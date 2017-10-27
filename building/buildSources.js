@@ -38,6 +38,7 @@ const buildBundles = async (outputDirectoryPath, buildConfigPath) => {
         bundle(rootPath('runner-modules/chai/lib/content'), 'chai-content.js'),
         bundle(rootPath('runner-modules/expect/lib/script-env'), 'expect-script-env.js'),
         bundle(rootPath('runner-modules/expect/lib/content'), 'expect-content.js'),
+        bundle(rootPath('runner-modules/httpEvents/lib/script-env'), 'httpEvents-script-env.js'),
         bundle(rootPath('runner-modules/requestBlocking/lib/script-env'), 'requestBlocking-script-env.js'),
         bundle(rootPath('runner-modules/runResult/lib/script-env'), 'runResult-script-env.js'),
         bundle(rootPath('runner-modules/runResult/lib/content'), 'runResult-content.js'),
