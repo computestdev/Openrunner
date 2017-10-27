@@ -40,6 +40,7 @@ const buildBundles = async (outputDirectoryPath, buildConfigPath) => {
         bundle(rootPath('runner-modules/expect/lib/content'), 'expect-content.js'),
         bundle(rootPath('runner-modules/runResult/lib/script-env'), 'runResult-script-env.js'),
         bundle(rootPath('runner-modules/runResult/lib/content'), 'runResult-content.js'),
+        bundle(rootPath('runner-modules/screenshot/lib/script-env'), 'screenshot-script-env.js'),
         bundle(rootPath('runner-modules/tabs/lib/script-env'), 'tabs-script-env.js'),
         bundle(rootPath('runner-modules/tabs/lib/content'), 'tabs-content.js'),
         fs.copy(require.resolve('react/dist/react.js'), outputPath('react.js')),

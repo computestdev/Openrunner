@@ -7,5 +7,6 @@ module.exports = new Map([
     ['chai', require('./chai/lib/background')],
     ['expect', require('./expect/lib/background')],
     ['runResult', require('./runResult/lib/background')],
+    ['screenshot', require('./screenshot/lib/background')],
     ['tabs', require('./tabs/lib/background')],
 ]);
