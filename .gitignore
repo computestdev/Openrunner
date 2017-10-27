@@ -1,0 +1,8 @@
+/node_modules
+/*.iml
+/.idea
+/coverage
+/PRIV
+/build
+/package-lock.json
+/npm-debug.log
