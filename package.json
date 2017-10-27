@@ -10,6 +10,7 @@
     "lint": "eslint bin core lib runner-modules test",
     "test:unit": "mocha",
     "test:unit:coverage": "istanbul cover --include-all-sources node_modules/mocha/bin/_mocha",
+    "test:unit:coveralls": "istanbul cover --include-all-sources node_modules/mocha/bin/_mocha test --report lcovonly && cat ./coverage/lcov.info | coveralls",
     "test": "npm run lint && npm run test:unit:coverage",
     "start": "npm run build && \"$FIREFOX_BIN\" --no-remote --profile PRIV/profile --jsconsole"
   },
@@ -32,6 +33,7 @@
   "devDependencies": {
     "babel-eslint": "^7.2.3",
     "clone": "^2.1.1",
+    "coveralls": "^3.0.0",
     "eslint": "^4.2.0",
     "eslint-plugin-import": "^2.7.0",
     "express": "^4.16.2",
