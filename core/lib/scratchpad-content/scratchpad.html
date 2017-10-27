@@ -19,6 +19,37 @@
                    title="repeat script run this many times" style="width: 5em">
             <span class="executeScriptState">stopped</span>
         </div>
-        <pre id="editor"></pre>
+        <pre id="editor">'Openrunner-Script: v1';
+const expect = await include('expect');
+const tabs = await include('tabs');
+await include('httpEvents');
+await include('wait');
+const screenshot = await include('screenshot');
+const requestBlocking = await include('requestBlocking');
+const tab = await tabs.create();
+
+await requestBlocking.block([
+    '*://*.google-analytics.com/*',
+]);
+
+await transaction('HomePage', async t => {
+    t.title = '00 HomePage';
+    await tab.navigate('http://computest.nl/', {timeout: '10s'});
+    await tab.wait(async () => {
+        await wait.documentComplete().selector('#layerslider_1 p.slider-text').isDisplayed();
+    });
+});
+
+await transaction('Actueel', async t => {
+    t.title = '01 Actueel';
+    await tab.waitForNewPage(async () => {
+        const links = await wait.selectorAll('#menu-main-header-menu > li > a').containsText('Actueel').amount(1);
+        links[0].click();
+    });
+    await tab.wait(async () => {
+        await wait.documentComplete();
+    });
+});
+</pre>
     </body>
 </html>
