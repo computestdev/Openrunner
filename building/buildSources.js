@@ -43,6 +43,8 @@ const buildBundles = async (outputDirectoryPath, buildConfigPath) => {
         bundle(rootPath('runner-modules/screenshot/lib/script-env'), 'screenshot-script-env.js'),
         bundle(rootPath('runner-modules/tabs/lib/script-env'), 'tabs-script-env.js'),
         bundle(rootPath('runner-modules/tabs/lib/content'), 'tabs-content.js'),
+        bundle(rootPath('runner-modules/wait/lib/script-env'), 'wait-script-env.js'),
+        bundle(rootPath('runner-modules/wait/lib/content'), 'wait-content.js'),
         fs.copy(require.resolve('react/dist/react.js'), outputPath('react.js')),
         fs.copy(require.resolve('react-dom/dist/react-dom.js'), outputPath('react-dom.js')),
         fs.copy(require.resolve('performr-runner-result-graph/bundle'), outputPath('performr-runner-result-graph.js')),

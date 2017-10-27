@@ -9,4 +9,5 @@ module.exports = new Map([
     ['runResult', require('./runResult/lib/background')],
     ['screenshot', require('./screenshot/lib/background')],
     ['tabs', require('./tabs/lib/background')],
+    ['wait', require('./wait/lib/background')],
 ]);
