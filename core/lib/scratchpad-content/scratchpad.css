@@ -1,0 +1,47 @@
+@charset "UTF-8";
+
+body {
+    overflow: hidden;
+    background-color: #272822;
+    color: #F8F8F2;
+}
+
+#toolbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    padding: 5px 8px;
+    background-color: #2F3129;
+}
+
+#toolbar > * {
+    vertical-align: top;
+}
+
+#toolbar > hr {
+    display: inline-block;
+    width: 1px;
+    height: 18px;
+    margin: 1px 5px;
+    background-color: white;
+    border: none;
+    outline: none;
+}
+
+#toolbar > .executeScriptState {
+    display: inline-block;
+    border: 2px ridge white;
+    padding: 1px 5px;
+    font-size: 15px;
+}
+
+#editor {
+    margin: 0;
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

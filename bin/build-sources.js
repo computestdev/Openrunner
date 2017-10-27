@@ -1,0 +1,41 @@
+'use strict';
+/* eslint-env node */
+const {resolve: resolvePath} = require('path');
+const yargs = require('yargs');
+
+const {buildSources} = require('../building');
+
+const {argv} = (
+    yargs
+    .option('output', {
+        alias: 'o',
+        describe: 'Build output directory',
+        demandOption: true,
+    })
+    .option('cncPort', {
+        describe:
+            'If set, the resulting extension build will automatically try to connect to this WebSocket port on the loopback interface, ' +
+            'to receive JSON-RPC 2 calls',
+        number: true,
+        default: 0,
+        defaultDescription: 'disabled',
+    })
+    .help('help')
+);
+
+(async () => {
+    const outputPath = resolvePath(argv.output);
+    console.log('*** Building sources at', outputPath);
+
+    try {
+        await buildSources({
+            outputPath,
+            cncPort: argv.cncPort,
+        });
+        console.log('*** Done!');
+    }
+    catch (err) {
+        console.error('Error during build!', err);
+        process.exitCode = 1;
+    }
+})();

@@ -1,0 +1,32 @@
+@charset "UTF-8";
+
+body {
+    background-color: white;
+    color: black;
+}
+
+#upload {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 250px;
+    z-index: 1;
+    overflow: hidden;
+}
+
+#render-error {
+    position: absolute;
+    top: 5px;
+    left: 260px;
+    right: 5px;
+    z-index: 1;
+    color: #7a0000;
+}
+
+#graph-container > .PerformrRunnerResultGraph {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}

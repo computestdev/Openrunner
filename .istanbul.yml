@@ -1,0 +1,8 @@
+---
+instrumentation:
+    excludes:
+        - 'build/**'
+        - 'coverage/**'
+        - 'icons/**'
+        - '**/node_modules/**'
+        - 'PRIV/**'

@@ -1,0 +1,85 @@
+{
+    "app.update.auto": false, // might cause unexpected networking traffic
+    "app.update.enabled": false,
+    "browser.download.manager.showWhenStarting": false,
+    "browser.EULA.override": true,
+    "browser.EULA.3.accepted": true,
+    "browser.offline": false,
+    "browser.safebrowsing.enabled": true, // if the website that we are testing is blacklisted, we would like to know about it
+    "browser.search.update": false,
+    "extensions.blocklist.enabled": false,
+    "browser.sessionstore.resume_from_crash": false,
+    "browser.shell.checkDefaultBrowser": false,
+    "browser.tabs.warnOnClose": false,
+    "browser.tabs.warnOnOpen": false,
+    "browser.startup.page": 0,
+    "browser.safebrowsing.malware.enabled": true,
+    "browser.laterrun.enabled": false, // https://bugzilla.mozilla.org/show_bug.cgi?id=1200639
+    "startup.homepage_welcome_url": "about:blank",
+    "devtools.errorconsole.enabled": true,
+    "dom.disable_open_during_load": false,
+    "extensions.autoDisableScopes" : 10, // disable all extensions that come from default locations on the system
+    "extensions.enabledScopes": 5, // only extensions installed from the profile or by firefox
+    "extensions.logging.enabled": false,
+    "extensions.update.enabled": false,
+    "extensions.update.notifyUser": false,
+    "network.http.phishy-userpass-length": 255, // do not warn about urls with a user & pass
+    "offline-apps.allow_by_default": true,
+    "prompts.tab_modal.enabled": false,
+    "security.fileuri.origin_policy": 3,
+    "security.fileuri.strict_origin_policy": false,
+    "security.warn_entering_secure": false,
+    "security.warn_entering_secure.show_once": false,
+    "security.warn_entering_weak": false,
+    "security.warn_entering_weak.show_once": false,
+    "security.warn_leaving_secure": false,
+    "security.warn_leaving_secure.show_once": false,
+    "security.warn_submit_insecure": false,
+    "security.warn_viewing_mixed": false,
+    "security.warn_viewing_mixed.show_once": false,
+    "signon.rememberSignons": false,
+    "toolkit.networkmanager.disable": true, // Do not use NetworkManager to detect offline/online status on linux
+    "network.manage-offline-status": false, // never set offline status automatically
+    "toolkit.telemetry.enabled": false, // might cause unexpected networking traffic
+    "toolkit.telemetry.prompted": 2,
+    "toolkit.telemetry.rejected": true,
+    "javascript.options.showInConsole": true,
+    "browser.dom.window.dump.enabled": true,
+    "dom.max_script_run_time": 30,
+    "browser.reader.detectedFirstArticle": true, // disable reader view popup
+    "datareporting.healthreport.uploadEnabled": false, // might cause unexpected networking traffic
+    "browser.selfsupport.url": "", // might cause unexpected networking traffic
+    "network.captive-portal-service.enabled": false, // public wifi captive portal detection, might cause unexpected networking traffic
+
+    // toolkit/components/telemetry/TelemetryReportingPolicy.jsm: (a nag which reduced the viewport height)
+    "datareporting.policy.dataSubmissionPolicyBypassNotification": true,
+    "datareporting.policy.dataSubmissionEnabled": false,
+    "toolkit.telemetry.reportingpolicy.firstRun": false,
+
+    // mozilla a/b testing:
+    "experiments.enabled": false,
+    "network.allow-experiments": false,
+    "browser.cache.frecency_experiment": -1, // https://trac.torproject.org/projects/tor/ticket/13575
+
+    "dom.send_after_paint_to_content": true, // required for the MozAfterPaint event for performr-runner
+    "privacy.trackingprotection.pbmode.enabled": false, // interferes with page load times
+
+    // allow unsigned extensions (firefox unbranded only):
+    "xpinstall.signatures.required": false,
+
+    // force enable e10s (multiprocess)
+    "browser.tabs.remote.autostart": true,
+    "browser.tabs.remote.force-enable": true,
+
+    // enable console.log, console.info, etc from extensions:
+    "extensions.sdk.console.logLevel": "all",
+
+    // always ask where to save downloads
+    "browser.download.useDownloadDir": false,
+
+    // It is currently not possible to track window.open in extensions:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1238314
+    // so make sure that window.open _always_ ends up in a new tab, not a new window
+    "browser.link.open_newwindow": 3,
+    "browser.link.open_newwindow.restriction": 0
+}

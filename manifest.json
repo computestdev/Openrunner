@@ -1,0 +1,50 @@
+{
+    "manifest_version": 2,
+    "name": "Openrunner",
+    "version": "2.0.0",
+    "description": "TODO",
+    "applications": {
+        "gecko": {
+            "id": "openrunner@computest.nl",
+            "strict_min_version": "54.0"
+        }
+    },
+    "permissions": [
+        "<all_urls>",
+        "cookies",
+        "tabs",
+        "webNavigation",
+        "webRequest",
+        "webRequestBlocking"
+    ],
+    "icons": {
+        "48": "icons/openrunner-48.png",
+        "96": "icons/openrunner-96.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "icons/openrunner-16.png",
+            "32": "icons/openrunner-32.png",
+            "64": "icons/openrunner-64.png"
+        },
+        "browser_style": true,
+        "default_title": "Computest Openrunner"
+    },
+    "background": {
+        "scripts": [
+            "build/background.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*/*"
+            ],
+            "all_frames": false,
+            "js": [
+                "build/tabs-content.js"
+            ],
+            "run_at": "document_start"
+        }
+    ]
+}
