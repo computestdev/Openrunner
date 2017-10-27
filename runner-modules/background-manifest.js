@@ -6,6 +6,7 @@ module.exports = new Map([
     ['assert', require('./assert/lib/background')],
     ['chai', require('./chai/lib/background')],
     ['expect', require('./expect/lib/background')],
+    ['requestBlocking', require('./requestBlocking/lib/background')],
     ['runResult', require('./runResult/lib/background')],
     ['screenshot', require('./screenshot/lib/background')],
     ['tabs', require('./tabs/lib/background')],
