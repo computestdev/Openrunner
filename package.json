@@ -16,6 +16,14 @@
   },
   "author": "Joris van der Wel <joris@jorisvanderwel.com>",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/computestdev/Openrunner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/computestdev/Openrunner/issues"
+  },
+  "homepage": "https://github.com/computestdev/Openrunner",
   "files": [
     "bin",
     "building",
@@ -24,7 +32,8 @@
     "lib",
     "runner-modules",
     "manifest.json",
-    "index.js"
+    "index.js",
+    "README.md"
   ],
   "bin": {
     "openrunner-build-sources": "./bin/build-sources.js",
