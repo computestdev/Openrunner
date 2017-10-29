@@ -1,6 +1,6 @@
 {
   "name": "openrunner",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Computest Openrunner: Benchmark and functional testing for frontend-heavy web applications",
   "main": "index.js",
   "scripts": {
