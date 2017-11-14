@@ -23,9 +23,21 @@ module.exports = script => {
         self.importScripts(...urls);
     };
 
+    const reportCodeCoverage = () => {
+        // eslint-disable-next-line camelcase, no-undef
+        const coverageData = typeof __runner_coverage__ !== 'undefined' && __runner_coverage__;
+
+        if (!coverageData) {
+            throw Error('This Openrunner build has not been instrumented for code coverage');
+        }
+
+        return coverageData;
+    };
+
     return new Map([
         ['core.stopScript', stopScript],
         ['core.runScript', runScript],
         ['core.importScripts', (...urls) => importScripts(...urls)],
+        ['core.reportCodeCoverage', reportCodeCoverage],
     ]);
 };

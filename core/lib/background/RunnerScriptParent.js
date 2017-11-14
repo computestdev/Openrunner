@@ -8,6 +8,7 @@ const coreMethods = require('./coreMethods');
 const loadModule = require('./loadModule');
 const ModuleRegister = require('../../../lib/ModuleRegister');
 const compileRunnerScript = require('./compileRunnerScript');
+const {mergeCoverageReports} = require('../../../lib/mergeCoverage');
 
 const scriptEnvUrl = browser.extension.getURL('/build/script-env.js');
 const PRIVATE = Symbol('RunnerScriptParent private');
@@ -199,6 +200,13 @@ class RunnerScriptParentPrivate {
                 await this.stop('Normal script completion');
             }
             finally { // only emit runEnd if runStart was emitted
+                // eslint-disable-next-line camelcase, no-undef
+                const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
+                if (myCoverage) {
+                    const scriptEnvCoverage = await this.rpcCall({timeout: 4001, name: 'core.reportCodeCoverage'});
+                    mergeCoverageReports(myCoverage, scriptEnvCoverage);
+                }
+
                 this.cleanup();
                 await this.emitRunEnd();
             }
