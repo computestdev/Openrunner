@@ -20,6 +20,10 @@ const {argv} = (
         default: 0,
         defaultDescription: 'disabled',
     })
+    .option('coverage', {
+        describe: 'Add coverage instrumentation',
+        boolean: true,
+    })
     .help('help')
 );
 
@@ -31,6 +35,7 @@ const {argv} = (
         await buildSources({
             outputPath,
             cncPort: argv.cncPort,
+            instrumentCoverage: argv.coverage,
         });
         console.log('*** Done!');
     }

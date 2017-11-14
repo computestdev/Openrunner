@@ -7,6 +7,7 @@ const Process = require('./Process');
 const TestingServer = require('../server/TestingServer');
 const {buildFirefoxProfile, buildSources} = require('../../index');
 const log = require('../../lib/logger')({hostname: 'test', MODULE: 'integrationTest'});
+const {mergeCoverageReports} = require('../../lib/mergeCoverage');
 
 const {
     TEST_FIREFOX_BIN,
@@ -51,6 +52,7 @@ const doStart = async () => {
     const buildSourceOptions = {
         outputPath: TEST_BUILD_OUTPUT,
         cncPort: listenPort,
+        instrumentCoverage: Boolean(global.__coverage__),
     };
     log.info(buildSourceOptions, 'Building sources...');
     await buildSources(buildSourceOptions);
@@ -80,9 +82,27 @@ const start = async () => {
 
 const stop = async () => {
     await startPromise;
+    await mergeCoverage();
+
     log.info('Stopping firefox...');
     await firefoxProcess.stop();
     await server.stop();
+};
+
+const mergeCoverage = async () => {
+    log.info('Gathering code coverage...');
+    try {
+        const myCoverage = global.__coverage__;
+        if (!myCoverage) {
+            return;
+        }
+
+        const extensionCoverage = await server.reportCodeCoverage();
+        mergeCoverageReports(myCoverage, extensionCoverage);
+    }
+    catch (err) {
+        log.warn({err}, 'Failed to retrieve code coverage from the browser extension');
+    }
 };
 
 const runScriptFromFunction = async (func, injected = {}) => {

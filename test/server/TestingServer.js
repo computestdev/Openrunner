@@ -167,6 +167,10 @@ class TestingServer {
         return await this.runScript({scriptContent, stackFileName});
     }
 
+    async reportCodeCoverage() {
+        return await this.cncServer.reportCodeCoverage();
+    }
+
 }
 
 module.exports = TestingServer;

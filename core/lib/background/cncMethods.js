@@ -24,7 +24,19 @@ module.exports = () => {
         }
     };
 
+    const reportCodeCoverage = () => {
+        // eslint-disable-next-line camelcase, no-undef
+        const coverageData = typeof __runner_coverage__ !== 'undefined' && __runner_coverage__;
+
+        if (!coverageData) {
+            throw Error('This Openrunner build has not been instrumented for code coverage');
+        }
+
+        return coverageData;
+    };
+
     return new Map([
         ['runScript', runScript],
+        ['reportCodeCoverage', reportCodeCoverage],
     ]);
 };
