@@ -31,6 +31,14 @@ try {
     window.addEventListener('unload', fireContentUnload);
     eventEmitter.on('tabs.contentUnload', () => log.debug('Content is about to unload'));
 
+    eventEmitter.on('tabs.contentUnload', () => {
+        // eslint-disable-next-line camelcase, no-undef
+        const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
+        if (myCoverage) {
+            rpc.notify('core.submitCodeCoverage', myCoverage);
+        }
+    });
+
     window.openRunnerRegisterRunnerModule = async (moduleName, func) => {
         try {
             if (typeof func !== 'function') {

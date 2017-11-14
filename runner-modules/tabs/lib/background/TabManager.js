@@ -6,6 +6,7 @@ const ScriptWindow = require('./ScriptWindow');
 const TabTracker = require('./TabTracker');
 const TabContentRPC = require('../../../../lib/TabContentRPC');
 const {resolveScriptContentEvalStack} = require('../../../../lib/errorParsing');
+const {mergeCoverageReports} = require('../../../../lib/mergeCoverage');
 
 class TabManager extends EventEmitter {
     constructor({runtime: browserRuntime, windows: browserWindows, tabs: browserTabs, webNavigation: browserWebNavigation}) {
@@ -91,6 +92,13 @@ class TabManager extends EventEmitter {
 
         rpc.notification('tabs.mainContentInit', () => this.handleTabInitialized(browserTabId));
         rpc.notification('tabs.contentInit', ({moduleName}) => this.handleTabModuleInitialized(browserTabId, moduleName));
+        rpc.notification('core.submitCodeCoverage', contentCoverage => {
+            // eslint-disable-next-line camelcase, no-undef
+            const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
+            if (myCoverage) {
+                mergeCoverageReports(myCoverage, contentCoverage);
+            }
+        });
         this.emit('initializedTabRpc', {id: tabData.id, rpc});
     }
 
