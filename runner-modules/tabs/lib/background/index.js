@@ -24,7 +24,7 @@ module.exports = script => {
         }
     };
 
-    const tabIdToBrowserTabId = tabId => tabManager.getBrowserTabId(tabId);
+    const getTab = tabId => tabManager.get(tabId);
     const getScriptBrowserWindowId = async () => tabManager.getBrowserWindowId();
 
     script.on('core.runEnd', wait => wait(handleRunEnd()));
@@ -33,7 +33,7 @@ module.exports = script => {
     script.importScripts(scriptEnvUrl);
 
     return Object.freeze({
-        tabIdToBrowserTabId,
+        getTab,
         getScriptBrowserWindowId,
     });
 };

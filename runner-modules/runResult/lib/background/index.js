@@ -16,10 +16,14 @@ TimePoint.setCounterFunc(() => ({
 }));
 
 module.exports = script => {
-    const handleTabsInitializedTabRpc = ({rpc}) => {
+    const handleTabsInitializedTabRpc = ({tab, rpc}) => {
         rpc.notification('runResult.scriptResult', result => {
             try {
                 log.debug('Received script result object from content');
+                for (const event of result.events) {
+                    event.tabId = tab.id;
+                    event.tabContentId = tab.currentContentId;
+                }
                 scriptResult.mergeJSONObject(result);
             }
             catch (err) {

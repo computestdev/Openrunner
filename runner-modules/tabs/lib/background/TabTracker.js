@@ -1,4 +1,5 @@
 'use strict';
+const {generate: generateShortId} = require('shortid');
 
 class Tab {
     constructor(id, browserTabId) {
@@ -20,9 +21,19 @@ class Tab {
             get initialized() {
                 return self.initialized;
             },
+
+            /**
+             * An unique ID which represents a single top level frame instance. Navigating to a new URL resets this id.
+             * This id might be null before the first navigation
+             * @return {?string}
+             */
+            get currentContentId() {
+                return self.currentContentId;
+            },
         });
         this.initCount = 0;
         this.initMarked = false;
+        this.currentContentId = null;
         this.pendingInitTokens = new Set();
         this.closed = false;
         Object.seal(this);
@@ -43,7 +54,6 @@ class Tab {
 
 class TabTracker {
     constructor() {
-        this.nextTabId = Math.floor(Math.random() * 1000000);
         this.tabs = new Map(); // id => Tab
         this.tabsByBrowserId = new Map(); // browserId => Tab
         this.waitForTabInitializationResolvers = new Set();
@@ -65,7 +75,7 @@ class TabTracker {
             }
         }
 
-        const id = this.nextTabId++;
+        const id = generateShortId();
         const tab = new Tab(id, browserTabId);
         this.tabs.set(id, tab);
         this.tabsByBrowserId.set(browserTabId, tab);
@@ -122,8 +132,13 @@ class TabTracker {
         }
 
         const wasInitialized = tab.initialized;
+        const wasInitMarked = tab.initMarked;
         tab.initMarked = true;
         tab.pendingInitTokens.delete(initToken);
+
+        if (!wasInitMarked) {
+            tab.currentContentId = generateShortId();
+        }
 
         if (tab.initialized) {
             if (!wasInitialized) {

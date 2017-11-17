@@ -65,14 +65,14 @@ class TabManager extends EventEmitter {
                 return; // the tab does not belong to this script
             }
 
-            const {id} = this.myTabs.getByBrowserTabId(browserTabId);
+            const tab = this.myTabs.getByBrowserTabId(browserTabId);
             // We could use `browserTab.openerTabId` to figure out if the tab was opened by us
             // however: https://bugzilla.mozilla.org/show_bug.cgi?id=1238314
             // So set these preferences in perform-runner-pm for now:
             //     browser.link.open_newwindow = 3
             //     browser.link.open_newwindow.restriction = 0
 
-            this.emit('tabCreated', {id});
+            this.emit('tabCreated', {tab});
         }
         catch (err) {
             log.error({err}, 'Error in browser.tabs.onCreated');
@@ -84,9 +84,9 @@ class TabManager extends EventEmitter {
     }
 
     handleRpcInitialize({browserTabId, rpc}) {
-        const tabData = this.myTabs.getByBrowserTabId(browserTabId);
+        const tab = this.myTabs.getByBrowserTabId(browserTabId);
 
-        if (!tabData) {
+        if (!tab) {
             return; // not my tab
         }
 
@@ -99,7 +99,7 @@ class TabManager extends EventEmitter {
                 mergeCoverageReports(myCoverage, contentCoverage);
             }
         });
-        this.emit('initializedTabRpc', {id: tabData.id, rpc});
+        this.emit('initializedTabRpc', {tab, rpc});
     }
 
     handleWebNavigationOnBeforeNavigate({tabId: browserTabId, frameId, url}) {
@@ -118,8 +118,8 @@ class TabManager extends EventEmitter {
     }
 
     handleTabInitialized(browserTabId) {
-        const tabData = this.myTabs.getByBrowserTabId(browserTabId);
-        const isMyTab = Boolean(tabData);
+        const tab = this.myTabs.getByBrowserTabId(browserTabId);
+        const isMyTab = Boolean(tab);
         log.info({browserTabId, isMyTab}, 'Main tab content script has been initialized');
 
         if (!isMyTab) {
@@ -137,7 +137,7 @@ class TabManager extends EventEmitter {
             files.push(String(file));
         };
 
-        this.emit('initializingTabContent', {id: tabData.id, executeContentScript, rpc});
+        this.emit('initializingTabContent', {tab, executeContentScript, rpc});
 
         for (const file of files) {
             this.browserTabs.executeScript(browserTabId, {
@@ -159,8 +159,8 @@ class TabManager extends EventEmitter {
     _markInitialized(browserTabId, initToken) {
         if (this.myTabs.markInitialized(browserTabId, initToken)) {
             log.info({browserTabId}, 'All tab content scripts have initialized');
-            const {id} = this.myTabs.getByBrowserTabId(browserTabId);
-            this.emit('initializedTabContent', {id});
+            const tab = this.myTabs.getByBrowserTabId(browserTabId);
+            this.emit('initializedTabContent', {tab});
 
             const rpc = this.tabContentRPC.get(browserTabId);
             rpc.call('tabs.initializedTabContent')
@@ -178,17 +178,15 @@ class TabManager extends EventEmitter {
         const {id: browserTabId} = browserTab;
 
         this.myTabs.register(browserTabId);
-        const {id} = this.myTabs.getByBrowserTabId(browserTabId);
-        return id;
+        return this.myTabs.getByBrowserTabId(browserTabId);
     }
 
     hasTab(id) {
         return this.myTabs.has(id);
     }
 
-    getBrowserTabId(id) {
-        const tab = this.myTabs.get(id);
-        return tab ? tab.browserTabId : null;
+    getTab(id) {
+        return this.myTabs.get(id);
     }
 
     async navigateTab(id, url) {

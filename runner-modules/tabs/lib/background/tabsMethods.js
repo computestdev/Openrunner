@@ -7,11 +7,12 @@ module.exports = (tabManager) => {
     const createTab = async () => {
         // creating a tab has a lot of overhead, so we do not allow the runner script to pass an url here (the url is always about:blank)
         // this lets us create tabs outside of the transaction block, while the navigation is within the block
-        return await tabManager.createTab();
+        const tab = await tabManager.createTab();
+        return tab.id;
     };
 
     const navigateTab = async ({id, url}) => {
-        if (typeof id !== 'number' || !tabManager.hasTab(id)) {
+        if (typeof id !== 'string' || !tabManager.hasTab(id)) {
             throw Error('tabs.navigate(): invalid argument `id`');
         }
         if (typeof url !== 'string' || !ALLOWED_URL_REGEXP.test(url)) {
@@ -22,7 +23,7 @@ module.exports = (tabManager) => {
     };
 
     const run = async ({id, code, arg}) => {
-        if (typeof id !== 'number' || !tabManager.hasTab(id)) {
+        if (typeof id !== 'string' || !tabManager.hasTab(id)) {
             throw Error('tabs.run(): invalid argument `id`');
         }
 
@@ -38,7 +39,7 @@ module.exports = (tabManager) => {
     };
 
     const waitForNewPage = async ({id, code, arg, timeoutMs}) => {
-        if (typeof id !== 'number' || !tabManager.hasTab(id)) {
+        if (typeof id !== 'string' || !tabManager.hasTab(id)) {
             throw Error('tabs.run(): invalid argument `id`');
         }
 
@@ -75,7 +76,7 @@ module.exports = (tabManager) => {
     };
 
     const wait = async ({id, code, arg}) => {
-        if (typeof id !== 'number' || !tabManager.hasTab(id)) {
+        if (typeof id !== 'string' || !tabManager.hasTab(id)) {
             throw Error('tabs.wait(): invalid argument `id`');
         }
 

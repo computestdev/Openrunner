@@ -91,6 +91,8 @@ class Event {
             shortTitle: '',
             timing: new TimePeriod(),
             type: String(type),
+            tabId: null,
+            tabContentId: null,
         });
         Object.freeze(this);
     }
@@ -268,6 +270,38 @@ class Event {
     }
 
     /**
+     *
+     * @return {?string}
+     */
+    get tabId() {
+        return this[PRIVATE].tabId;
+    }
+
+    /**
+     *
+     * @param {?string} value
+     */
+    set tabId(value) {
+        this[PRIVATE].tabId = value ? String(value) : null;
+    }
+
+    /**
+     *
+     * @return {?string}
+     */
+    get tabContentId() {
+        return this[PRIVATE].tabContentId;
+    }
+
+    /**
+     *
+     * @param {?string} value
+     */
+    set tabContentId(value) {
+        this[PRIVATE].tabContentId = value ? String(value) : null;
+    }
+
+    /**
      * @return {{
      *   children: Array,
      *   timing: ({
@@ -297,6 +331,8 @@ class Event {
             timing: this.timing.toJSONObject(),
             metaData: metaData,
             children: [...this.children].map(event => event.toJSONObject()),
+            tabId: this.tabId,
+            tabContentId: this.tabContentId,
         };
         /* eslint-enable sort-keys */
 
