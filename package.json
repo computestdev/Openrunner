@@ -7,7 +7,7 @@
     "build:sources": "node bin/build-sources.js --output build",
     "build:profile": "node bin/build-firefox-profile --input build --output PRIV/profile",
     "build": "npm run build:sources && npm run build:profile",
-    "lint": "eslint bin core lib runner-modules test",
+    "lint": "eslint bin building core lib runner-modules test",
     "test:unit": "mocha",
     "test:unit:coverage": "nyc --all mocha",
     "test:unit:coveralls": "npm run test:unit:coverage && nyc report --reporter=text-lcov | coveralls",

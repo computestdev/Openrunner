@@ -1,6 +1,6 @@
 'use strict';
 /* eslint-env node */
-const {resolve: resolvePath, relative: relativePath} = require('path');
+const {resolve: resolvePath} = require('path');
 const Promise = require('bluebird');
 const fs = require('fs-extra');
 const browserify = require('browserify');
