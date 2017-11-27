@@ -43,6 +43,8 @@ const buildBundles = async (outputDirectoryPath, buildConfigPath, {instrumentCov
         bundle(rootPath('runner-modules/chai/lib/content'), 'chai-content.js'),
         bundle(rootPath('runner-modules/contentEvents/lib/script-env'), 'contentEvents-script-env.js'),
         bundle(rootPath('runner-modules/contentEvents/lib/content'), 'contentEvents-content.js'),
+        bundle(rootPath('runner-modules/eventSimulation/lib/script-env'), 'eventSimulation-script-env.js'),
+        bundle(rootPath('runner-modules/eventSimulation/lib/content'), 'eventSimulation-content.js'),
         bundle(rootPath('runner-modules/expect/lib/script-env'), 'expect-script-env.js'),
         bundle(rootPath('runner-modules/expect/lib/content'), 'expect-content.js'),
         bundle(rootPath('runner-modules/httpEvents/lib/script-env'), 'httpEvents-script-env.js'),

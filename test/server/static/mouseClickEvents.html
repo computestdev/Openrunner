@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mouse Events</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 5px;
+        }
+        #outer {
+            width: 400px;
+            height: 150px;
+            padding: 50px;
+            border: 1px solid green;
+            margin: 50px;
+        }
+        #middle {
+            width: 200px;
+            height: 50px;
+            padding: 30px;
+            border: 1px solid yellowgreen;
+        }
+        #target {
+            display: block;
+            width: 200px;
+            height: 20px;
+        }
+        #tests {
+            margin: 15px;
+        }
+        #result {
+            width: 1000px;
+            height: 700px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const result = document.getElementById('result');
+            const outer = document.getElementById('outer');
+            const middle = document.getElementById('middle');
+            const target = document.getElementById('target');
+
+            const addLine = obj => result.value += `${JSON.stringify(obj)},\n`;
+            const describeNode = node => {
+                if (!node) {
+                    return null;
+                }
+
+                if (node.id) {
+                    return '#' + node.id;
+                }
+
+                return `<${node.nodeName.toLowerCase()}>`
+            };
+
+            const mouseEvent = [
+                'auxclick',
+                'click',
+                'dblclick',
+                'mousedown',
+                'mouseup',
+                // other mouse events which are not tested using this page:
+                // 'mouseenter',
+                // 'mouseleave',
+                // 'mousemove',
+                // 'mouseout',
+                // 'mouseover', 
+            ];
+            const mouseEventListener = e => e.eventPhase === Event.AT_TARGET && addLine({
+                type: e.type,
+                target: describeNode(e.target),
+                bubbles: e.bubbles,
+                cancelable: e.cancelable,
+                composed: e.composed,
+                timeStamp: e.timeStamp,
+
+                screenX: e.screenX,
+                screenY: e.screenY,
+                clientX: e.clientX,
+                clientY: e.clientY,
+                ctrlKey: e.ctrlKey,
+                shiftKey: e.shiftKey,
+                altKey: e.altKey,
+                metaKey: e.metaKey,
+                button: e.button,
+                buttons: e.buttons,
+                relatedTarget: describeNode(e.relatedTarget),
+            });
+
+            for (const eventType of mouseEvent) {
+                outer.addEventListener(eventType, mouseEventListener);
+                middle.addEventListener(eventType, mouseEventListener);
+                target.addEventListener(eventType, mouseEventListener);
+            }
+
+            document.getElementById('clickMethod').addEventListener('click', e => target.click());
+            document.getElementById('dispatch').addEventListener('click', e => target.dispatchEvent(
+                new MouseEvent('click', {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: true,
+                    clientX: 170,
+                    clientY: 140,
+                    screenX: 1234,
+                    screenY: 212,
+                    ctrlKey: false,
+                    shiftKey: false,
+                    altKey: false,
+                    metaKey: false,
+                    button: 0,
+                    buttons: 0,
+                    relatedTarget: null,
+                    view: window,
+                })
+            ));
+        });
+    </script>
+</head>
+<body>
+    <div id="outer">
+        <div id="middle">
+            <a id="target" href="#targetHasBeenClicked">
+                Click me!!!
+            </a>
+        </div>
+    </div>
+
+    <div id="tests">
+        <button id="clickMethod" type="button">
+            .click()
+        </button>
+        <button id="dispatch" type="button">
+            .dispatchEvent()
+        </button>
+    </div>
+
+    <div>
+        <textarea id="result"></textarea>
+    </div>
+
+    <div style="height: 1000px;">lots of space for scrolling!</div>
+</body>
+</html>

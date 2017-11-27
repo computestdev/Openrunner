@@ -6,7 +6,7 @@ const {runScriptFromFunction, testServerPort} = require('../utilities/integratio
 
 describe('integration/scriptingEnvironment', {timeout: 60000}, () => {
     specify('Minimal script using only "transaction", "core" and "tabs"', async () => {
-        /* eslint-disable */
+        /* eslint-disable no-undef */
         const result = await runScriptFromFunction(async () => {
             'Openrunner-Script: v1';
             const tabs = await include('tabs');
@@ -20,9 +20,11 @@ describe('integration/scriptingEnvironment', {timeout: 60000}, () => {
                 });
             });
         }, {url: `http://localhost:${testServerPort()}/static/static.html?waitBeforeResponse=50&bytesPerSecond=100000`});
-        /* eslint-enable */
+        /* eslint-enable no-undef */
 
-        eq(result.error, null);
+        if (result.error) {
+            throw result.error;
+        }
         eq(result.result.transactions.length, 1);
         eq(result.result.transactions[0].id, 'First');
         eq(result.result.transactions[0].title, '00 First');
