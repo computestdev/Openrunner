@@ -7,6 +7,7 @@ const chaiDom = require('chai-dom');
 chai.use(chaiSubset);
 chai.use(chaiArrays);
 chai.use(chaiDom);
+chai.config.truncateThreshold = 1024;
 
 module.exports = () => {
     return Object.freeze({
