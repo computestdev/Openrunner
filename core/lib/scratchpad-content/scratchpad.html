@@ -25,6 +25,7 @@ const tabs = await include('tabs');
 await include('contentEvents');
 await include('httpEvents');
 await include('wait');
+await include('eventSimulation');
 const screenshot = await include('screenshot');
 const requestBlocking = await include('requestBlocking');
 const tab = await tabs.create();
@@ -45,7 +46,7 @@ await transaction('Actueel', async t => {
     t.title = '01 Actueel';
     await tab.waitForNewPage(async () => {
         const links = await wait.selectorAll('#menu-main-header-menu > li > a').containsText('Actueel').amount(1);
-        links[0].click();
+        await eventSimulation.click(links[0]);
     });
     await tab.wait(async () => {
         await wait.documentComplete();
