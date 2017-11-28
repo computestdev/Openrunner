@@ -3,8 +3,12 @@
 
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'contentEvents/content/index'});
 
-const {performance, requestAnimationFrame} = window;
 const SLOW_PAINT_THRESHOLD = 50; // 60hz = 16.6...ms
+
+// Note: calling a stored copy of requestAnimationFrame results in errors intermittently
+// So to avoid this bug we wrap the function
+const requestAnimationFrame = callback => window.requestAnimationFrame(callback);
+const timing = () => window.performance.timing;
 
 openRunnerRegisterRunnerModule('contentEvents', async ({getModule}) => {
     const {scriptResult, TimePoint} = await getModule('runResult');
@@ -17,8 +21,8 @@ openRunnerRegisterRunnerModule('contentEvents', async ({getModule}) => {
 
     applyEventMetaData(scriptResult.timeEvent(
         'content:navigate',
-        performance.timing.navigationStart,
-        performance.timing.responseStart
+        timing().navigationStart,
+        timing().responseStart
     ));
 
     const handleReadyStateChange = () => {
@@ -26,15 +30,15 @@ openRunnerRegisterRunnerModule('contentEvents', async ({getModule}) => {
             if (document.readyState === 'interactive') {
                 applyEventMetaData(scriptResult.timeEvent(
                     'content:documentInteractive',
-                    performance.timing.responseStart,
-                    performance.timing.domInteractive
+                    timing().responseStart,
+                    timing().domInteractive
                 ));
             }
             else if (document.readyState === 'complete') {
                 applyEventMetaData(scriptResult.timeEvent(
                     'content:documentComplete',
-                    performance.timing.domInteractive,
-                    performance.timing.domComplete
+                    timing().domInteractive,
+                    timing().domComplete
                 ));
             }
         }
