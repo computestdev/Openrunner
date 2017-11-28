@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Focus Events</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 5px;
+        }
+        #outer {
+            width: 400px;
+            height: 150px;
+            padding: 50px;
+            border: 1px solid green;
+            margin: 50px;
+        }
+        #middle {
+            width: 200px;
+            height: 50px;
+            padding: 30px;
+            border: 1px solid yellowgreen;
+        }
+        #middle > label {
+            display: block;
+            width: 200px;
+            height: 30px;
+        }
+        #middle > label > input {
+            display: inline-block;
+            width: 100px;
+            height: 15px;
+        }
+        #tests {
+            margin: 15px;
+        }
+        #result {
+            width: 1000px;
+            height: 700px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const result = document.getElementById('result');
+            const outer = document.getElementById('outer');
+            const middle = document.getElementById('middle');
+            const target1 = document.getElementById('target1');
+            const target2 = document.getElementById('target2');
+
+            const addLine = obj => result.value += `${JSON.stringify(obj)},\n`;
+            const describeNode = node => {
+                if (!node) {
+                    return null;
+                }
+
+                if (node.id) {
+                    return '#' + node.id;
+                }
+
+                return `<${node.nodeName.toLowerCase()}>`
+            };
+
+            const focusEvents = [
+                'focus',
+                'blur',
+                'focusin',
+                'focusout',
+            ];
+            const focusEventListener = e => e.eventPhase === Event.AT_TARGET && addLine({
+                type: e.type,
+                target: describeNode(e.target),
+                bubbles: e.bubbles,
+                cancelable: e.cancelable,
+                composed: e.composed,
+                timeStamp: e.timeStamp,
+
+                relatedTarget: describeNode(e.relatedTarget),
+                activeElement: describeNode(document.activeElement),
+            });
+
+            for (const eventType of focusEvents) {
+                document.body.addEventListener(eventType, focusEventListener);
+                outer.addEventListener(eventType, focusEventListener);
+                middle.addEventListener(eventType, focusEventListener);
+                target1.addEventListener(eventType, focusEventListener);
+                target2.addEventListener(eventType, focusEventListener);
+            }
+
+            document.getElementById('focusMethod1').addEventListener('click', e => target1.focus());
+            document.getElementById('focusMethod2').addEventListener('click', e => target2.focus());
+        });
+    </script>
+</head>
+<body>
+    <div id="outer">
+        <div id="middle">
+            <label id="label1">Target 1<input id="target1" value="foo"></label>
+            <label id="label2">Target 2<input id="target2" value="bar"></label>
+        </div>
+    </div>
+
+    <div id="tests">
+        <button id="focusMethod1" type="button">target1.focus()</button>
+        <button id="focusMethod2" type="button">target2.focus()</button>
+    </div>
+
+    <div>
+        <textarea id="result"></textarea>
+    </div>
+
+    <div style="height: 1000px;">lots of space for scrolling!</div>
+</body>
+</html>
