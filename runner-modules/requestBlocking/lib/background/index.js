@@ -1,15 +1,17 @@
 'use strict';
 const requestBlockingMethods = require('./requestBlockingMethods');
-const BlockingPatterns = require('./BlockingPatterns');
+const RequestModificationPatterns = require('../../../../lib/RequestModificationPatterns');
 
 const scriptEnvUrl = browser.extension.getURL('/build/requestBlocking-script-env.js');
 
 module.exports = async script => {
     const tabs = await script.include('tabs');
     const browserWindowId = await tabs.getScriptBrowserWindowId();
-    const blockingPatterns = new BlockingPatterns({
-        browserWebRequest: browser.webRequest,
+    const blockingPatterns = new RequestModificationPatterns({
+        browserWebRequestEmitter: browser.webRequest.onBeforeRequest,
+        extraInfoSpec: ['blocking'],
         browserWindowId,
+        listener: () => ({cancel: true}),
     });
 
     const handleRunEnd = async () => {

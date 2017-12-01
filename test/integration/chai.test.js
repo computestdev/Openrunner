@@ -3,7 +3,7 @@ const {describe, specify} = require('mocha-sugar-free');
 
 const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
-describe.only('integration/chai', {timeout: 60000, slow: 10000}, () => {
+describe('integration/chai', {timeout: 60000, slow: 10000}, () => {
     specify('Should expose chai to content', async () => {
         /* eslint-disable no-undef */
         const result = await runScriptFromFunction(async () => {

@@ -49,6 +49,7 @@ const buildBundles = async (outputDirectoryPath, buildConfigPath, {instrumentCov
         bundle(rootPath('runner-modules/expect/lib/content'), 'expect-content.js'),
         bundle(rootPath('runner-modules/httpEvents/lib/script-env'), 'httpEvents-script-env.js'),
         bundle(rootPath('runner-modules/requestBlocking/lib/script-env'), 'requestBlocking-script-env.js'),
+        bundle(rootPath('runner-modules/requestModification/lib/script-env'), 'requestModification-script-env.js'),
         bundle(rootPath('runner-modules/runResult/lib/script-env'), 'runResult-script-env.js'),
         bundle(rootPath('runner-modules/runResult/lib/content'), 'runResult-content.js'),
         bundle(rootPath('runner-modules/screenshot/lib/script-env'), 'screenshot-script-env.js'),

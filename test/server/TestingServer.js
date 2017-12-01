@@ -11,6 +11,7 @@ const {resolve: pathResolve} = require('path');
 const {statAsync: stat, createReadStream} = Promise.promisifyAll(require('fs'));
 const mime = require('mime');
 const morgan = require('morgan');
+const jsonHtmlify = require('htmlescape');
 
 const log = require('../../lib/logger')({pid: process.pid, hostname: os.hostname(), MODULE: 'TestingServer'});
 const {CnCServer} = require('../..');
@@ -104,6 +105,32 @@ class TestingServer {
 
         app.get('/empty', (request, response) => {
             response.status(200).send('');
+        });
+
+        app.get('/headers/json', (request, response) => {
+            response.status(200);
+            response.header('X-Foo', 'Value for the X-Foo Header');
+            response.header('X-Bar', 'Value for the X-Bar Header');
+            response.json({headers: request.headers});
+        });
+
+        app.get('/headers/html', (request, response) => {
+            response.status(200);
+            response.header('X-Foo', 'Value for the X-Foo Header');
+            response.header('X-Bar', 'Value for the X-Bar Header');
+            response.type('html');
+            response.send(`<!DOCTYPE html>
+<html>
+    <head>
+        <title>Headers</title>
+        <script>window.requestHeaders = ${jsonHtmlify(request.headers)}</script>
+    </head>
+    <body>
+        <pre id="requestHeadersDisplay"></pre>
+        <script>requestHeadersDisplay.textContent = JSON.stringify(requestHeaders, null, 2)</script>
+    </body>
+</html>
+            `);
         });
 
         app.use((request, response) => {
