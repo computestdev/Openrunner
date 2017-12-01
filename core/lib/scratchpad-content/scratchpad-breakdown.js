@@ -56,7 +56,10 @@ rpc.method('setResultJSONObject', resultObject => render(resultObject));
 
 const render = resultObject => {
     const parsedResultObject = PerformrRunnerResultGraph.parseResultObject(resultObject.result);
-    const component = React.createElement(PerformrRunnerResultGraph.default, {resultObject: parsedResultObject});
+    const component = React.createElement(PerformrRunnerResultGraph.default, {
+        resultObject: parsedResultObject,
+        width: window.screen.availWidth,
+    });
 
     const container = document.querySelector('#graph-container');
     ReactDOM.unmountComponentAtNode(container);

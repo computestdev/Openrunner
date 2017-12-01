@@ -73,7 +73,7 @@
     "istanbul-lib-instrument": "^1.9.1",
     "jsonbird": "^3.0.0",
     "performr-runner-metadata-parser": "^1.0.0",
-    "performr-runner-result-graph": "^4.0.1",
+    "performr-runner-result-graph": "^5.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "robust-websocket": "^0.3.0",
