@@ -258,6 +258,12 @@ class RunResult {
     }
 }
 
+// convenience so that we can access all the functionality of a RunResult instance without having to pass the entire module:
+RunResult.prototype.TimePoint = TimePoint;
+RunResult.prototype.TimePeriod = TimePeriod;
+RunResult.prototype.Event = Event;
+RunResult.prototype.Transaction = Transaction;
+
 Object.freeze(RunResult);
 Object.freeze(RunResult.prototype);
 

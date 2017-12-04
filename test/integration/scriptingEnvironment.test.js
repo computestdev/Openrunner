@@ -4,7 +4,7 @@ const {assert: {strictEqual: eq}} = require('chai');
 
 const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
-describe('integration/scriptingEnvironment', {timeout: 60000}, () => {
+describe('integration/scriptingEnvironment', {timeout: 60000, slow: 10000}, () => {
     specify('Minimal script using only "transaction", "core" and "tabs"', async () => {
         /* eslint-disable no-undef */
         const result = await runScriptFromFunction(async () => {
