@@ -25,17 +25,21 @@ openRunnerRegisterRunnerModule('contentEvents', async ({getModule}) => {
         timing().responseStart
     ));
 
+    let interactiveEvent;
+    let completeEvent;
+
     const handleReadyStateChange = () => {
         try {
-            if (document.readyState === 'interactive') {
-                applyEventMetaData(scriptResult.timeEvent(
+            if (!interactiveEvent && (document.readyState === 'interactive' || document.readyState === 'complete')) {
+                interactiveEvent = applyEventMetaData(scriptResult.timeEvent(
                     'content:documentInteractive',
                     timing().responseStart,
                     timing().domInteractive
                 ));
             }
-            else if (document.readyState === 'complete') {
-                applyEventMetaData(scriptResult.timeEvent(
+
+            if (!completeEvent && document.readyState === 'complete') {
+                completeEvent = applyEventMetaData(scriptResult.timeEvent(
                     'content:documentComplete',
                     timing().domInteractive,
                     timing().domComplete
@@ -67,6 +71,7 @@ openRunnerRegisterRunnerModule('contentEvents', async ({getModule}) => {
 
     document.addEventListener('readystatechange', handleReadyStateChange);
     requestAnimationFrame(handleAnimationFrame);
+    handleReadyStateChange();
 
     return {};
 });
