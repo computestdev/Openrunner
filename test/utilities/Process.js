@@ -9,13 +9,14 @@ const {assert} = require('chai');
 const log = require('../../lib/logger')({hostname: 'test', MODULE: 'Process'});
 
 class Process extends EventEmitter {
-    constructor({executablePath, args, env, cwd, enableExtraFd}) {
+    constructor({executablePath, args, env, cwd, enableExtraFd, outputFilter = s => s}) {
         super();
         this.executablePath = executablePath;
         this.args = args || [];
         this.env = env || {};
         this.cwd = cwd || undefined; // undefined = inherit
         this.enableExtraFd = Boolean(enableExtraFd || false);
+        this.outputFilter = outputFilter;
 
         this.runningChild = null;
         this.childrenLifeTime = Promise.resolve();
@@ -135,21 +136,23 @@ class Process extends EventEmitter {
             });
 
             childProcess.stdout.pipe(split()).on('data', line => {
-                if (!line) {
+                const filteredLine = this.outputFilter(line, 'STDOUT');
+                if (!filteredLine) {
                     return;
                 }
 
-                log.debug({childPid, fd: 1}, `CHILD: ${line}`);
-                this.emit('STDOUT', line);
+                log.debug({childPid, fd: 1, CHILD: true}, filteredLine);
+                this.emit('STDOUT', filteredLine);
             });
 
             childProcess.stderr.pipe(split()).on('data', line => {
-                if (!line) {
+                const filteredLine = this.outputFilter(line, 'STDERR');
+                if (!filteredLine) {
                     return;
                 }
 
-                log.warn({childPid, fd: 2}, `CHILD: ${line}`);
-                this.emit('STDERR', line);
+                log.warn({childPid, fd: 2, CHILD: true}, filteredLine);
+                this.emit('STDERR', filteredLine);
             });
 
             if (this.enableExtraFd) {
