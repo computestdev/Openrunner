@@ -1,0 +1,776 @@
+[
+    {
+        "testCaseName": "First keyboard row of regular characters",
+        "keyIdentifiers": ["`","1","2","3","4","5","6","7","8","9","0","-","=","~","!","@","#","$","%","^","&","*","(",")","_","+"],
+        "expectedEvents": [
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"`","code":"Backquote","keyCode":192,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"`","code":"Backquote","keyCode":0,"charCode":96,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"`"},
+            {"type":"input","target":"#textarea","targetValue":"`","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"`"},
+            {"type":"keyup","target":"#textarea","targetValue":"`","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"`","code":"Backquote","keyCode":192,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"1","code":"Digit1","keyCode":49,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"1","code":"Digit1","keyCode":0,"charCode":49,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"1"},
+            {"type":"input","target":"#textarea","targetValue":"`1","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"1"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"1","code":"Digit1","keyCode":49,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"2","code":"Digit2","keyCode":50,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"2","code":"Digit2","keyCode":0,"charCode":50,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"2"},
+            {"type":"input","target":"#textarea","targetValue":"`12","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"2"},
+            {"type":"keyup","target":"#textarea","targetValue":"`12","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"2","code":"Digit2","keyCode":50,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`12","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"3","code":"Digit3","keyCode":51,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`12","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"3","code":"Digit3","keyCode":0,"charCode":51,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`12","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"3"},
+            {"type":"input","target":"#textarea","targetValue":"`123","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"3"},
+            {"type":"keyup","target":"#textarea","targetValue":"`123","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"3","code":"Digit3","keyCode":51,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`123","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"4","code":"Digit4","keyCode":52,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`123","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"4","code":"Digit4","keyCode":0,"charCode":52,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`123","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"4"},
+            {"type":"input","target":"#textarea","targetValue":"`1234","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"4"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"4","code":"Digit4","keyCode":52,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"5","code":"Digit5","keyCode":53,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"5","code":"Digit5","keyCode":0,"charCode":53,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"5"},
+            {"type":"input","target":"#textarea","targetValue":"`12345","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"5"},
+            {"type":"keyup","target":"#textarea","targetValue":"`12345","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"5","code":"Digit5","keyCode":53,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`12345","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"6","code":"Digit6","keyCode":54,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`12345","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"6","code":"Digit6","keyCode":0,"charCode":54,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`12345","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"6"},
+            {"type":"input","target":"#textarea","targetValue":"`123456","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"6"},
+            {"type":"keyup","target":"#textarea","targetValue":"`123456","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"6","code":"Digit6","keyCode":54,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`123456","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"7","code":"Digit7","keyCode":55,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`123456","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"7","code":"Digit7","keyCode":0,"charCode":55,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`123456","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"7"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"7"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"7","code":"Digit7","keyCode":55,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"8","code":"Digit8","keyCode":56,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"8","code":"Digit8","keyCode":0,"charCode":56,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"8"},
+            {"type":"input","target":"#textarea","targetValue":"`12345678","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"8"},
+            {"type":"keyup","target":"#textarea","targetValue":"`12345678","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"8","code":"Digit8","keyCode":56,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`12345678","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"9","code":"Digit9","keyCode":57,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`12345678","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"9","code":"Digit9","keyCode":0,"charCode":57,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`12345678","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"9"},
+            {"type":"input","target":"#textarea","targetValue":"`123456789","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"9"},
+            {"type":"keyup","target":"#textarea","targetValue":"`123456789","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"9","code":"Digit9","keyCode":57,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`123456789","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"0","code":"Digit0","keyCode":48,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`123456789","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"0","code":"Digit0","keyCode":0,"charCode":48,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`123456789","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"0"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"0"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"0","code":"Digit0","keyCode":48,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"-","code":"Minus","keyCode":173,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"-","code":"Minus","keyCode":0,"charCode":45,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"-"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"-"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"-","code":"Minus","keyCode":173,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"=","code":"Equal","keyCode":61,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"=","code":"Equal","keyCode":0,"charCode":61,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"="},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"="},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"=","code":"Equal","keyCode":61,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"~","code":"Backquote","keyCode":192,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"~","code":"Backquote","keyCode":0,"charCode":126,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"~"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"~"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"~","code":"Backquote","keyCode":192,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"!","code":"Digit1","keyCode":49,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"!","code":"Digit1","keyCode":0,"charCode":33,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"!"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"!"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"!","code":"Digit1","keyCode":49,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"@","code":"Digit2","keyCode":50,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"@","code":"Digit2","keyCode":0,"charCode":64,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"@"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"@"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"@","code":"Digit2","keyCode":50,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"#","code":"Digit3","keyCode":51,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"#","code":"Digit3","keyCode":0,"charCode":35,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"#"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"#"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"#","code":"Digit3","keyCode":51,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"$","code":"Digit4","keyCode":52,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"$","code":"Digit4","keyCode":0,"charCode":36,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"$"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"$"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"$","code":"Digit4","keyCode":52,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"%","code":"Digit5","keyCode":53,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"%","code":"Digit5","keyCode":0,"charCode":37,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"%"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"%"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"%","code":"Digit5","keyCode":53,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$%","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"^","code":"Digit6","keyCode":54,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$%","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"^","code":"Digit6","keyCode":0,"charCode":94,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$%","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"^"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%^","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"^"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"^","code":"Digit6","keyCode":54,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$%^","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"&","code":"Digit7","keyCode":55,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$%^","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"&","code":"Digit7","keyCode":0,"charCode":38,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$%^","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"&"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"&"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"&","code":"Digit7","keyCode":55,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"*","code":"Digit8","keyCode":56,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"*","code":"Digit8","keyCode":0,"charCode":42,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"*"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"*"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"*","code":"Digit8","keyCode":56,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"(","code":"Digit9","keyCode":57,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"(","code":"Digit9","keyCode":0,"charCode":40,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"("},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*(","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"("},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*(","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"(","code":"Digit9","keyCode":57,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*(","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":")","code":"Digit0","keyCode":48,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*(","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":")","code":"Digit0","keyCode":0,"charCode":41,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*(","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":")"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":")"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":")","code":"Digit0","keyCode":48,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"_","code":"Minus","keyCode":173,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"_","code":"Minus","keyCode":0,"charCode":95,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"_"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"_"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"_","code":"Minus","keyCode":173,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"+","code":"Equal","keyCode":61,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"+","code":"Equal","keyCode":0,"charCode":43,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"+"},
+            {"type":"input","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_+","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"+"},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_+","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"+","code":"Equal","keyCode":61,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_+","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"change","target":"#textarea","targetValue":"`1234567890-=~!@#$%^&*()_+","bubbles":true,"cancelable":false,"composed":false,"relatedTarget":null}
+        ]
+    },
+    {
+        "testCaseName": "Second keyboard row of regular characters",
+        "keyIdentifiers": ["q","w","e","r","t","y","u","i","o","p","[","]","\\","Q","W","E","R","T","Y","U","I","O","P","{","}","|"],
+        "expectedEvents": [
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"q","code":"KeyQ","keyCode":81,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"q","code":"KeyQ","keyCode":0,"charCode":113,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"q"},
+            {"type":"input","target":"#textarea","targetValue":"q","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"q"},
+            {"type":"keyup","target":"#textarea","targetValue":"q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"q","code":"KeyQ","keyCode":81,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"w","code":"KeyW","keyCode":87,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"w","code":"KeyW","keyCode":0,"charCode":119,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"w"},
+            {"type":"input","target":"#textarea","targetValue":"qw","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"w"},
+            {"type":"keyup","target":"#textarea","targetValue":"qw","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"w","code":"KeyW","keyCode":87,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qw","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"e","code":"KeyE","keyCode":69,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qw","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"e","code":"KeyE","keyCode":0,"charCode":101,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qw","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"e"},
+            {"type":"input","target":"#textarea","targetValue":"qwe","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"e"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwe","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"e","code":"KeyE","keyCode":69,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwe","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"r","code":"KeyR","keyCode":82,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwe","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"r","code":"KeyR","keyCode":0,"charCode":114,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwe","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"r"},
+            {"type":"input","target":"#textarea","targetValue":"qwer","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"r"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwer","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"r","code":"KeyR","keyCode":82,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwer","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"t","code":"KeyT","keyCode":84,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwer","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"t","code":"KeyT","keyCode":0,"charCode":116,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwer","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"t"},
+            {"type":"input","target":"#textarea","targetValue":"qwert","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"t"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwert","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"t","code":"KeyT","keyCode":84,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwert","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"y","code":"KeyY","keyCode":89,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwert","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"y","code":"KeyY","keyCode":0,"charCode":121,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwert","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"y"},
+            {"type":"input","target":"#textarea","targetValue":"qwerty","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"y"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwerty","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"y","code":"KeyY","keyCode":89,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwerty","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"u","code":"KeyU","keyCode":85,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwerty","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"u","code":"KeyU","keyCode":0,"charCode":117,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwerty","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"u"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyu","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"u"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyu","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"u","code":"KeyU","keyCode":85,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyu","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"i","code":"KeyI","keyCode":73,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyu","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"i","code":"KeyI","keyCode":0,"charCode":105,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyu","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"i"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyui","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"i"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyui","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"i","code":"KeyI","keyCode":73,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyui","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"o","code":"KeyO","keyCode":79,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyui","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"o","code":"KeyO","keyCode":0,"charCode":111,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyui","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"o"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuio","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"o"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuio","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"o","code":"KeyO","keyCode":79,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuio","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"p","code":"KeyP","keyCode":80,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuio","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"p","code":"KeyP","keyCode":0,"charCode":112,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuio","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"p"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"p"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"p","code":"KeyP","keyCode":80,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"[","code":"BracketLeft","keyCode":219,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"[","code":"BracketLeft","keyCode":0,"charCode":91,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"["},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"["},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"[","code":"BracketLeft","keyCode":219,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"]","code":"BracketRight","keyCode":221,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"]","code":"BracketRight","keyCode":0,"charCode":93,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"]"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"]"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"]","code":"BracketRight","keyCode":221,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"\\","code":"Backslash","keyCode":220,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"\\","code":"Backslash","keyCode":0,"charCode":92,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"\\"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"\\"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"\\","code":"Backslash","keyCode":220,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Q","code":"KeyQ","keyCode":81,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Q","code":"KeyQ","keyCode":0,"charCode":81,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"Q"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\Q","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"Q"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\Q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Q","code":"KeyQ","keyCode":81,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\Q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"W","code":"KeyW","keyCode":87,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\Q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"W","code":"KeyW","keyCode":0,"charCode":87,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\Q","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"W"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QW","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"W"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QW","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"W","code":"KeyW","keyCode":87,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QW","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"E","code":"KeyE","keyCode":69,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QW","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"E","code":"KeyE","keyCode":0,"charCode":69,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QW","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"E"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWE","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"E"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWE","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"E","code":"KeyE","keyCode":69,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWE","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"R","code":"KeyR","keyCode":82,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWE","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"R","code":"KeyR","keyCode":0,"charCode":82,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWE","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"R"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWER","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"R"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWER","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"R","code":"KeyR","keyCode":82,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWER","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"T","code":"KeyT","keyCode":84,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWER","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"T","code":"KeyT","keyCode":0,"charCode":84,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWER","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"T"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERT","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"T"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERT","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"T","code":"KeyT","keyCode":84,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERT","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Y","code":"KeyY","keyCode":89,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERT","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Y","code":"KeyY","keyCode":0,"charCode":89,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERT","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"Y"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTY","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"Y"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTY","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Y","code":"KeyY","keyCode":89,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTY","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"U","code":"KeyU","keyCode":85,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTY","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"U","code":"KeyU","keyCode":0,"charCode":85,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTY","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"U"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYU","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"U"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYU","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"U","code":"KeyU","keyCode":85,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYU","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"I","code":"KeyI","keyCode":73,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYU","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"I","code":"KeyI","keyCode":0,"charCode":73,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYU","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"I"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUI","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"I"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUI","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"I","code":"KeyI","keyCode":73,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUI","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"O","code":"KeyO","keyCode":79,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUI","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"O","code":"KeyO","keyCode":0,"charCode":79,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUI","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"O"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIO","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"O"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIO","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"O","code":"KeyO","keyCode":79,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIO","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"P","code":"KeyP","keyCode":80,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIO","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"P","code":"KeyP","keyCode":0,"charCode":80,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIO","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"P"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"P"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"P","code":"KeyP","keyCode":80,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"{","code":"BracketLeft","keyCode":219,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"{","code":"BracketLeft","keyCode":0,"charCode":123,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"{"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"{"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"{","code":"BracketLeft","keyCode":219,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"}","code":"BracketRight","keyCode":221,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"}","code":"BracketRight","keyCode":0,"charCode":125,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"}"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"}"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"}","code":"BracketRight","keyCode":221,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"|","code":"Backslash","keyCode":220,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"|","code":"Backslash","keyCode":0,"charCode":124,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"|"},
+            {"type":"input","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}|","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"|"},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}|","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"|","code":"Backslash","keyCode":220,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}|","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"change","target":"#textarea","targetValue":"qwertyuiop[]\\QWERTYUIOP{}|","bubbles":true,"cancelable":false,"composed":false,"relatedTarget":null}
+        ]
+    },
+    {
+        "testCaseName": "Third keyboard row of regular characters",
+        "keyIdentifiers": ["a","s","d","f","g","h","j","k","l",";","'","A","S","D","F","G","H","J","K","L",":","\""],
+        "expectedEvents": [
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"a","code":"KeyA","keyCode":65,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"a","code":"KeyA","keyCode":0,"charCode":97,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"a"},
+            {"type":"input","target":"#textarea","targetValue":"a","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"a"},
+            {"type":"keyup","target":"#textarea","targetValue":"a","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"a","code":"KeyA","keyCode":65,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"a","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"s","code":"KeyS","keyCode":83,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"a","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"s","code":"KeyS","keyCode":0,"charCode":115,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"a","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"s"},
+            {"type":"input","target":"#textarea","targetValue":"as","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"s"},
+            {"type":"keyup","target":"#textarea","targetValue":"as","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"s","code":"KeyS","keyCode":83,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"as","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"d","code":"KeyD","keyCode":68,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"as","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"d","code":"KeyD","keyCode":0,"charCode":100,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"as","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"d"},
+            {"type":"input","target":"#textarea","targetValue":"asd","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"d"},
+            {"type":"keyup","target":"#textarea","targetValue":"asd","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"d","code":"KeyD","keyCode":68,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asd","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"f","code":"KeyF","keyCode":70,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asd","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"f","code":"KeyF","keyCode":0,"charCode":102,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asd","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"f"},
+            {"type":"input","target":"#textarea","targetValue":"asdf","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"f"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdf","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"f","code":"KeyF","keyCode":70,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdf","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"g","code":"KeyG","keyCode":71,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdf","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"g","code":"KeyG","keyCode":0,"charCode":103,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdf","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"g"},
+            {"type":"input","target":"#textarea","targetValue":"asdfg","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"g"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfg","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"g","code":"KeyG","keyCode":71,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfg","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"h","code":"KeyH","keyCode":72,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfg","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"h","code":"KeyH","keyCode":0,"charCode":104,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfg","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"h"},
+            {"type":"input","target":"#textarea","targetValue":"asdfgh","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"h"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfgh","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"h","code":"KeyH","keyCode":72,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfgh","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"j","code":"KeyJ","keyCode":74,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfgh","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"j","code":"KeyJ","keyCode":0,"charCode":106,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfgh","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"j"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghj","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"j"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghj","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"j","code":"KeyJ","keyCode":74,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghj","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"k","code":"KeyK","keyCode":75,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghj","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"k","code":"KeyK","keyCode":0,"charCode":107,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghj","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"k"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjk","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"k"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjk","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"k","code":"KeyK","keyCode":75,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjk","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"l","code":"KeyL","keyCode":76,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjk","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"l","code":"KeyL","keyCode":0,"charCode":108,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjk","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"l"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"l"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"l","code":"KeyL","keyCode":76,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":";","code":"Semicolon","keyCode":59,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":";","code":"Semicolon","keyCode":0,"charCode":59,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":";"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":";"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":";","code":"Semicolon","keyCode":59,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"'","code":"Quote","keyCode":222,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"'","code":"Quote","keyCode":0,"charCode":39,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"'"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"'"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"'","code":"Quote","keyCode":222,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"A","code":"KeyA","keyCode":65,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"A","code":"KeyA","keyCode":0,"charCode":65,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"A"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'A","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"A"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'A","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"A","code":"KeyA","keyCode":65,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'A","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"S","code":"KeyS","keyCode":83,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'A","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"S","code":"KeyS","keyCode":0,"charCode":83,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'A","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"S"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'AS","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"S"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'AS","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"S","code":"KeyS","keyCode":83,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'AS","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"D","code":"KeyD","keyCode":68,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'AS","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"D","code":"KeyD","keyCode":0,"charCode":68,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'AS","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"D"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASD","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"D"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASD","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"D","code":"KeyD","keyCode":68,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASD","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F","code":"KeyF","keyCode":70,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASD","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F","code":"KeyF","keyCode":0,"charCode":70,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASD","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"F"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDF","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"F"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDF","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F","code":"KeyF","keyCode":70,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASDF","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"G","code":"KeyG","keyCode":71,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASDF","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"G","code":"KeyG","keyCode":0,"charCode":71,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASDF","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"G"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDFG","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"G"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFG","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"G","code":"KeyG","keyCode":71,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASDFG","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"H","code":"KeyH","keyCode":72,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASDFG","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"H","code":"KeyH","keyCode":0,"charCode":72,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASDFG","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"H"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDFGH","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"H"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFGH","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"H","code":"KeyH","keyCode":72,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASDFGH","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"J","code":"KeyJ","keyCode":74,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASDFGH","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"J","code":"KeyJ","keyCode":0,"charCode":74,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASDFGH","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"J"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJ","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"J"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJ","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"J","code":"KeyJ","keyCode":74,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJ","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"K","code":"KeyK","keyCode":75,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJ","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"K","code":"KeyK","keyCode":0,"charCode":75,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJ","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"K"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJK","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"K"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJK","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"K","code":"KeyK","keyCode":75,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJK","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"L","code":"KeyL","keyCode":76,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJK","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"L","code":"KeyL","keyCode":0,"charCode":76,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJK","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"L"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"L"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"L","code":"KeyL","keyCode":76,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":":","code":"Semicolon","keyCode":59,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":":","code":"Semicolon","keyCode":0,"charCode":58,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":":"},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":":"},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":":","code":"Semicolon","keyCode":59,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"\"","code":"Quote","keyCode":222,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"\"","code":"Quote","keyCode":0,"charCode":34,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"\""},
+            {"type":"input","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:\"","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"\""},
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:\"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"\"","code":"Quote","keyCode":222,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keyup","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:\"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"change","target":"#textarea","targetValue":"asdfghjkl;'ASDFGHJKL:\"","bubbles":true,"cancelable":false,"composed":false,"relatedTarget":null}
+        ]
+    },
+    {
+        "testCaseName": "Fourth keyboard row of regular characters",
+        "keyIdentifiers": ["z","x","c","v","b","n","m",",",".","/","Z","X","C","V","B","N","M","<",">","?"," "],
+        "expectedEvents": [
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"z","code":"KeyZ","keyCode":90,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"z","code":"KeyZ","keyCode":0,"charCode":122,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"z"},
+            {"type":"input","target":"#textarea","targetValue":"z","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"z"},
+            {"type":"keyup","target":"#textarea","targetValue":"z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"z","code":"KeyZ","keyCode":90,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"x","code":"KeyX","keyCode":88,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"x","code":"KeyX","keyCode":0,"charCode":120,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"x"},
+            {"type":"input","target":"#textarea","targetValue":"zx","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"x"},
+            {"type":"keyup","target":"#textarea","targetValue":"zx","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"x","code":"KeyX","keyCode":88,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zx","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"c","code":"KeyC","keyCode":67,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zx","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"c","code":"KeyC","keyCode":0,"charCode":99,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zx","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"c"},
+            {"type":"input","target":"#textarea","targetValue":"zxc","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"c"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxc","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"c","code":"KeyC","keyCode":67,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxc","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"v","code":"KeyV","keyCode":86,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxc","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"v","code":"KeyV","keyCode":0,"charCode":118,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxc","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"v"},
+            {"type":"input","target":"#textarea","targetValue":"zxcv","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"v"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcv","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"v","code":"KeyV","keyCode":86,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcv","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"b","code":"KeyB","keyCode":66,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcv","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"b","code":"KeyB","keyCode":0,"charCode":98,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcv","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"b"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvb","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"b"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvb","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"b","code":"KeyB","keyCode":66,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvb","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"n","code":"KeyN","keyCode":78,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvb","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"n","code":"KeyN","keyCode":0,"charCode":110,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvb","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"n"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbn","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"n"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbn","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"n","code":"KeyN","keyCode":78,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbn","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"m","code":"KeyM","keyCode":77,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbn","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"m","code":"KeyM","keyCode":0,"charCode":109,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbn","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"m"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"m"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"m","code":"KeyM","keyCode":77,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":",","code":"Comma","keyCode":188,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":",","code":"Comma","keyCode":0,"charCode":44,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":","},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":","},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":",","code":"Comma","keyCode":188,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":".","code":"Period","keyCode":190,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":".","code":"Period","keyCode":0,"charCode":46,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"."},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,.","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"."},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,.","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":".","code":"Period","keyCode":190,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,.","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"/","code":"Slash","keyCode":191,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,.","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"/","code":"Slash","keyCode":0,"charCode":47,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,.","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"/"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"/"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"/","code":"Slash","keyCode":191,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Z","code":"KeyZ","keyCode":90,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Z","code":"KeyZ","keyCode":0,"charCode":90,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"Z"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./Z","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"Z"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./Z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Z","code":"KeyZ","keyCode":90,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./Z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"X","code":"KeyX","keyCode":88,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./Z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"X","code":"KeyX","keyCode":0,"charCode":88,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./Z","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"X"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZX","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"X"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZX","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"X","code":"KeyX","keyCode":88,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZX","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"C","code":"KeyC","keyCode":67,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZX","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"C","code":"KeyC","keyCode":0,"charCode":67,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZX","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"C"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXC","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"C"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXC","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"C","code":"KeyC","keyCode":67,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXC","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"V","code":"KeyV","keyCode":86,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXC","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"V","code":"KeyV","keyCode":0,"charCode":86,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXC","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"V"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCV","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"V"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCV","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"V","code":"KeyV","keyCode":86,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXCV","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"B","code":"KeyB","keyCode":66,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXCV","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"B","code":"KeyB","keyCode":0,"charCode":66,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXCV","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"B"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCVB","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"B"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVB","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"B","code":"KeyB","keyCode":66,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXCVB","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"N","code":"KeyN","keyCode":78,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXCVB","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"N","code":"KeyN","keyCode":0,"charCode":78,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXCVB","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"N"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBN","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"N"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBN","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"N","code":"KeyN","keyCode":78,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBN","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"M","code":"KeyM","keyCode":77,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBN","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"M","code":"KeyM","keyCode":0,"charCode":77,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBN","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"M"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"M"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"M","code":"KeyM","keyCode":77,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"<","code":"Comma","keyCode":188,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"<","code":"Comma","keyCode":0,"charCode":60,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"<"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"<"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"<","code":"Comma","keyCode":188,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":">","code":"Period","keyCode":190,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":">","code":"Period","keyCode":0,"charCode":62,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":">"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":">"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":">","code":"Period","keyCode":190,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"?","code":"Slash","keyCode":191,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"?","code":"Slash","keyCode":0,"charCode":63,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"?"},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>?","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"?"},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>?","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"?","code":"Slash","keyCode":191,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>?","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>?","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":" ","code":"Space","keyCode":32,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>?","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":" ","code":"Space","keyCode":0,"charCode":32,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>?","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":" "},
+            {"type":"input","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>? ","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":" "},
+            {"type":"keyup","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>? ","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":" ","code":"Space","keyCode":32,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"change","target":"#textarea","targetValue":"zxcvbnm,./ZXCVBNM<>? ","bubbles":true,"cancelable":false,"composed":false,"relatedTarget":null}
+        ]
+    },
+    {
+        "testCaseName": "Special keys and modifiers",
+        "keyIdentifiers": [
+            "AltLeft",
+            "AltRight",
+            "ArrowDown",
+            "ArrowLeft",
+            "ArrowRight",
+            "ArrowUp",
+            "Backspace",
+            "ControlLeft",
+            "Delete",
+            "End",
+            "Enter",
+            "Escape",
+            "F1",
+            "F2",
+            "F3",
+            "F4",
+            "F5",
+            "F6",
+            "F7",
+            "F8",
+            "F9",
+            "F10",
+            "F11",
+            "F12",
+            "F13",
+            "Home",
+            "OSLeft",
+            "OSRight",
+            "PageDown",
+            "PageUp",
+            "ShiftLeft",
+            "ShiftRight"
+        ],
+        "expectedEvents": [
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Alt","code":"AltLeft","keyCode":18,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":true,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Alt","code":"AltLeft","keyCode":18,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Alt","code":"AltRight","keyCode":18,"charCode":0,"location":2,"ctrlKey":false,"shiftKey":false,"altKey":true,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Alt","code":"AltRight","keyCode":18,"charCode":0,"location":2,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowDown","code":"ArrowDown","keyCode":40,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowDown","code":"ArrowDown","keyCode":40,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowDown","code":"ArrowDown","keyCode":40,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowLeft","code":"ArrowLeft","keyCode":37,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowLeft","code":"ArrowLeft","keyCode":37,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowLeft","code":"ArrowLeft","keyCode":37,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowRight","code":"ArrowRight","keyCode":39,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowRight","code":"ArrowRight","keyCode":39,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowRight","code":"ArrowRight","keyCode":39,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowUp","code":"ArrowUp","keyCode":38,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowUp","code":"ArrowUp","keyCode":38,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"ArrowUp","code":"ArrowUp","keyCode":38,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Backspace","code":"Backspace","keyCode":8,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Backspace","code":"Backspace","keyCode":8,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Backspace","code":"Backspace","keyCode":8,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Control","code":"ControlLeft","keyCode":17,"charCode":0,"location":1,"ctrlKey":true,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Control","code":"ControlLeft","keyCode":17,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Delete","code":"Delete","keyCode":46,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Delete","code":"Delete","keyCode":46,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Delete","code":"Delete","keyCode":46,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"End","code":"End","keyCode":35,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"End","code":"End","keyCode":35,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"End","code":"End","keyCode":35,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Enter","code":"Enter","keyCode":13,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Enter","code":"Enter","keyCode":13,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"beforeinput","target":"#textarea","targetValue":"","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"data":"\n"},
+            {"type":"input","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":false,"composed":true,"relatedTarget":null,"data":"\n"},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Enter","code":"Enter","keyCode":13,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Escape","code":"Escape","keyCode":27,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Escape","code":"Escape","keyCode":27,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Escape","code":"Escape","keyCode":27,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F1","code":"F1","keyCode":112,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F1","code":"F1","keyCode":112,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F1","code":"F1","keyCode":112,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F2","code":"F2","keyCode":113,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F2","code":"F2","keyCode":113,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F2","code":"F2","keyCode":113,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F3","code":"F3","keyCode":114,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F3","code":"F3","keyCode":114,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F3","code":"F3","keyCode":114,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F4","code":"F4","keyCode":115,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F4","code":"F4","keyCode":115,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F4","code":"F4","keyCode":115,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F5","code":"F5","keyCode":116,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F5","code":"F5","keyCode":116,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F5","code":"F5","keyCode":116,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F6","code":"F6","keyCode":117,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F6","code":"F6","keyCode":117,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F6","code":"F6","keyCode":117,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F7","code":"F7","keyCode":118,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F7","code":"F7","keyCode":118,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F7","code":"F7","keyCode":118,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F8","code":"F8","keyCode":119,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F8","code":"F8","keyCode":119,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F8","code":"F8","keyCode":119,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F9","code":"F9","keyCode":120,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F9","code":"F9","keyCode":120,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F9","code":"F9","keyCode":120,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F10","code":"F10","keyCode":121,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F10","code":"F10","keyCode":121,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F10","code":"F10","keyCode":121,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F11","code":"F11","keyCode":122,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F11","code":"F11","keyCode":122,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F11","code":"F11","keyCode":122,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F12","code":"F12","keyCode":123,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F12","code":"F12","keyCode":123,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F12","code":"F12","keyCode":123,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F13","code":"F13","keyCode":44,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F13","code":"F13","keyCode":44,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"F13","code":"F13","keyCode":44,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Home","code":"Home","keyCode":36,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Home","code":"Home","keyCode":36,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Home","code":"Home","keyCode":36,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Meta","code":"OSLeft","keyCode":224,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":true,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Meta","code":"OSLeft","keyCode":224,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Meta","code":"OSRight","keyCode":224,"charCode":0,"location":2,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":true,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Meta","code":"OSRight","keyCode":224,"charCode":0,"location":2,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"PageDown","code":"PageDown","keyCode":34,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"PageDown","code":"PageDown","keyCode":34,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"PageDown","code":"PageDown","keyCode":34,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"PageUp","code":"PageUp","keyCode":33,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keypress","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"PageUp","code":"PageUp","keyCode":33,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"PageUp","code":"PageUp","keyCode":33,"charCode":0,"location":0,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftLeft","keyCode":16,"charCode":0,"location":1,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"keydown","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftRight","keyCode":16,"charCode":0,"location":2,"ctrlKey":false,"shiftKey":true,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+            {"type":"keyup","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":true,"composed":true,"relatedTarget":null,"key":"Shift","code":"ShiftRight","keyCode":16,"charCode":0,"location":2,"ctrlKey":false,"shiftKey":false,"altKey":false,"metaKey":false,"repeat":false,"isComposing":false},
+
+            {"type":"change","target":"#textarea","targetValue":"\n","bubbles":true,"cancelable":false,"composed":false,"relatedTarget":null}
+        ]
+    }
+]

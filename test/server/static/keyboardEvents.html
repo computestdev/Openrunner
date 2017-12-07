@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Keyboard Events</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 5px;
+        }
+        #targets > div {
+            margin: 10px 0;
+        }
+
+        #controls {
+            margin: 25px 0;
+        }
+
+        #result {
+            width: 1000px;
+            height: 700px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const result = document.getElementById('result');
+
+            const addLine = (...obj) => result.value += `${JSON.stringify(Object.assign({}, ...obj))},\n`;
+            const describeNode = node => {
+                if (!node) {
+                    return null;
+                }
+
+                if (node.id) {
+                    return '#' + node.id;
+                }
+
+                return `<${node.nodeName.toLowerCase()}>`
+            };
+
+            // specs:
+            // https://dom.spec.whatwg.org/
+            // https://html.spec.whatwg.org/
+            // https://w3c.github.io/uievents/
+
+            const genericEvents = [ // Event / UIEvent
+                'change', // input (except hidden, submit, image, button), select, textarea
+                'select',
+                'submit',
+            ];
+            const inputEvents = [ // InputEvent;
+                'beforeinput',
+                'input',
+            ];
+            const mouseEvents = [ // MouseEvent
+                'click',
+            ];
+            const keyboardEvents = [ // KeyboardEvent
+                'keydown',
+                'keypress',
+                'keyup',
+            ];
+
+            const describeGenericEventProperties = e => ({
+                type: e.type,
+                target: describeNode(e.target),
+                targetValue: e.target && e.target.value,
+                bubbles: e.bubbles,
+                cancelable: e.cancelable,
+                composed: e.composed,
+                timeStamp: e.timeStamp,
+                relatedTarget: describeNode(e.relatedTarget),
+            });
+
+            const genericEventListener = e => e.eventPhase === Event.AT_TARGET && addLine(
+                describeGenericEventProperties(e),
+            );
+            const inputEventListener = e => e.eventPhase === Event.AT_TARGET && addLine(
+                describeGenericEventProperties(e),
+                {
+                    isComposing: e.isComposing,
+                    data: e.data,
+                },
+            );
+            const mouseEventListener = e => e.eventPhase === Event.AT_TARGET && addLine(
+                describeGenericEventProperties(e),
+                {
+                    screenX: e.screenX,
+                    screenY: e.screenY,
+                    clientX: e.clientX,
+                    clientY: e.clientY,
+                    ctrlKey: e.ctrlKey,
+                    shiftKey: e.shiftKey,
+                    altKey: e.altKey,
+                    metaKey: e.metaKey,
+                    button: e.button,
+                    buttons: e.buttons,
+                },
+            );
+            const keyboardEventListener = e => e.eventPhase === Event.AT_TARGET && addLine(
+                describeGenericEventProperties(e),
+                {
+                    key: e.key,
+                    code: e.code,
+                    keyCode: e.keyCode, // (deprecated)
+                    charCode: e.charCode, // (deprecated)
+                    location: e.location,
+                    ctrlKey: e.ctrlKey,
+                    shiftKey: e.shiftKey,
+                    altKey: e.altKey,
+                    metaKey: e.metaKey,
+                    repeat: e.repeat,
+                    isComposing: e.isComposing,
+                },
+            );
+
+            for (const target of document.querySelectorAll('.target')) {
+                for (const eventType of genericEvents) {
+                    target.addEventListener(eventType, genericEventListener);
+                }
+                for (const eventType of inputEvents) {
+                    target.addEventListener(eventType, inputEventListener);
+                }
+                for (const eventType of mouseEvents) {
+                    target.addEventListener(eventType, mouseEventListener);
+                }
+                for (const eventType of keyboardEvents) {
+                    target.addEventListener(eventType, keyboardEventListener);
+                }
+
+                target.addEventListener('keydown', e => {
+                    if (document.querySelector('#keydownCancel').checked) {
+                        e.preventDefault();
+                    }
+                });
+                target.addEventListener('keypress', e => {
+                    if (document.querySelector('#keypressCancel').checked) {
+                        e.preventDefault();
+                    }
+                });
+                target.addEventListener('keyup', e => {
+                    if (document.querySelector('#keyupCancel').checked) {
+                        e.preventDefault();
+                    }
+                });
+                target.addEventListener('beforeinput', e => {
+                    if (document.querySelector('#beforeinputCancel').checked) {
+                        e.preventDefault();
+                    }
+                });
+                target.addEventListener('input', e => {
+                    if (document.querySelector('#inputCancel').checked) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <form id="targets">
+        <div><label>type=text<input id="inputText" class="target" value="foo" type="text"></label></div>
+        <div><label>type=number<input id="inputNumber" class="target" value="123" type="number"></label></div>
+        <div><label>type=checkbox<input id="inputCheckbox" class="target" value="foo" type="checkbox"></label></div>
+        <div><label>type=radio<input id="inputRadio0" class="target" value="foo" type="radio" name="radio"></label></div>
+        <div><label>type=radio<input id="inputRadio1" class="target" value="bar" type="radio" name="radio"></label></div>
+        <div><label>type=reset<input id="inputReset" class="target" type="reset"></label></div>
+        <div><label>textarea <textarea id="textarea" class="target">foo</textarea></label></div>
+        <div>contenteditable <div id="contentEditable" class="target" contenteditable="true" style="outline: 1px solid red">foo<br>bar</div></div>
+        <div><button id="button" type="button">Button type=button</button></div>
+        <div>
+            <select id="select0" class="target">
+                <option value="foo">Foo</option>
+                <option value="bar">Bar</option>
+                <option value="baz">Baz</option>
+                <option value="quux">Quux</option>
+            </select>
+        </div>
+        <div>
+            <select id="select1" class="target" size="3">
+                <option value="foo">Foo</option>
+                <option value="bar">Bar</option>
+                <option value="baz">Baz</option>
+                <option value="quux">Quux</option>
+            </select>
+        </div>
+    </form>
+
+    <div id="controls">
+        <label>Cancel keydown<input id="keydownCancel" type="checkbox"></label><br>
+        <label>Cancel keypress<input id="keypressCancel" type="checkbox"></label><br>
+        <label>Cancel beforeinput<input id="beforeinputCancel" type="checkbox"></label><br>
+        <label>Cancel input<input id="inputCancel" type="checkbox"></label><br>
+        <label>Cancel keyup<input id="keyupCancel" type="checkbox"></label><br>
+    </div>
+
+    <div>
+        <textarea id="result"></textarea>
+    </div>
+
+</body>
+</html>

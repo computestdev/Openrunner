@@ -5,7 +5,7 @@ const {getOwnerDocument, getDocumentWindow, assertIsNodeType, ELEMENT_NODE} = re
 const BROWSER_WINDOW_NAVIGATION_BAR_SIZE = 72;
 const BROWSER_WINDOW_LEFT_BORDER_SIZE = 0;
 
-const click = async (element, {x = null, y = null, mouseDownDuration = 64} = {}) => {
+const click = async (element, {x = null, y = null, mouseDownDuration = 0} = {}) => {
     assertIsNodeType(element, ELEMENT_NODE, 'simulateClick(): First argument: ');
 
     const window = getDocumentWindow(getOwnerDocument(element));
