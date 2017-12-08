@@ -22,16 +22,22 @@ const trackRunResultEvents = (runResult, bluefox) => {
     };
     bluefox.onExecuteEnd = ({executionId}) => {
         const data = executions.get(executionId);
-        data.end = new TimePoint();
+        if (data) {
+            data.end = new TimePoint();
+        }
     };
     bluefox.onCheckBegin = ({executionId}) => {
         const data = executions.get(executionId);
-        data.lastCheckBegin = performance.now();
+        if (data) { // onExecuteBegin may not have been called if executeOnce() is used
+            data.lastCheckBegin = performance.now();
+        }
     };
     bluefox.onCheckEnd = ({executionId}) => {
         const data = executions.get(executionId);
-        ++data.checks;
-        data.checksOverhead += performance.now() - data.lastCheckBegin;
+        if (data) {
+            ++data.checks;
+            data.checksOverhead += performance.now() - data.lastCheckBegin;
+        }
     };
 
     const drain = () => {
