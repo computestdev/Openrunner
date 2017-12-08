@@ -24,7 +24,10 @@ describe('integration/chai', {timeout: 60000, slow: 10000}, () => {
                 document.body.id = 'foo';
                 expect(document.body).to.have.id('foo');
                 expect({a: 'b', foo: 'bar'}).to.containSubset({a: 'b'});
-                expect([1, 2, 3]).to.be.containingAllOf([1]);
+                await assert.isRejected(
+                    Promise.reject(Error('FOO BAR')),
+                    /FOO/i
+                );
             });
         }, {url: `http://localhost:${testServerPort()}/static/static.html`});
         /* eslint-enable no-undef */
@@ -46,7 +49,10 @@ describe('integration/chai', {timeout: 60000, slow: 10000}, () => {
             expect(123).to.equal(123);
             expect('foo bar baz').to.match(/bar/);
             expect({a: 'b', foo: 'bar'}).to.containSubset({a: 'b'});
-            expect([1, 2, 3]).to.be.containingAllOf([1]);
+            await assert.isRejected(
+                Promise.reject(Error('FOO BAR')),
+                /FOO/i
+            );
         });
         /* eslint-enable no-undef */
 

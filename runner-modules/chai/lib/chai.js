@@ -2,11 +2,11 @@
 /* global window */
 const chai = require('chai');
 const chaiSubset = require('chai-subset');
-const chaiArrays = require('chai-arrays');
+const chaiAsPromised = require('chai-as-promised');
 const chaiDom = require('chai-dom');
 
 chai.use(chaiSubset);
-chai.use(chaiArrays);
+chai.use(chaiAsPromised);
 if (typeof window === 'object' && window.HTMLDocument) {
     chai.use(chaiDom);
 }
