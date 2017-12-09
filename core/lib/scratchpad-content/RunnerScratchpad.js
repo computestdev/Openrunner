@@ -6,32 +6,9 @@ require('brace/mode/javascript');
 require('brace/mode/json');
 require('brace/theme/monokai');
 
-const log = require('../../../lib/logger')({hostname: 'scratchpad-content', MODULE: 'scratchpad-content/RunnerScratchpad'});
-
-let previousSaveUrl = null;
+// const log = require('../../../lib/logger')({hostname: 'scratchpad-content', MODULE: 'scratchpad-content/RunnerScratchpad'});
 
 class RunnerScratchpad {
-    static saveDialog(window, content, {fileName, mimeType} = {}) {
-        const {document} = window;
-        const {Blob, URL, MouseEvent} = window;
-
-        const blob = new Blob([content], {type: mimeType || 'application/octet-stream'});
-
-        log.info({size: blob.size}, 'Attempting to save file');
-
-        if (previousSaveUrl) {
-            URL.revokeObjectURL(previousSaveUrl);
-            previousSaveUrl = null;
-        }
-
-        previousSaveUrl = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.download = fileName;
-        link.href = previousSaveUrl;
-        link.dispatchEvent(new MouseEvent('click'));
-    }
-
     constructor(container, optionsArg = {}) {
         if (!container) {
             throw Error('Argument 0 must be a DOM Element');
@@ -126,14 +103,6 @@ class RunnerScratchpad {
         }
 
         this._hiddenFileInput.click();
-    }
-
-    saveDialog({fileName} = {}) {
-        RunnerScratchpad.saveDialog(this.container.ownerDocument.defaultView, this.getValue(), {
-            fileName: fileName || 'Openrunner-scratchpad.' + this.fileExtension,
-            mimeType: this.mimeType,
-        });
-
     }
 }
 

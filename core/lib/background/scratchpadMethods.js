@@ -1,10 +1,13 @@
 'use strict';
+/* global Blob, URL */
 const log = require('../../../lib/logger')({hostname: 'background', MODULE: 'core/background/scratchpadMethods'});
 const RunnerScriptParent = require('./RunnerScriptParent');
 const errorToObject = require('../../../lib/errorToObject');
 const {SCRATCHPAD_RESULT_HTML, SCRATCHPAD_BREAKDOWN_HTML} = require('../scratchpad-content/urls');
 
-module.exports = ({browserTabId, browserTabs, rpc, scratchpadRPC}) => {
+let saveUrl;
+
+module.exports = ({browserTabId, browserTabs, browserDownloads, rpc, scratchpadRPC}) => {
     let activeScript = null;
     let intervalTimer = 0;
     let resultBrowserTabId = 0;
@@ -145,9 +148,25 @@ module.exports = ({browserTabId, browserTabs, rpc, scratchpadRPC}) => {
         await rpc.call('setResultJSONObject', resultObject);
     };
 
+    const saveTextToFile = async ({content, mimeType = 'application/octet-stream', filename}) => {
+        const blob = new Blob([content], {type: String(mimeType)});
+        if (saveUrl) {
+            URL.revokeObjectURL(saveUrl);
+            saveUrl = null;
+        }
+        saveUrl = URL.createObjectURL(blob);
+
+        await browserDownloads.download({
+            filename: String(filename),
+            saveAs: true,
+            url: saveUrl,
+        });
+    };
+
     return new Map([
         ['executeScript', executeScript],
         ['stopScript', stopScript],
         ['openResultBreakdown', openResultBreakdown],
+        ['saveTextToFile', saveTextToFile],
     ]);
 };

@@ -14,6 +14,7 @@ const getRuntimeVersions = require('./runtimeVersions');
             browserRuntime: browser.runtime,
             browserTabs: browser.tabs,
             browserWebNavigation: browser.webNavigation,
+            browserDownloads: browser.downloads,
         });
         browserAction.attach();
 

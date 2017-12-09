@@ -11,9 +11,10 @@ const VALID_URLS = new Set([
 ]);
 
 class ScratchpadRPC {
-    constructor({browserRuntime, browserTabs, browserWebNavigation}) {
+    constructor({browserRuntime, browserTabs, browserDownloads, browserWebNavigation}) {
         this.browserRuntime = browserRuntime;
         this.browserTabs = browserTabs;
+        this.browserDownloads = browserDownloads;
         this.browserWebNavigation = browserWebNavigation;
         this.tabContentRPC = new TabContentRPC({
             browserRuntime,
@@ -82,6 +83,7 @@ class ScratchpadRPC {
             rpc.methods(scratchpadMethods({
                 browserTabId,
                 browserTabs: this.browserTabs,
+                browserDownloads: this.browserDownloads,
                 rpc,
                 scratchpadRPC: this,
             }));

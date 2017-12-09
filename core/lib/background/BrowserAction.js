@@ -4,8 +4,8 @@ const ScratchpadRPC = require('./ScratchpadRPC');
 const {SCRATCHPAD_HTML} = require('../scratchpad-content/urls');
 
 class BrowserAction {
-    constructor({browserBrowserAction, browserRuntime, browserTabs, browserWebNavigation}) {
-        this.scratchpadRPC = new ScratchpadRPC({browserRuntime, browserTabs, browserWebNavigation});
+    constructor({browserBrowserAction, browserRuntime, browserTabs, browserWebNavigation, browserDownloads}) {
+        this.scratchpadRPC = new ScratchpadRPC({browserRuntime, browserTabs, browserWebNavigation, browserDownloads});
         this.browserBrowserAction = browserBrowserAction;
         this.browserTabs = browserTabs;
         this.handleClick = this.handleClick.bind(this);

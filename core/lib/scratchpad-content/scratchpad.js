@@ -35,7 +35,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     scratchpad.openDialog();
                 }
                 else if (classList.contains('saveButton')) {
-                    scratchpad.saveDialog();
+                    rpc.call('saveTextToFile', {
+                        content: scratchpad.getValue(),
+                        mimeType: 'text/javascript',
+                        filename: 'scratchpad.js',
+                    })
+                    .catch(err => log.error({err}, 'Error while calling "saveTextToFile"'));
                 }
             }
             catch (err) {

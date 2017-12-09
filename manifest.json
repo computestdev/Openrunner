@@ -12,6 +12,7 @@
     "permissions": [
         "<all_urls>",
         "cookies",
+        "downloads",
         "tabs",
         "webNavigation",
         "webRequest",
