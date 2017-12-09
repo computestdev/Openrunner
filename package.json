@@ -10,8 +10,9 @@
     "lint": "eslint bin building core lib runner-modules test",
     "test:unit": "mocha",
     "test:unit:coverage": "nyc --all mocha",
+    "test:unit:coverage:report": "nyc report --reporter=html",
     "test:unit:coveralls": "npm run test:unit:coverage && nyc report --reporter=text-lcov | coveralls",
-    "test": "npm run lint && npm run test:unit:coverage",
+    "test": "npm run lint && npm run test:unit:coverage && npm run test:unit:coverage:report",
     "test:server": "sh -c 'node bin/testing-server.js \"$@\" | bunyan' --",
     "start": "npm run build && \"$FIREFOX_BIN\" --no-remote --profile PRIV/profile --jsconsole"
   },
