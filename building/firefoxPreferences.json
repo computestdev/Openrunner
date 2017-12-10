@@ -61,15 +61,10 @@
     "network.allow-experiments": false,
     "browser.cache.frecency_experiment": -1, // https://trac.torproject.org/projects/tor/ticket/13575
 
-    "dom.send_after_paint_to_content": true, // required for the MozAfterPaint event for performr-runner
     "privacy.trackingprotection.pbmode.enabled": false, // interferes with page load times
 
     // allow unsigned extensions (firefox unbranded only):
     "xpinstall.signatures.required": false,
-
-    // force enable e10s (multiprocess)
-    "browser.tabs.remote.autostart": true,
-    "browser.tabs.remote.force-enable": true,
 
     // enable console.log, console.info, etc from extensions:
     "extensions.sdk.console.logLevel": "all",
