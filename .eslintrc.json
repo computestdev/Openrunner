@@ -97,6 +97,7 @@
         "import/no-extraneous-dependencies": [
             "error", {
                 "devDependencies": [
+                    "bin/**",
                     "test/**"
                 ]
             }
