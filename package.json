@@ -72,7 +72,7 @@
     "chai-subset": "^1.6.0",
     "cjson": "^0.5.0",
     "error-stack-parser": "^2.0.1",
-    "fs-extra": "^4.0.1",
+    "fs-extra": "^5.0.0",
     "istanbul-lib-instrument": "^1.9.1",
     "jsonbird": "^3.0.0",
     "performr-runner-metadata-parser": "^1.0.0",
