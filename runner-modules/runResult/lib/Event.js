@@ -7,7 +7,7 @@ const TimePeriod = require('./TimePeriod');
 const PRIVATE = Symbol();
 
 function jsonClone(value) {
-    // This ensures that everything is cloned, but also that the  value can be properly converted to json when compiling the
+    // This ensures that everything is cloned, but also that the value can be properly converted to json when compiling the
     // complete run result
     const valueJson = JSON.stringify(value);
     return valueJson === undefined ? null : JSON.parse(valueJson);

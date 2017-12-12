@@ -19,27 +19,37 @@ class RunResultBackground extends RunResultSuper {
 
         const generateEventId = eventIdGenerator(Date.now());
         const addEventId = events => {
-            for (let i = 0; i < events.length; ++i) {
-                const event = events[i];
+            for (const event of events) {
                 event.id = generateEventId();
                 addEventId(event.children);
             }
         };
 
+        const translateError = error => { // (error is a pojo here)
+            if (!error) {
+                return error;
+            }
+
+            let stack = error.stack;
+            if (stack) {
+                stack = resolveScriptContentEvalStack(stack);
+                stack = resolveScriptEnvEvalStack(stack);
+            }
+
+            const newError = scriptErrorToObject(Object.assign({}, error, {stack}));
+
+            if (scriptFileName) {
+                replaceMagicScriptNames(newError, scriptFileName);
+            }
+
+            newError.cause = translateError(newError.cause);
+            return newError;
+        };
+
         addEventId(result.events);
 
         for (const transaction of result.transactions) {
-            if (transaction.error) {
-                if (transaction.error.stack) {
-                    transaction.error.stack = resolveScriptContentEvalStack(transaction.error.stack);
-                    transaction.error.stack = resolveScriptEnvEvalStack(transaction.error.stack);
-                }
-                transaction.error = scriptErrorToObject(transaction.error);
-
-                if (scriptFileName) {
-                    replaceMagicScriptNames(transaction.error, scriptFileName);
-                }
-            }
+            transaction.error = translateError(transaction.error);
         }
 
         return result;

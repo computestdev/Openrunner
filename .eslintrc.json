@@ -7,7 +7,6 @@
         "__dirname": false,
         "browser": false,
         "Buffer": false,
-        "crypto": false,
         "clearImmediate": false,
         "clearInterval": false,
         "clearTimeout": false,

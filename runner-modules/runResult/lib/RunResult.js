@@ -28,6 +28,18 @@ class RunResult {
     }
 
     /**
+     * The time period for this script run. The begin and end time must be set explicitly.
+     * @param {TimePeriod} value
+     */
+    set timing(value) {
+        if (!TimePeriod.isTimePeriod(value)) {
+            throw Error('Value must be a TimePeriod');
+        }
+
+        this[PRIVATE].timing = value;
+    }
+
+    /**
      * Add an event to this run result
      * @param {!Event} event
      * @return {Event} Same value as `event` argument
@@ -93,12 +105,7 @@ class RunResult {
             event.timing.endNow();
         }
 
-        try {
-            event.setMetaData('error', errorToObject(bodyError));
-        }
-        catch (err) {
-            // security error accessing bodyError; make sure we do not replace the original error
-        }
+        event.setMetaData('error', errorToObject(bodyError));
 
         if (bodyError) {
             throw bodyError;
@@ -145,17 +152,18 @@ class RunResult {
 
         this[PRIVATE].transactions.set(transaction.id, transaction);
 
+        let bodyReturn = undefined;
         let bodyError = null;
 
         if (body) {
             transaction.beginNow();
 
             try {
-                await body(transaction);
+                bodyReturn = await body(transaction);
             }
             catch (err) {
                 bodyError = err;
-                // todo add thsi transaction id to the error data
+                // todo add this transaction id to the error data
             }
 
             if (transaction.isPending) {
@@ -168,7 +176,7 @@ class RunResult {
             throw bodyError;
         }
 
-        return transaction;
+        return bodyReturn;
     }
 
     /**
@@ -201,6 +209,7 @@ class RunResult {
         if (runResultJsonObject) { // the object is null if the script quit prematurely
             const {mergeResults} = this[PRIVATE];
             if (mergeResults.includes(runResultJsonObject)) {
+                // a small check to avoid typo's
                 throw Error('This object has already been merged');
             }
 
@@ -221,40 +230,38 @@ class RunResult {
      */
     toJSONObject() {
         const {mergeResults} = this[PRIVATE];
-        // Firefox maintains key order, so put the keys in an order that makes it more convenient to read the resulting json
-        /* eslint-disable sort-keys */
-
         const myTiming = this.timing.isCleared ? null : this.timing.toJSONObject();
 
-        const result = {
-            timing: myTiming || mergeResults.reduce((previous, result) => result.timing || previous, null),
-            transactions: [].concat(...mergeResults.map(result => result.transactions)),
-            events: [].concat(...mergeResults.map(result => result.events)),
-        };
-        /* eslint-enable sort-keys */
 
+        let events = [];
         for (const event of this.events) {
-            result.events.push(event.toJSONObject());
+            events.push(event.toJSONObject());
         }
+        events = events.concat(...mergeResults.map(result => result.events));
+        events.sort((a, b) => TimePoint.compare(a.timing.begin, b.timing.begin));
 
+
+        let transactions = [];
         for (const transaction of this.transactions) {
-            result.transactions.push(transaction.toJSONObject());
+            transactions.push(transaction.toJSONObject());
         }
-
+        transactions = transactions.concat(...mergeResults.map(result => result.transactions));
         // last resort to enforce unique transaction id's
         // We try to throw errors for these at creation, however this check is not
         // cross-process (which would be too expensive)
         const seenTransactionIds = new Set();
-        result.transactions = result.transactions.filter(transaction => {
+        transactions = transactions.filter(transaction => {
             const seen = seenTransactionIds.has(transaction.id);
             seenTransactionIds.add(transaction.id);
             return !seen;
         });
+        transactions.sort((a, b) => TimePoint.compare(a.timing.begin, b.timing.begin));
 
-        result.transactions.sort((a, b) => TimePoint.compare(a.timing.begin, b.timing.begin));
-        result.events.sort((a, b) => TimePoint.compare(a.timing.begin, b.timing.begin));
-
-        return result;
+        return {
+            timing: myTiming || mergeResults.reduce((previous, result) => result.timing || previous, null),
+            transactions,
+            events,
+        };
     }
 }
 

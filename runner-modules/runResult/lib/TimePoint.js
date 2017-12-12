@@ -61,15 +61,15 @@ class TimePoint {
             return timeCompare;
         }
 
-        if (a.contentCounter !== null && b.contentCounter !== null) {
+        if (a.contentCounter !== undefined && b.contentCounter !== undefined) {
             return a.contentCounter - b.contentCounter;
         }
 
-        if (a.scriptCounter !== null && b.scriptCounter !== null) {
+        if (a.scriptCounter !== undefined && b.scriptCounter !== undefined) {
             return a.scriptCounter - b.scriptCounter;
         }
 
-        if (a.backgroundCounter !== null && b.backgroundCounter !== null) {
+        if (a.backgroundCounter !== undefined && b.backgroundCounter !== undefined) {
             return a.backgroundCounter - b.backgroundCounter;
         }
 
@@ -77,11 +77,15 @@ class TimePoint {
     }
 
     /**
-     * @param {number} [time=Date.now()] The current time in milliseconds since UNIX epoch
-     * @param {object} [counters=now()] An object of performance counters.
+     * @param {number} [timeArg=Date.now()] The current time in milliseconds since UNIX epoch
+     * @param {object} [countersArg=now()] An object of performance counters.
      *        All values are in milliseconds (with an undefined starting point)
      */
-    constructor(time = Date.now(), counters = getCurrentCounters()) {
+    constructor(timeArg, countersArg) {
+        const useDefaults = timeArg === undefined && countersArg === undefined;
+        const time = useDefaults ? Date.now() : timeArg;
+        const counters = useDefaults ? getCurrentCounters() : countersArg || {};
+
         if (typeof time !== 'number') {
             throw Error('Invalid argument: `time` must be a number');
         }

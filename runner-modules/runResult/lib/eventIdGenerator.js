@@ -4,6 +4,7 @@ const padToEight = s => ('0000000' + s).slice(-8);
 const padToTwo = s => ('0' + s).slice(-2);
 const POW_2_32 = Math.pow(2, 32);
 const POW_2_48 = Math.pow(2, 48);
+const cryptoFillRandomBytes = require('../../../lib/cryptoFillRandomBytes');
 
 /**
  * @param {number} timestamp See Date.now()
@@ -15,7 +16,7 @@ const eventIdGenerator = timestamp => {
     }
 
     const randomArray = new Uint8Array(6);
-    crypto.getRandomValues(randomArray);
+    cryptoFillRandomBytes(randomArray);
     const randomPrefix = [...randomArray].map(n => padToTwo(n.toString(16))).join('');
 
     const timestampPrefix = padToTwelve(Math.abs(timestamp % POW_2_48).toString(16)); // lasts until the year 10889
