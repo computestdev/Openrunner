@@ -143,7 +143,10 @@ class TestingServer {
         });
 
         this.httpServer = http.createServer(app);
-        this.httpServer.on('connection', socket => socket.setKeepAlive(true, HTTP_SOCKET_KEEPALIVE));
+        this.httpServer.on('connection', socket => {
+            socket.setKeepAlive(true, HTTP_SOCKET_KEEPALIVE);
+            socket.unref(); // Prevent these sockets from keeping the test runner process alive
+        });
         this.httpServer.timeout = DEFAULT_HTTP_TIMEOUT;
 
         this.httpServer.listen(this.configuredListenPort, this.configuredListenHost);
