@@ -19,6 +19,8 @@ module.exports = async script => {
         if (scriptError) {
             const event = await takeScreenshot(deps);
             event.setMetaData('causedByScriptError', true);
+            event.shortTitle = 'Screenshot (script error)';
+            event.longTitle = `Screenshot (script error): ${scriptError.message}`;
         }
     };
 

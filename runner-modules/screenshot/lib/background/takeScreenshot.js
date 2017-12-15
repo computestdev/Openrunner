@@ -13,6 +13,8 @@ const takeScreenshot = async ({tabsModule, runResultModule, browserTabs, comment
     });
     const endTimePoint = new TimePoint();
     const event = scriptResult.timePointEvent('screenshot', beginTimePoint, endTimePoint);
+    event.shortTitle = 'Screenshot';
+    event.longTitle = 'Screenshot';
     // The data url is stored within its own object so that we can easily encode it with https://www.npmjs.com/package/msgpack5
     event.comment = comment || '';
     event.setMetaData('data', {
