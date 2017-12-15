@@ -137,8 +137,8 @@ class TestingServer {
             response.status(404).send('Thing not found!');
         });
 
-        app.use((error, request, response, next) => {
-            console.error(error.stack);
+        app.use((err, request, response, next) => {
+            log.error({err}, 'Error during express route');
             response.status(500).send('Something broke!');
         });
 

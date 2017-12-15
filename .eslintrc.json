@@ -190,6 +190,7 @@
                 "allowParens": true
             }
         ],
+        "no-console": "error",
         "no-const-assign": "error",
         "no-div-regex": "error",
         "no-dupe-args": "error",
