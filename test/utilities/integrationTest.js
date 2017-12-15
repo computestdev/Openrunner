@@ -132,6 +132,11 @@ const mergeCoverage = async () => {
     }
 };
 
+const runScript = async (scriptContent) => {
+    await start();
+    return await server.runScript({scriptContent, stackFileName: 'integrationTest.js'});
+};
+
 const runScriptFromFunction = async (func, injected = {}) => {
     await start();
     return await server.runScriptFromFunction(func, injected);
@@ -140,6 +145,7 @@ const runScriptFromFunction = async (func, injected = {}) => {
 module.exports = {
     start,
     stop,
+    runScript,
     runScriptFromFunction,
     testServerPort: () => server.listenPort,
 };

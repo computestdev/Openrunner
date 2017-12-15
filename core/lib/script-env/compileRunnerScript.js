@@ -6,7 +6,7 @@ const evalNoScope = eval; // eslint-disable-line no-eval
 // https://bugzilla.mozilla.org/show_bug.cgi?id=1353468
 
 const compileRunnerScript = scriptContent => {
-    return evalNoScope(`(async (include, transaction) => { 'use strict'; ${scriptContent} })`);
+    return evalNoScope(`(async (include, transaction) => { 'use strict'; ${scriptContent}\n})`);
 };
 
 module.exports = compileRunnerScript;

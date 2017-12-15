@@ -2,7 +2,7 @@
 const {describe, specify} = require('mocha-sugar-free');
 const {assert: {strictEqual: eq}} = require('chai');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScript, runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
 describe('integration/scriptingEnvironment', {timeout: 60000, slow: 10000}, () => {
     specify('Minimal script using only "transaction", "core" and "tabs"', async () => {
@@ -29,5 +29,19 @@ describe('integration/scriptingEnvironment', {timeout: 60000, slow: 10000}, () =
         eq(result.result.transactions[0].id, 'First');
         eq(result.result.transactions[0].title, '00 First');
         eq(result.result.transactions[0].error, null);
+    });
+
+    specify('Script ending with a line comment', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScript(
+            `'Openrunner-Script: v1';` +
+            `return 123; //`
+        );
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+        eq(result.value, 123);
     });
 });
