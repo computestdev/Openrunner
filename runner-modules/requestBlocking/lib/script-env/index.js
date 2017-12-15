@@ -20,7 +20,7 @@ openRunnerRegisterRunnerModule('requestBlocking', async ({script}) => {
         });
 
         if (!body) {
-            return undefined; // permanent change (that is, for the duration of the scrip)
+            return undefined; // permanent change (that is, for the duration of the script)
         }
 
         try {
