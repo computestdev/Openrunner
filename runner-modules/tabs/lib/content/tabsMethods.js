@@ -5,14 +5,33 @@ const constructGlobalFunctions = require('./globalFunctions');
 // "not being evaluated by a direct call": http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.
 const evalNoScope = eval; // eslint-disable-line no-eval
 
+const getModuleValues = function* (modulesMap, metadata) {
+    for (const module of modulesMap.values()) {
+        if (module && typeof module.scriptValue === 'function') {
+            yield module.scriptValue(metadata);
+        }
+        else {
+            yield module;
+        }
+    }
+};
+
 module.exports = (moduleRegister, eventEmitter) => {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
     const globalFunctionsPromise = constructGlobalFunctions(getModule);
 
     const compileFunction = async (functionCode, globalFunctions, metadata) => {
         const modules = await moduleRegister.getAllModules();
-        const argNames = ['runMetadata', 'transaction', ...modules.keys()];
-        const argValues = [metadata, globalFunctions.transaction, ...modules.values()];
+        const argNames = [
+            'runMetadata',
+            'transaction',
+            ...modules.keys(),
+        ];
+        const argValues = [
+            metadata, // `runMetadata`
+            globalFunctions.transaction, // `transaction`
+            ...getModuleValues(modules, metadata),
+        ];
 
         // (([foo, bar]) => (async () => { console.log('hi!') }))
         return evalNoScope(

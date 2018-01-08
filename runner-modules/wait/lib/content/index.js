@@ -8,7 +8,7 @@ const trackRunResultEvents = require('./trackRunResultEvents');
 openRunnerRegisterRunnerModule('wait', async ({eventEmitter, getModule}) => {
     const runResultModule = await getModule('runResult');
     const bluefox = new Bluefox();
-    const wait = bluefox.target(window).notThenable();
+    const wait = bluefox.target(window);
 
     eventEmitter.on('tabs.initializedTabContent', () => {
         const drain = trackRunResultEvents(runResultModule, bluefox);
@@ -23,5 +23,15 @@ openRunnerRegisterRunnerModule('wait', async ({eventEmitter, getModule}) => {
         });
     });
 
-    return wait;
+    return {
+        scriptValue: metadata => {
+            if (typeof metadata.waitBeginTime === 'number') {
+                return wait.overrideStartTime(metadata.waitBeginTime);
+            }
+            if (typeof metadata.runBeginTime === 'number') {
+                return wait.overrideStartTime(metadata.runBeginTime);
+            }
+            return wait;
+        },
+    };
 });
