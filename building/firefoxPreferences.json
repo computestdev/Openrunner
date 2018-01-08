@@ -76,5 +76,7 @@
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1238314
     // so make sure that window.open _always_ ends up in a new tab, not a new window
     "browser.link.open_newwindow": 3,
-    "browser.link.open_newwindow.restriction": 0
+    "browser.link.open_newwindow.restriction": 0,
+
+    "dom.disable_beforeunload": true // there is not an API to dismiss these yet
 }
