@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
+    "bunyan": "^1.8.12",
     "clone": "^2.1.1",
     "coveralls": "^3.0.0",
     "css.escape": "^1.5.1",
