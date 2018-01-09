@@ -107,6 +107,10 @@ class TestingServer {
             response.status(200).send('');
         });
 
+        app.get('/no-reply', (request, response) => {
+            // do not send a response
+        });
+
         app.get('/headers/json', (request, response) => {
             response.status(200);
             response.header('X-Foo', 'Value for the X-Foo Header');
