@@ -7,10 +7,20 @@ const takeScreenshot = async ({tabsModule, runResultModule, browserTabs, comment
 
     const beginTimePoint = new TimePoint();
     log.debug('Taking screenshot...');
-    const dataUrlString = await browserTabs.captureVisibleTab(browserWindowId, {
-        format: 'jpeg',
-        quality: 90,
-    });
+
+    let dataUrlString;
+    try {
+        dataUrlString = await browserTabs.captureVisibleTab(browserWindowId, {
+            format: 'jpeg',
+            quality: 90,
+        });
+    }
+    catch (err) {
+        const newError = Error(`screenshot.take(): Unable to take screenshot: ${err.message}`);
+        newError.cause = err;
+        throw newError;
+    }
+
     const endTimePoint = new TimePoint();
     const event = scriptResult.timePointEvent('screenshot', beginTimePoint, endTimePoint);
     event.shortTitle = 'Screenshot';

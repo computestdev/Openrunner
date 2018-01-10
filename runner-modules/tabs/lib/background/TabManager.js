@@ -7,6 +7,7 @@ const TabTracker = require('./TabTracker');
 const TabContentRPC = require('../../../../lib/TabContentRPC');
 const {resolveScriptContentEvalStack} = require('../../../../lib/errorParsing');
 const {mergeCoverageReports} = require('../../../../lib/mergeCoverage');
+const WaitForEvent = require('../../../../lib/WaitForEvent');
 
 class TabManager extends EventEmitter {
     constructor({runtime: browserRuntime, windows: browserWindows, tabs: browserTabs, webNavigation: browserWebNavigation}) {
@@ -25,9 +26,11 @@ class TabManager extends EventEmitter {
             context: 'runner-modules/tabs',
             onRpcInitialize: obj => this.handleRpcInitialize(obj),
         });
+        this._navigationCommittedWait = new WaitForEvent(); // key is the browserTabId
 
         this.handleTabCreated = this.handleTabCreated.bind(this);
         this.handleWebNavigationOnBeforeNavigate = this.handleWebNavigationOnBeforeNavigate.bind(this);
+        this.handleWebNavigationOnCommitted = this.handleWebNavigationOnCommitted.bind(this);
         this.handleTabInitialized = this.handleTabInitialized.bind(this);
         this.handleTabsRemoved = this.handleTabsRemoved.bind(this);
         this.scriptWindow.on('windowCreated', ({browserWindowId}) => this.emit('windowCreated', {browserWindowId}));
@@ -40,6 +43,7 @@ class TabManager extends EventEmitter {
         this.tabContentRPC.attach();
         this.browserTabs.onCreated.addListener(this.handleTabCreated);
         this.browserWebNavigation.onBeforeNavigate.addListener(this.handleWebNavigationOnBeforeNavigate);
+        this.browserWebNavigation.onCommitted.addListener(this.handleWebNavigationOnCommitted);
         this.browserTabs.onRemoved.addListener(this.handleTabsRemoved);
         this._attached = true;
     }
@@ -49,6 +53,7 @@ class TabManager extends EventEmitter {
         this.tabContentRPC.detach();
         this.browserTabs.onCreated.removeListener(this.handleTabCreated);
         this.browserWebNavigation.onBeforeNavigate.removeListener(this.handleWebNavigationOnBeforeNavigate);
+        this.browserWebNavigation.onCommitted.removeListener(this.handleWebNavigationOnCommitted);
         this.browserTabs.onRemoved.removeListener(this.handleTabsRemoved);
     }
 
@@ -114,6 +119,21 @@ class TabManager extends EventEmitter {
         }
         catch (err) {
             log.error({err}, 'Error in browser.webNavigation.onBeforeNavigate');
+        }
+    }
+
+    handleWebNavigationOnCommitted({tabId: browserTabId, frameId, url}) {
+        try {
+            log.debug({browserTabId, frameId, url}, 'browser.webNavigation.onCommitted');
+
+            if (frameId) { // frameId === 0 is top; otherwise it is an iframe
+                return;
+            }
+
+            this._navigationCommittedWait.resolve(browserTabId);
+        }
+        catch (err) {
+            log.error({err}, 'Error in browser.webNavigation.onCommitted');
         }
     }
 
@@ -196,8 +216,14 @@ class TabManager extends EventEmitter {
 
         const {browserTabId} = this.myTabs.get(id);
         this.myTabs.markUninitialized(browserTabId);
-        await browser.tabs.update(browserTabId, {url});
-        await this.myTabs.waitForTabInitialization(browserTabId);
+
+        // wait for the onCommitted event (which occurs even if there was an error downloading the page)
+        // a new navigation might fail if onCommitted has not fired yet (firefox 57).
+        await this._navigationCommittedWait.wait(browserTabId, async () => {
+            log.debug({browserTabId, url}, 'Navigating tab to new url');
+            await browser.tabs.update(browserTabId, {url});
+            await this.myTabs.waitForTabInitialization(browserTabId);
+        });
     }
 
     async runContentScript(id, code, {arg, metadata = {}} = {}) {

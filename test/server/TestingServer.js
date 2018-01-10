@@ -5,10 +5,11 @@ const {assert} = require('chai');
 const Promise = require('bluebird');
 const express = require('express');
 const http = require('http');
+const https = require('https');
 const serveIndex = require('serve-index');
 const Throttle = require('throttle');
 const {resolve: pathResolve} = require('path');
-const {statAsync: stat, createReadStream} = Promise.promisifyAll(require('fs'));
+const {stat, createReadStream, readFile} = require('fs-extra');
 const mime = require('mime');
 const morgan = require('morgan');
 const jsonHtmlify = require('htmlescape');
@@ -16,14 +17,17 @@ const jsonHtmlify = require('htmlescape');
 const log = require('../../lib/logger')({pid: process.pid, hostname: os.hostname(), MODULE: 'TestingServer'});
 const {CnCServer} = require('../..');
 
-const staticDirectoryPath = pathResolve(__dirname, './static');
+const STATIC_CONTENT_PATH = pathResolve(__dirname, './static');
+const TLS_PRIVATE_KEY_PATH = pathResolve(__dirname, './tls/private.key');
+const TLS_CA_UNTRUSTED_ROOT_CERT = pathResolve(__dirname, './tls/ca-untrusted-root.crt');
 const HTTP_SOCKET_KEEPALIVE = 10 * 1000;
 const DEFAULT_HTTP_TIMEOUT = 30 * 1000;
 
 class TestingServer {
-    constructor({listenHost = 'localhost', listenPort}) {
+    constructor({listenHost = 'localhost', listenPort = 0, badTLSListenPort = -1}) {
         this.configuredListenHost = listenHost;
         this.configuredListenPort = listenPort;
+        this.configuredbadTLSListenPort = badTLSListenPort;
         this.expressApp = null;
         this.httpServer = null;
         this.cncServer = null;
@@ -69,9 +73,9 @@ class TestingServer {
         });
 
         app.get('/static/*', (request, response, next) => {
-            const path = pathResolve(staticDirectoryPath, './' + request.path.substr('/static/'.length));
+            const path = pathResolve(STATIC_CONTENT_PATH, './' + request.path.substr('/static/'.length));
 
-            if (!path.startsWith(staticDirectoryPath)) {
+            if (!path.startsWith(STATIC_CONTENT_PATH)) {
                 throw Error('Invalid request.path');
             }
 
@@ -97,7 +101,7 @@ class TestingServer {
             })
             .catch(error => (error.code === 'ENOENT' ? next() : next(error)));
         });
-        app.use('/static', serveIndex(staticDirectoryPath, {icons: true}));
+        app.use('/static', serveIndex(STATIC_CONTENT_PATH, {icons: true}));
 
         app.get('/404', (request, response) => {
             response.status(404).send('Thing not found!');
@@ -160,7 +164,24 @@ class TestingServer {
         this.cncServer = new CnCServer({httpServer: this.httpServer});
         await this.cncServer.start();
 
-        log.warn({address}, 'Started');
+        log.warn({address}, 'Started main HTTP server');
+
+        if (this.configuredbadTLSListenPort >= 0) {
+            const [key, cert] = await Promise.all([
+                readFile(TLS_PRIVATE_KEY_PATH),
+                readFile(TLS_CA_UNTRUSTED_ROOT_CERT),
+            ]);
+
+            this.badTLSHttpServer = https.createServer({key, cert}, (request, response) => {
+                response.writeHead(200);
+                response.end('Hello!');
+            });
+            this.badTLSHttpServer.listen(this.configuredbadTLSListenPort, this.configuredListenHost);
+            await new Promise(resolve => this.badTLSHttpServer.once('listening', resolve));
+
+            const address = this.badTLSHttpServer.address();
+            log.warn({address}, 'Started Bad-TLS HTTP server');
+        }
     }
 
     async stop() {
@@ -174,15 +195,26 @@ class TestingServer {
         if (this.httpServer) {
             await Promise.fromCallback(cb => this.httpServer.close(cb));
             this.httpServer = null;
-            log.info('HTTP server has been closed');
+            log.info('Main HTTP server has been closed');
+        }
+
+        if (this.badTLSHttpServer) {
+            await Promise.fromCallback(cb => this.badTLSHttpServer.close(cb));
+            this.badTLSHttpServer = null;
+            log.info('Bad-TLS HTTP server has been closed');
         }
 
         log.warn('Stopped');
     }
 
     get listenPort() {
-        assert(this.httpServer, 'Server has not been started');
+        assert(this.httpServer, 'Main server has not been started');
         return this.httpServer.address().port;
+    }
+
+    get badTLSListenPort() {
+        assert(this.badTLSHttpServer, 'Bad-TLS server has not been started');
+        return this.badTLSHttpServer.address().port;
     }
 
     async waitForActiveCnCConnection() {

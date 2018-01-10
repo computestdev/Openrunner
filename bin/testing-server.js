@@ -17,6 +17,11 @@ const {argv} = (
         default: 0,
         number: true,
     })
+    .option('bad-cert-port', {
+        describe: 'HTTPS Listen port which provides a bad certificate',
+        default: -1,
+        number: true,
+    })
     .help('help')
 );
 
@@ -25,6 +30,7 @@ const {argv} = (
         const server = new TestingServer({
             listenHost: argv.host,
             listenPort: argv.port,
+            badTLSListenPort: argv['bad-cert-port'],
         });
         await server.start();
     }

@@ -2,7 +2,7 @@
 const {describe, specify} = require('mocha-sugar-free');
 const {assert: {strictEqual: eq, lengthOf, isAbove, isObject, isString, match}} = require('chai');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
 
 const assertJpegDataUrl = url => {
     isString(url);
@@ -77,5 +77,60 @@ describe('integration/screenshot', {timeout: 60000, slow: 20000}, () => {
         isObject(event.metaData.data);
         eq(event.metaData.data.dataURL, true);
         assertJpegDataUrl(event.metaData.data.data);
+    });
+
+    specify('Taking a screenshot of a page with a TLS error', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            const screenshot = await include('screenshot');
+            const tab = await tabs.create();
+
+            await assert.isRejected(
+                tab.navigate(injected.badURL, {timeout: '2s'}),
+                Error,
+                /navigating.*https:\/\/localhost.*time.*out/i
+            );
+
+            assert.isRejected(screenshot.take(), Error, /screenshot.*take.*unable/i);
+
+            // should be able to navigate again
+            await tab.navigate(injected.goodURL + '?foo', {timeout: '2s'});
+            assert.strictEqual(await tab.run(() => location.search), '?foo');
+        }, {
+            badURL: `https://localhost:${testServerBadTLSPort()}/`,
+            goodURL: `http://localhost:${testServerPort()}/static/static.html`,
+        });
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
+    specify('Taking a screenshot of a page with a TLS error when the script rejects', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            await include('screenshot');
+            const tab = await tabs.create();
+
+            await assert.isRejected(
+                tab.navigate(injected.badURL, {timeout: '2s'}),
+                Error,
+                /navigating.*https:\/\/localhost.*time.*out/i
+            );
+
+            throw Error('Error from test!');
+        }, {
+            badURL: `https://localhost:${testServerBadTLSPort()}/`,
+        });
+        /* eslint-enable no-undef */
+
+        eq(result.error.message, 'Error from test!');
     });
 });

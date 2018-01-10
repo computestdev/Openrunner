@@ -1,7 +1,7 @@
 'use strict';
 const {describe, specify} = require('mocha-sugar-free');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
 
 describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
     specify('Successful navigation', async () => {
@@ -406,4 +406,33 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             throw result.error;
         }
     });
+
+    specify('Navigating to an URL with a TLS error', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            const tab = await tabs.create();
+
+            await assert.isRejected(
+                tab.navigate(injected.badURL, {timeout: '2s'}),
+                Error,
+                /navigating.*https:\/\/localhost.*time.*out/i
+            );
+
+            // should be able to navigate again
+            await tab.navigate(injected.goodURL + '?foo', {timeout: '2s'});
+            assert.strictEqual(await tab.run(() => location.search), '?foo');
+        }, {
+            badURL: `https://localhost:${testServerBadTLSPort()}/`,
+            goodURL: `http://localhost:${testServerPort()}/static/static.html`,
+        });
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
 });
+

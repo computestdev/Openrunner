@@ -1,6 +1,7 @@
 'use strict';
 const screenshotMethods = require('./screenshotMethods');
 const takeScreenshot = require('./takeScreenshot');
+const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'screenshot/background/index'});
 
 const scriptEnvUrl = browser.extension.getURL('/build/screenshot-script-env.js');
 
@@ -17,10 +18,15 @@ module.exports = async script => {
 
     const handleRunScriptResult = async ({scriptError}) => {
         if (scriptError) {
-            const event = await takeScreenshot(deps);
-            event.setMetaData('causedByScriptError', true);
-            event.shortTitle = 'Screenshot (script error)';
-            event.longTitle = `Screenshot (script error): ${scriptError.message}`;
+            try {
+                const event = await takeScreenshot(deps);
+                event.setMetaData('causedByScriptError', true);
+                event.shortTitle = 'Screenshot (script error)';
+                event.longTitle = `Screenshot (script error): ${scriptError.message}`;
+            }
+            catch (err) {
+                log.warn({err}, 'Failed to take implicit screenshot triggered by a script error');
+            }
         }
     };
 

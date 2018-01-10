@@ -14,6 +14,7 @@ const {
     TEST_FIREFOX_PROFILE = resolvePath(__dirname, '..', '..', 'PRIV', 'test-profile'),
     TEST_BUILD_OUTPUT = resolvePath(__dirname, '..', '..', 'PRIV', 'test-build'),
     TEST_SERVER_PORT = '0', // 0 = pick a random free port
+    TEST_SERVER_BAD_TLS_PORT = '0', // 0 = pick a random free port
 } = process.env;
 
 let firefoxProcess;
@@ -24,6 +25,7 @@ const startTestServer = async () => {
     server = new TestingServer({
         listenHost: 'localhost',
         listenPort: Number(TEST_SERVER_PORT),
+        badTLSListenPort: Number(TEST_SERVER_BAD_TLS_PORT),
     });
     await server.start();
     return {listenPort: server.listenPort};
@@ -148,4 +150,5 @@ module.exports = {
     runScript,
     runScriptFromFunction,
     testServerPort: () => server.listenPort,
+    testServerBadTLSPort: () => server.badTLSListenPort,
 };
