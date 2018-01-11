@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Openrunner",
-    "version": "2.3.1",
+    "version": "2.4.0",
     "description": "TODO",
     "applications": {
         "gecko": {
