@@ -25,7 +25,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             const classList = e.target.classList;
 
             if (classList.contains('saveButton')) {
-                scratchpad.saveDialog({filename: 'result.json'});
+                rpc.call('saveTextToFile', {
+                    content: scratchpad.getValue(),
+                    mimeType: 'application/json',
+                    filename: 'result.json',
+                })
+                .catch(err => log.error({err}, 'Error while calling "saveTextToFile"'));
             }
             else if (classList.contains('breakdownButton')) {
                 const resultObject = JSON.parse(scratchpad.getValue());
@@ -35,7 +40,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             else if (classList.contains('saveHistoricToCSV')) {
                 const content = historicTransactionsToCSV();
-                RunnerScratchpad.saveDialog(window, content, {fileName: 'results.csv', mimeType: 'text/csv'});
+
+                rpc.call('saveTextToFile', {
+                    content,
+                    mimeType: 'text/csv',
+                    filename: 'results.csv',
+                })
+                .catch(err => log.error({err}, 'Error while calling "saveTextToFile"'));
             }
         });
 
