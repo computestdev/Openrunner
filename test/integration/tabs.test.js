@@ -1,7 +1,8 @@
 'use strict';
 const {describe, specify} = require('mocha-sugar-free');
+const {assert: {lengthOf, strictEqual: eq}} = require('chai');
 
-const {runScriptFromFunction, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, runScript, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
 
 describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
     specify('Successful navigation', async () => {
@@ -434,5 +435,134 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             throw result.error;
         }
     });
-});
 
+    describe('Proper short stack traces', () => {
+        const SCRIPT_INIT =
+            `'Openrunner-Script: v1';` +
+            `const tabs = await include('tabs');` +
+            `const tab = await tabs.create();`;
+
+        specify('tab.navigate() with an invalid argument', async () => {
+            const result = await runScript(
+                `${SCRIPT_INIT} // line 1\n` +
+                `  // line 2\n` +
+                `    await tab.navigate('foo://bar', {timeout: '2s'}); // line 3; Error here\n` +
+                `// line 4`
+            );
+            const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
+            lengthOf(scriptStackFrames, 1);
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[0].lineNumber, 3);
+            eq(scriptStackFrames[0].columnNumber, 11); // Position of "tab.navigate"
+            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+        });
+
+        specify('tab.navigate() with to an invalid page', async () => {
+            const result = await runScript(
+                `${SCRIPT_INIT} // line 1\n` +
+                `await tab.navigate('http://localhost:${testServerPort()}/no-reply', {timeout: '0.1s'}); // line 2; Error here`
+            );
+
+            const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
+            lengthOf(scriptStackFrames, 1);
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[0].lineNumber, 2);
+            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.navigate"
+            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+        });
+
+        specify('tab.run() rejected by a runner content script', async () => {
+            const result = await runScript(
+                `${SCRIPT_INIT} // line 1\n` +
+                `await tab.navigate('http://localhost:${testServerPort()}/static/textOnly.html'); // line 2\n` +
+                `// line 3\n` +
+                `await tab.run(async () => { // line 4 / 1\n` +
+                `    // line 5 / 2\n` +
+                `    throw new Error("Error from test!!") // line 6 / 3\n` +
+                `    // line 7 / 4\n` +
+                `}); // line 8 / 5\n`
+            );
+
+            const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
+
+            lengthOf(scriptStackFrames, 2);
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[0].lineNumber, 4);
+            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.run"
+            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+
+            eq(scriptStackFrames[1].fileName, 'integrationTest.js#content');
+            eq(scriptStackFrames[1].lineNumber, 3);
+            eq(scriptStackFrames[1].columnNumber, 11); // Position of "new Error"
+            eq(scriptStackFrames[1].runnerScriptContext, 'content');
+        });
+
+        specify('tab.wait() rejected by a runner content script', async () => {
+            const result = await runScript(
+                `${SCRIPT_INIT} // line 1\n` +
+                `await tab.navigate('http://localhost:${testServerPort()}/static/textOnly.html'); // line 2\n` +
+                `// line 3\n` +
+                `await tab.wait( // line 4\n` +
+                `    () => Promise.reject(Error('Error from test!')) // line 5\n` +
+                `); // line 6\n`
+            );
+
+            const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
+
+            lengthOf(scriptStackFrames, 2);
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[0].lineNumber, 4);
+            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.wait"
+            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+
+            eq(scriptStackFrames[1].fileName, 'integrationTest.js#content');
+            eq(scriptStackFrames[1].lineNumber, 1);
+            // columnNumber is not tested here; a correct columnNumber is not guaranteed on the first line
+            eq(scriptStackFrames[1].runnerScriptContext, 'content');
+        });
+
+        specify('tab.waitForNewPage() rejected by a runner content script', async () => {
+            const result = await runScript(
+                `${SCRIPT_INIT} // line 1\n` +
+                `await tab.navigate('http://localhost:${testServerPort()}/static/textOnly.html'); // line 2\n` +
+                `// line 3\n` +
+                `await tab.waitForNewPage(() => { // line 4\n` +
+                `// line 5\n` +
+                `    const error = new Error('Error from test!') // line 6\n` +
+                `    throw error // line 7\n` +
+                `}); // line 8\n`
+            );
+
+            const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
+
+            lengthOf(scriptStackFrames, 2);
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[0].lineNumber, 4);
+            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.waitForNewPage"
+            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+
+            eq(scriptStackFrames[1].fileName, 'integrationTest.js#content');
+            eq(scriptStackFrames[1].lineNumber, 3);
+            eq(scriptStackFrames[1].columnNumber, 19); // Position of "new Error"
+            eq(scriptStackFrames[1].runnerScriptContext, 'content');
+        });
+
+        specify('tab.waitForNewPage() rejected by a timeout', async () => {
+            const result = await runScript(
+                `${SCRIPT_INIT} // line 1\n` +
+                `await tab.navigate('http://localhost:${testServerPort()}/static/textOnly.html'); // line 2\n` +
+                `await tab.waitForNewPage(() => { // line 3\n` +
+                `    // line 4\n` +
+                `}, null, {timeout: '0.1s'}); // line 5\n`
+            );
+
+            const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
+
+            lengthOf(scriptStackFrames, 1);
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[0].lineNumber, 3);
+            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.waitForNewPage"
+            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+        });
+    });
+});

@@ -25,13 +25,12 @@ module.exports = script => {
         async navigate(url, {timeout = 30000} = {}) {
             return extendStack(async () => {
                 const timeoutMs = parseTimeoutArgument(timeout);
-                const timeoutError = Error(`Navigating to ${LEFT_QUOTE}${url}${RIGHT_QUOTE} timed out after ${timeoutMs / 1000} seconds.`);
                 try {
                     await script.rpcCall({timeout: timeoutMs, name: 'tabs.navigate'}, {id: this.id, url});
                 }
                 catch (err) {
                     if (err.name === 'RPCRequestError' && err.code === -32000) {
-                        throw timeoutError;
+                        throw new Error(`Navigating to ${LEFT_QUOTE}${url}${RIGHT_QUOTE} timed out after ${timeoutMs / 1000} seconds.`);
                     }
 
                     throw err;
