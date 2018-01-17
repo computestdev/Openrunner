@@ -104,15 +104,39 @@ class TestingServer {
         app.use('/static', serveIndex(STATIC_CONTENT_PATH, {icons: true}));
 
         app.get('/404', (request, response) => {
-            response.status(404).send('Thing not found!');
+            response.status(404).type('txt').send('Thing not found!');
         });
 
         app.get('/empty', (request, response) => {
-            response.status(200).send('');
+            response.status(200).type('txt').send('');
         });
 
         app.get('/no-reply', (request, response) => {
             // do not send a response
+        });
+
+        app.get('/unexpected-close', (request, response) => {
+            response.socket.destroy();
+        });
+
+        app.get('/redirect/307', (request, response) => {
+            response.redirect(307, request.query.url);
+        });
+
+        app.get('/redirect/html', (request, response) => {
+            response.status(200);
+            response.type('html');
+            response.send(`<!DOCTYPE html>
+<html>
+    <head>
+        <title>JavaScript Redirect</title>
+        <script>location.replace(${jsonHtmlify(request.query.url || '')})</script>
+    </head>
+    <body>
+        <p>Bye!</p>
+    </body>
+</html>
+            `);
         });
 
         app.get('/headers/json', (request, response) => {

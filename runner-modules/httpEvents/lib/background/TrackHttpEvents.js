@@ -64,6 +64,7 @@ class TrackHttpEvents {
             parentEvent.longTitle = `${method} ${url}`;
             parentEvent.shortTitle = `${method} ${urlForShortTitle(url)}`;
             parentEvent.setMetaData('url', url);
+            parentEvent.setMetaData('finalUrl', url);
             parentEvent.setMetaData('method', method);
             parentEvent.setMetaData('frameId', frameId);
             parentEvent.setMetaData('tabId', tabId);
@@ -103,17 +104,18 @@ class TrackHttpEvents {
         }
     }
 
-    handleBeforeRedirect({requestId, url, timeStamp, ip, fromCache, statusCode, redirectUrl, responseHeaders, statusLine}) {
+    handleBeforeRedirect({requestId, url, timeStamp, ip, fromCache, statusCode, redirectUrl, statusLine}) {
         // (may be fired multiple times per request)
         try {
             const eventData = this.events.get(requestId);
-            const childEvent = eventData.parentEvent.childTimeEvent('http:redirect', timeStamp, timeStamp);
+            const {parentEvent} = eventData;
+            const childEvent = parentEvent.childTimeEvent('http:redirect', timeStamp, timeStamp);
             childEvent.setMetaData('ip', ip);
             childEvent.setMetaData('fromCache', fromCache);
             childEvent.setMetaData('statusCode', statusCode);
             childEvent.setMetaData('redirectUrl', redirectUrl);
-            childEvent.setMetaData('responseHeaders', responseHeaders);
             childEvent.setMetaData('statusLine', statusLine);
+            parentEvent.setMetaData('finalUrl', redirectUrl);
         }
         catch (err) {
             log.error({err, requestId, url}, 'Error during webRequest.onBeforeRedirect');
