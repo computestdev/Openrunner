@@ -1,4 +1,5 @@
 'use strict';
+const {illegalArgumentError} = require('../../../../lib/scriptErrors');
 
 const parsePatternArg = patternsArg => {
     const patterns = Array.isArray(patternsArg)
@@ -7,7 +8,7 @@ const parsePatternArg = patternsArg => {
 
     for (const value of patterns) {
         if (typeof value !== 'string') {
-            throw Error('Invalid patterns argument');
+            throw illegalArgumentError('requestBlocking: Invalid patterns argument');
         }
     }
     return patterns;

@@ -1,6 +1,6 @@
 'use strict';
 const {describe, specify} = require('mocha-sugar-free');
-const {assert: {strictEqual: eq, isAtLeast, isAtMost, lengthOf}} = require('chai');
+const {assert: {strictEqual: eq, match, isAtLeast, isAtMost, lengthOf}} = require('chai');
 
 const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
@@ -45,5 +45,50 @@ describe('integration/runResult', {timeout: 10000, slow: 5000}, () => {
         isAtMost(first.timing.end.time, result.result.timing.end.time);
         isAtLeast(second.timing.begin.time, first.timing.begin.time);
         isAtMost(second.timing.end.time, first.timing.end.time);
+    });
+
+    specify('Pending transactions should be marked with an error if the script ends', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            'Openrunner-Script-Timeout: 100';
+            await transaction('First', async t => {
+                await new Promise(() => {});
+            });
+        });
+        /* eslint-enable no-undef */
+
+        eq(result.error.name, 'Openrunner:ScriptExecutionTimeoutError');
+        lengthOf(result.result.transactions, 1);
+        const [transaction] = result.result.transactions;
+        eq(transaction.error.name, 'Openrunner:TransactionAbortedError');
+        match(transaction.error.message, /transaction.*abort.*script run.*end.*execution.*time.*out.*0.1 second/i);
+    });
+
+    specify('Pending content transactions should be marked with an error if the tab navigates away', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const tab = await tabs.create();
+
+            await tab.navigate(injected.url + '?foo', {timeout: '10s'});
+            await tab.run(async () => {
+                transaction('First', async t => {
+                    await new Promise(() => {});
+                });
+            });
+            await tab.navigate(injected.url + '?bar', {timeout: '10s'});
+        }, {url: `http://localhost:${testServerPort()}/static/empty.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        lengthOf(result.result.transactions, 1);
+        const [transaction] = result.result.transactions;
+        eq(transaction.error.name, 'Openrunner:TransactionAbortedError');
+        match(transaction.error.message, /transaction.*abort.*page.*navigated/i);
     });
 });

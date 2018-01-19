@@ -3,6 +3,7 @@
 const EventEmitter = require('events').EventEmitter;
 const JSONBird = require('jsonbird');
 
+const {SCRIPT_EXECUTION_TIMEOUT_ERROR} = require('../../../lib/scriptErrors');
 const log = require('../../../lib/logger')({hostname: 'background', MODULE: 'core/background/RunnerScriptParent'});
 const coreMethods = require('./coreMethods');
 const loadModule = require('./loadModule');
@@ -47,7 +48,7 @@ class RunnerScriptParent {
         return this[PRIVATE].run();
     }
 
-    async stop(reason = 'unknown') {
+    async stop(reason) {
         return this[PRIVATE].stop(reason);
     }
 
@@ -172,7 +173,10 @@ class RunnerScriptParentPrivate {
             const {runTimeoutMs, stackFileName} = this;
             this.scriptTimeoutTimer = setTimeout(() => {
                 this.scriptTimeoutTimer = 0;
-                this.stop(`Script execution timed out after ${runTimeoutMs / 1000} seconds`)
+                this.stop({
+                    name: SCRIPT_EXECUTION_TIMEOUT_ERROR,
+                    message: `Script execution timed out after ${runTimeoutMs / 1000} seconds`,
+                })
                 .catch(err => log.error({err}, 'Stopping script (after script timeout) failed'));
             }, runTimeoutMs);
 
@@ -197,7 +201,7 @@ class RunnerScriptParentPrivate {
                 await this.emitRunScriptResult(runScriptResult);
                 scriptResult.timing.endNow();
                 log.info({err: runScriptResult.scriptError}, 'Worker completed runScript command');
-                await this.stop('Normal script completion');
+                await this.stop({message: 'Normal script completion'});
             }
             finally { // only emit runEnd if runStart was emitted
                 // eslint-disable-next-line camelcase, no-undef
@@ -239,7 +243,7 @@ class RunnerScriptParentPrivate {
         }
     }
 
-    async stop(reason) {
+    async stop({name, message} = {}) {
         if (this.sentStopCommand) {
             return false;
         }
@@ -247,7 +251,7 @@ class RunnerScriptParentPrivate {
         this.sentStopCommand = true;
 
         await this.rpcCall('core.stopScript', {
-            reason: reason,
+            reason: {name, message},
         });
         return true;
     }

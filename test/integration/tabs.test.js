@@ -28,14 +28,21 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const assert = await include('assert');
             const tab = await tabs.create();
 
-            await assert.isRejected(
-                tab.navigate('foo://bar', {timeout: '2s'}),
-                /url.*must.*absolute.*HTTP.*URL/
-            );
-            await assert.isRejected(
-                tab.navigate('foo.html', {timeout: '2s'}),
-                /url.*must.*absolute.*HTTP.*URL/i
-            );
+            {
+                const err = await assert.isRejected(
+                    tab.navigate('foo://bar', {timeout: '2s'}),
+                    /url.*must.*absolute.*HTTP.*URL/
+                );
+                assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
+            }
+
+            {
+                const err = await assert.isRejected(
+                    tab.navigate('foo.html', {timeout: '2s'}),
+                    /url.*must.*absolute.*HTTP.*URL/i
+                );
+                assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
+            }
         });
         /* eslint-enable no-undef */
 
@@ -53,11 +60,12 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const assert = await include('assert');
 
             const before = Date.now();
-            await assert.isRejected(
+            const err = await assert.isRejected(
                 tab.navigate(injected.url, {timeout: '2s'}),
                 /Navigating.*http:\/\/localhost.*no-reply.*time.*out.*2 second/i
             );
             const after = Date.now();
+            assert.strictEqual(err.name, 'Openrunner:NavigateError');
             assert.approximately(after - before, 2000, 500);
         }, {url: `http://localhost:${testServerPort()}/no-reply`});
         /* eslint-enable no-undef */
@@ -212,7 +220,8 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             const secondNavigationTime = Date.now();
             await tab.navigate(injected.url + '?foo', {timeout: '2s'});
-            await assert.isRejected(runPromise, Error, /page.*navigated.*away.*while.*execution.*content script.*pending/i);
+            const err = await assert.isRejected(runPromise, Error, /page.*navigated.*away.*while.*execution.*content script.*pending/i);
+            assert.strictEqual(err.name, 'Openrunner:ContentScriptAbortedError');
             assert.approximately(runPromiseRejectionTime - secondNavigationTime, 0, 100);
 
         }, {url: `http://localhost:${testServerPort()}/static/static.html`});
@@ -416,11 +425,12 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const assert = await include('assert');
             const tab = await tabs.create();
 
-            await assert.isRejected(
+            const err = await assert.isRejected(
                 tab.navigate(injected.badURL, {timeout: '2s'}),
                 Error,
                 /navigating.*https:\/\/localhost.*time.*out/i
             );
+            assert.strictEqual(err.name, 'Openrunner:NavigateError');
 
             // should be able to navigate again
             await tab.navigate(injected.goodURL + '?foo', {timeout: '2s'});
@@ -449,6 +459,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `    await tab.navigate('foo://bar', {timeout: '2s'}); // line 3; Error here\n` +
                 `// line 4`
             );
+            eq(result.error.name, 'Openrunner:IllegalArgumentError');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
             lengthOf(scriptStackFrames, 1);
             eq(scriptStackFrames[0].fileName, 'integrationTest.js');
@@ -457,12 +468,13 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             eq(scriptStackFrames[0].runnerScriptContext, 'main');
         });
 
-        specify('tab.navigate() with to an invalid page', async () => {
+        specify('tab.navigate() to an invalid page', async () => {
             const result = await runScript(
                 `${SCRIPT_INIT} // line 1\n` +
                 `await tab.navigate('http://localhost:${testServerPort()}/no-reply', {timeout: '0.1s'}); // line 2; Error here`
             );
 
+            eq(result.error.name, 'Openrunner:NavigateError');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
             lengthOf(scriptStackFrames, 1);
             eq(scriptStackFrames[0].fileName, 'integrationTest.js');
@@ -483,6 +495,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `}); // line 8 / 5\n`
             );
 
+            eq(result.error.name, 'Error');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
 
             lengthOf(scriptStackFrames, 2);
@@ -507,6 +520,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `); // line 6\n`
             );
 
+            eq(result.error.name, 'Error');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
 
             lengthOf(scriptStackFrames, 2);
@@ -533,6 +547,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `}); // line 8\n`
             );
 
+            eq(result.error.name, 'Error');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
 
             lengthOf(scriptStackFrames, 2);
@@ -556,6 +571,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `}, null, {timeout: '0.1s'}); // line 5\n`
             );
 
+            eq(result.error.name, 'Openrunner:NewPageWaitTimeoutError');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
 
             lengthOf(scriptStackFrames, 1);

@@ -1,5 +1,6 @@
 'use strict';
 
+const {transactionAbortedError} = require('../../../../lib/scriptErrors');
 const TimePoint = require('../TimePoint');
 const TimePeriod = require('../TimePeriod');
 const Event = require('../Event');
@@ -18,10 +19,9 @@ openRunnerRegisterRunnerModule('runResult', async ({script}) => {
 
     const handleRunEnd = async reason => {
         log.debug('Script run has ended, sending the run result for the script-env');
-        const transactionError = Error(
-            'This transaction aborted because the script run has ended: ' + reason
+        const transactionError = transactionAbortedError(
+            'This transaction aborted because the script run has ended: ' + (reason && reason.message)
         );
-        transactionError.name = 'ScriptTransactionAborted';
         scriptResult.setPendingTransactionError(transactionError);
         await script.rpcCall('runResult.scriptResult', scriptResult.toJSONObject());
     };

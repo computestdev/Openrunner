@@ -1,5 +1,5 @@
 'use strict';
-
+const {illegalArgumentError, illegalStateError} = require('../../../lib/scriptErrors');
 const TimePoint = require('./TimePoint');
 
 const PRIVATE = Symbol();
@@ -63,7 +63,7 @@ class TimePeriod {
      */
     set begin(value) {
         if (value && !TimePoint.isTimePoint(value)) {
-            throw Error('Value must be null or a TimePoint');
+            throw illegalArgumentError('TimePeriod.begin: Value must be null or a TimePoint');
         }
 
         this[PRIVATE].begin = value || null;
@@ -81,7 +81,7 @@ class TimePeriod {
      */
     set end(value) {
         if (value && !TimePoint.isTimePoint(value)) {
-            throw Error('Value must be null or a TimePoint');
+            throw illegalArgumentError('TimePeriod.end: Value must be null or a TimePoint');
         }
 
         this[PRIVATE].end = value || null;
@@ -131,7 +131,7 @@ class TimePeriod {
      */
     beginNow() {
         if (!this.isCleared) {
-            throw Error('Invalid state: this TimePeriod can only begin if it is currently "cleared"');
+            throw illegalStateError('TimePeriod.beginNow: This TimePeriod can only begin if it is currently "cleared"');
         }
 
         this.begin = new TimePoint();
@@ -144,7 +144,7 @@ class TimePeriod {
      */
     endNow() {
         if (!this.isPending) {
-            throw Error('Invalid state: this TimePeriod can only end if it is currently "pending"');
+            throw illegalStateError('TimePeriod.endNow: This TimePeriod can only end if it is currently "pending"');
         }
 
         this.end = new TimePoint();

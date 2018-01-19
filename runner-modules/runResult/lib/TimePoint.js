@@ -1,5 +1,7 @@
 'use strict';
 
+const {illegalArgumentError} = require('../../../lib/scriptErrors');
+
 let getCurrentCounters;
 
 /**
@@ -87,23 +89,23 @@ class TimePoint {
         const counters = useDefaults ? getCurrentCounters() : countersArg || {};
 
         if (typeof time !== 'number') {
-            throw Error('Invalid argument: `time` must be a number');
+            throw illegalArgumentError('new TimePoint: `time` must be a number');
         }
 
         if (typeof counters !== 'object') {
-            throw Error('Invalid argument: `counters` must be an object');
+            throw illegalArgumentError('new TimePoint: `counters` must be an object');
         }
 
         if (counters.contentCounter !== undefined && typeof counters.contentCounter !== 'number') {
-            throw Error('Invalid argument: `counters.contentCounter` must be undefined or a number');
+            throw illegalArgumentError('new TimePoint: `counters.contentCounter` must be undefined or a number');
         }
 
         if (counters.scriptCounter !== undefined && typeof counters.scriptCounter !== 'number') {
-            throw Error('Invalid argument: `counters.scriptCounter` must be undefined or a number');
+            throw illegalArgumentError('new TimePoint: `counters.scriptCounter` must be undefined or a number');
         }
 
         if (counters.backgroundCounter !== undefined && typeof counters.backgroundCounter !== 'number') {
-            throw Error('Invalid argument: `counters.backgroundCounter` must be undefined or a number');
+            throw illegalArgumentError('new TimePoint: `counters.backgroundCounter` must be undefined or a number');
         }
 
         /**

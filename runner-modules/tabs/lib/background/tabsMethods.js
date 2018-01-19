@@ -1,4 +1,5 @@
 'use strict';
+const {illegalArgumentError, newPageWaitTimeoutError, CONTENT_SCRIPT_ABORTED_ERROR} = require('../../../../lib/scriptErrors');
 const delay = require('../../../../lib/delay');
 
 const ALLOWED_URL_REGEXP = /^https?:\/\//;
@@ -13,10 +14,10 @@ module.exports = (tabManager) => {
 
     const navigateTab = async ({id, url}) => {
         if (typeof id !== 'string' || !tabManager.hasTab(id)) {
-            throw Error('tabs.navigate(): invalid argument `id`');
+            throw illegalArgumentError('tabs.navigate(): invalid argument `id`');
         }
         if (typeof url !== 'string' || !ALLOWED_URL_REGEXP.test(url)) {
-            throw Error('tabs.navigate(): `url` argument must be an absolute HTTP URL');
+            throw illegalArgumentError('tabs.navigate(): `url` argument must be an absolute HTTP URL');
         }
 
         return await tabManager.navigateTab(id, url);
@@ -24,11 +25,11 @@ module.exports = (tabManager) => {
 
     const run = async ({id, code, arg}) => {
         if (typeof id !== 'string' || !tabManager.hasTab(id)) {
-            throw Error('tabs.run(): invalid argument `id`');
+            throw illegalArgumentError('tabs.run(): invalid argument `id`');
         }
 
         if (typeof code !== 'string') {
-            throw Error('tabs.run(): invalid argument `code`');
+            throw illegalArgumentError('tabs.run(): invalid argument `code`');
         }
 
         const metadata = Object.freeze({
@@ -40,11 +41,11 @@ module.exports = (tabManager) => {
 
     const waitForNewPage = async ({id, code, arg, timeoutMs}) => {
         if (typeof id !== 'string' || !tabManager.hasTab(id)) {
-            throw Error('tabs.run(): invalid argument `id`');
+            throw illegalArgumentError('tabs.run(): invalid argument `id`');
         }
 
         if (typeof code !== 'string') {
-            throw Error('tabs.run(): invalid argument `code`');
+            throw illegalArgumentError('tabs.run(): invalid argument `code`');
         }
 
         const metadata = Object.freeze({
@@ -61,7 +62,7 @@ module.exports = (tabManager) => {
         }
         catch (err) {
             // ignore errors which are caused by navigation away; that is what we are expecting
-            if (!err.contentScriptCancelledByNavigation) {
+            if (err.name !== CONTENT_SCRIPT_ABORTED_ERROR) {
                 throw err;
             }
         }
@@ -69,7 +70,9 @@ module.exports = (tabManager) => {
         // the timeout does not start counting until the content script has completed its execution; this is by design
         await Promise.race([
             waitForNewContentPromise,
-            delay(timeoutMs).then(() => Promise.reject(Error(`Waiting for a new page timed out after ${timeoutMs / 1000} seconds`))),
+            delay(timeoutMs).then(() => Promise.reject(
+                newPageWaitTimeoutError(`Waiting for a new page timed out after ${timeoutMs / 1000} seconds`)
+            )),
         ]);
 
         return {reject: null};
@@ -77,11 +80,11 @@ module.exports = (tabManager) => {
 
     const wait = async ({id, code, arg}) => {
         if (typeof id !== 'string' || !tabManager.hasTab(id)) {
-            throw Error('tabs.wait(): invalid argument `id`');
+            throw illegalArgumentError('tabs.wait(): invalid argument `id`');
         }
 
         if (typeof code !== 'string') {
-            throw Error('tabs.wait(): invalid argument `code`');
+            throw illegalArgumentError('tabs.wait(): invalid argument `code`');
         }
 
         const waitMetadata = Object.freeze({
@@ -97,7 +100,7 @@ module.exports = (tabManager) => {
                 return await tabManager.runContentScript(id, code, {arg, metadata});
             }
             catch (err) {
-                if (err.contentScriptCancelledByNavigation) {
+                if (err.name === CONTENT_SCRIPT_ABORTED_ERROR) {
                     // runContentScript wait for a new tab to initialize
                     return await attempt(attemptNumber + 1);
                 }

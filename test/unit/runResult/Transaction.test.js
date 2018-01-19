@@ -151,7 +151,7 @@ describe('Transaction', () => {
         it('Should throw unless the period isCleared', () => {
             const transaction = new Transaction('Foo');
             transaction.beginNow();
-            throws(() => transaction.beginNow(), /invalid.*state.*begin.*cleared/i);
+            throws(() => transaction.beginNow(), /beginNow.*only.*if.*cleared/i);
         });
     });
 
@@ -171,14 +171,14 @@ describe('Transaction', () => {
 
         it('Should throw unless the period isPending', () => {
             const transaction = new Transaction('Foo');
-            throws(() => transaction.endNow(), /invalid.*state.*end.*pending/i);
+            throws(() => transaction.endNow(), /endNow.*only.*if.*pending/i);
         });
 
         it('Should throw unless the period isPending', () => {
             const transaction = new Transaction('Foo');
             transaction.timing.begin = new TimePoint(123);
             transaction.endNow();
-            throws(() => transaction.endNow(), /invalid.*state.*end.*pending/i);
+            throws(() => transaction.endNow(), /endNow.*only.*if.*pending/i);
         });
     });
 });

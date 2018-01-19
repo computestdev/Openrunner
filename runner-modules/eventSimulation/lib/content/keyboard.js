@@ -1,4 +1,5 @@
 'use strict';
+const {illegalArgumentError} = require('../../../../lib/scriptErrors');
 const findPropertyInChain = require('../../../../lib/findPropertyInChain');
 const {getOwnerDocument, getDocumentWindow, assertIsNodeType, ELEMENT_NODE} = require('../../../../lib/domUtilities');
 const {parseKeyIdentifiers, SHIFT_KEY} = require('./keys');
@@ -115,7 +116,7 @@ const keyboardTextInput = async (element, keyIdentifiers, options = {}) => {
     const isElementContentEditable = element.isContentEditable;
 
     if (!isElementTextValueControl && !isElementContentEditable) {
-        throw new TypeError(
+        throw illegalArgumentError(
             `keyboardTextInput(): (${element.nodeName} ${element.type || ''}) is not a valid element for text input`
         );
     }

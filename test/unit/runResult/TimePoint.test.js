@@ -74,11 +74,11 @@ describe('TimePoint', () => {
         });
 
         it('Should throw for invalid arguments', () => {
-            throws(() => new TimePoint('foo', {}), /invalid.*time.*number/i);
-            throws(() => new TimePoint(123, 123), /invalid.*counters.*object/i);
-            throws(() => new TimePoint(123, {contentCounter: 'foo'}), /invalid.*contentCounter.*number/i);
-            throws(() => new TimePoint(123, {scriptCounter: 'foo'}), /invalid.*scriptCounter.*number/i);
-            throws(() => new TimePoint(123, {backgroundCounter: 'foo'}), /invalid.*backgroundCounter.*number/i);
+            throws(() => new TimePoint('foo', {}), /new TimePoint.*time.*number/i);
+            throws(() => new TimePoint(123, 123), /new TimePoint.*counters.*object/i);
+            throws(() => new TimePoint(123, {contentCounter: 'foo'}), /new TimePoint.*contentCounter.*number/i);
+            throws(() => new TimePoint(123, {scriptCounter: 'foo'}), /new TimePoint.*scriptCounter.*number/i);
+            throws(() => new TimePoint(123, {backgroundCounter: 'foo'}), /new TimePoint.*backgroundCounter.*number/i);
         });
     });
 

@@ -1,5 +1,6 @@
 'use strict';
 
+const {transactionAbortedError} = require('../../../../lib/scriptErrors');
 const TimePoint = require('../TimePoint');
 const TimePeriod = require('../TimePeriod');
 const Event = require('../Event');
@@ -19,10 +20,9 @@ openRunnerRegisterRunnerModule('runResult', ({eventEmitter, rpc}) => {
     eventEmitter.on('tabs.contentUnload', () => {
         log.debug('Content unload, sending script result object');
         try {
-            const transactionError = Error(
+            const transactionError = transactionAbortedError(
                 'This transaction aborted because the page has navigated to a different location or the tab has been closed'
             );
-            transactionError.name = 'ContentTransactionAborted';
             scriptResult.setPendingTransactionError(transactionError);
 
             rpc.notify('runResult.scriptResult', scriptResult.toJSONObject());

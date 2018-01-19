@@ -1,5 +1,6 @@
 'use strict';
 
+const {illegalArgumentError} = require('../../../lib/scriptErrors');
 const TimePeriod = require('./TimePeriod');
 const errorToObject = require('../../../lib/errorToObject');
 
@@ -71,7 +72,7 @@ class Transaction {
      */
     set timing(value) {
         if (!TimePeriod.isTimePeriod(value)) {
-            throw Error('Value must be a TimePeriod');
+            throw illegalArgumentError('Transaction.timing: Value must be a TimePeriod');
         }
 
         this[PRIVATE].timing = value;
@@ -130,7 +131,7 @@ class Transaction {
             catch (e) {
             }
 
-            throw Error(`Invalid argument, must be instance of Error, or null: ${tag} ${errorToString}`);
+            throw illegalArgumentError(`Transaction.error: value must be instance of Error, or null: ${tag} ${errorToString}`);
         }
         this[PRIVATE].error = err;
     }

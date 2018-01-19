@@ -2,6 +2,7 @@
 const EventEmitter = require('events').EventEmitter;
 
 const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'tabs/background/TabManager'});
+const {contentScriptAbortedError, illegalStateError} = require('../../../../lib/scriptErrors');
 const ScriptWindow = require('./ScriptWindow');
 const TabTracker = require('./TabTracker');
 const TabContentRPC = require('../../../../lib/TabContentRPC');
@@ -190,7 +191,7 @@ class TabManager extends EventEmitter {
 
     async createTab() {
         if (!this._attached) {
-            throw Error('Invalid state');
+            throw illegalStateError('TabManager.createTab: Not initialized yet or in the progress of cleaning up');
         }
         // note: "about:blank" might cause our content scripts to not run, but that is okay: that will simply cause the tab to not be
         // marked as "initialized". runner scripts are expected to call tab.navigate(url) before interacting further with that tab
@@ -211,7 +212,7 @@ class TabManager extends EventEmitter {
 
     async navigateTab(id, url) {
         if (!this._attached) {
-            throw Error('Invalid state');
+            throw illegalStateError('TabManager.navigateTab: Not initialized yet or in the progress of cleaning up');
         }
 
         const {browserTabId} = this.myTabs.get(id);
@@ -228,7 +229,7 @@ class TabManager extends EventEmitter {
 
     async runContentScript(id, code, {arg, metadata = {}} = {}) {
         if (!this._attached) {
-            throw Error('Invalid state');
+            throw illegalStateError('TabManager.runContentScript: Not initialized yet or in the progress of cleaning up');
         }
 
         const {browserTabId} = this.myTabs.get(id);
@@ -238,9 +239,9 @@ class TabManager extends EventEmitter {
         const rpcPromise = Promise.race([
             rpc.call({name: 'tabs.run', timeout: 0}, {code, arg, metadata}),
             this.myTabs.waitForTabUninitialization(browserTabId).then(() => {
-                const error = Error('The web page has navigated away while the execution of the content script was pending');
-                error.contentScriptCancelledByNavigation = true;
-                throw error;
+                throw contentScriptAbortedError(
+                    'The web page has navigated away while the execution of the content script was pending'
+                );
             }),
         ]);
 
@@ -255,7 +256,7 @@ class TabManager extends EventEmitter {
 
     async waitForNewContent(id) {
         if (!this._attached) {
-            throw Error('Invalid state');
+            throw illegalStateError('TabManager.waitForNewContent: Not initialized yet or in the progress of cleaning up');
         }
 
         const {browserTabId} = this.myTabs.get(id);
@@ -268,7 +269,7 @@ class TabManager extends EventEmitter {
 
     async closeScriptWindow() {
         if (!this._attached) {
-            throw Error('Invalid state');
+            throw illegalStateError('TabManager.closeScriptWindow: Not initialized yet or in the progress of cleaning up');
         }
 
         log.debug({

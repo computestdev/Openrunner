@@ -1,4 +1,5 @@
 'use strict';
+const {illegalArgumentError} = require('../../../../lib/scriptErrors');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/tabsMethods'});
 const constructGlobalFunctions = require('./globalFunctions');
 
@@ -46,11 +47,11 @@ module.exports = (moduleRegister, eventEmitter) => {
 
     const run = async ({code, arg, metadata}) => {
         if (typeof code !== 'string') {
-            throw Error('tabs.run(): invalid argument `code`');
+            throw illegalArgumentError('tabs.run(): invalid argument `code`');
         }
 
         if (typeof metadata !== 'object') {
-            throw Error('tabs.run(): invalid argument `metadata`');
+            throw illegalArgumentError('tabs.run(): invalid argument `metadata`');
         }
 
         const globalFunctions = await globalFunctionsPromise;

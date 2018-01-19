@@ -1,5 +1,6 @@
 'use strict';
 
+const {illegalArgumentError} = require('../../../lib/scriptErrors');
 const Event = require('./Event');
 const TimePoint = require('./TimePoint');
 const Transaction = require('./Transaction');
@@ -33,7 +34,7 @@ class RunResult {
      */
     set timing(value) {
         if (!TimePeriod.isTimePeriod(value)) {
-            throw Error('Value must be a TimePeriod');
+            throw illegalArgumentError('RunResult.timing: Value must be a TimePeriod');
         }
 
         this[PRIVATE].timing = value;
@@ -46,7 +47,7 @@ class RunResult {
      */
     addEvent(event) {
         if (!Event.isEvent(event)) {
-            throw Error('First argument must be an Event instance');
+            throw illegalArgumentError('RunResult.addEvent: First argument must be an Event instance');
         }
 
         this[PRIVATE].events.add(event);
@@ -147,7 +148,9 @@ class RunResult {
         const transaction = new Transaction(id);
 
         if (this[PRIVATE].transactions.has(transaction.id)) {
-            throw Error(`A transaction with id "${transaction.id}" already exists. Transaction id's must be unique.`);
+            throw illegalArgumentError(
+                `RunResult.transaction: A transaction with id "${transaction.id}" already exists. Transaction id's must be unique.`
+            );
         }
 
         this[PRIVATE].transactions.set(transaction.id, transaction);
@@ -210,7 +213,7 @@ class RunResult {
             const {mergeResults} = this[PRIVATE];
             if (mergeResults.includes(runResultJsonObject)) {
                 // a small check to avoid typo's
-                throw Error('This object has already been merged');
+                throw illegalArgumentError('RunResult.mergeJSONObject: This object has already been merged');
             }
 
             mergeResults.push(runResultJsonObject);

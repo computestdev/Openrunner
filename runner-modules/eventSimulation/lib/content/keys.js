@@ -1,4 +1,5 @@
 'use strict';
+const {illegalArgumentError} = require('../../../../lib/scriptErrors');
 
 const DOM_KEY_LOCATION_STANDARD = 0;
 const DOM_KEY_LOCATION_LEFT = 1;
@@ -240,7 +241,7 @@ const parseKeyIdentifiers = identifiers => {
     });
 
     if (invalidKeys.length) {
-        throw new TypeError(`Invalid Argument: The following keys are not supported: "${invalidKeys.join('", "')}"`);
+        throw illegalArgumentError(`The following keys are not supported: "${invalidKeys.join('", "')}"`);
     }
 
     return keyEntries;

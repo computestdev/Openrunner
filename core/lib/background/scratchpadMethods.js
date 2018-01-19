@@ -30,7 +30,7 @@ module.exports = ({browserTabId, browserTabs, browserDownloads, rpc, scratchpadR
             setRunState({state: 'stopping'});
 
             try {
-                await script.stop(reason);
+                await script.stop({message: reason});
             }
             finally {
                 setRunState({state: 'stopped'});

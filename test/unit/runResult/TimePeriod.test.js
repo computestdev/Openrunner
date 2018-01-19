@@ -158,7 +158,7 @@ describe('TimePeriod', () => {
         it('Should throw unless the period isCleared', () => {
             const period = new TimePeriod();
             period.beginNow();
-            throws(() => period.beginNow(), /invalid.*state.*begin.*cleared/i);
+            throws(() => period.beginNow(), /beginNow.*only.*if.*cleared/i);
         });
     });
 
@@ -176,13 +176,13 @@ describe('TimePeriod', () => {
 
         it('Should throw unless the period isPending', () => {
             const period = new TimePeriod();
-            throws(() => period.endNow(), /invalid.*state.*end.*pending/i);
+            throws(() => period.endNow(), /endNow.*only.*if.*pending/i);
         });
 
         it('Should throw unless the period isPending', () => {
             const period = new TimePeriod(new TimePoint(123));
             period.endNow();
-            throws(() => period.endNow(), /invalid.*state.*end.*pending/i);
+            throws(() => period.endNow(), /endNow.*only.*if.*pending/i);
         });
     });
 });

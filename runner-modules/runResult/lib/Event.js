@@ -1,5 +1,6 @@
 'use strict';
 
+const {illegalArgumentError} = require('../../../lib/scriptErrors');
 const deepFreeze = require('../../../lib/deepFreeze');
 const TimePoint = require('./TimePoint');
 const TimePeriod = require('./TimePeriod');
@@ -63,14 +64,14 @@ class Event {
         const event = new Event(type);
 
         if (typeof beginTime !== 'number') {
-            throw Error('Second argument (beginTime) is mandatory and must be a number');
+            throw illegalArgumentError('Event.fromTime: Second argument (beginTime) is mandatory and must be a number');
         }
 
         event.timing.begin = new TimePoint(beginTime, {});
 
         if (endTime !== null) {
             if (typeof endTime !== 'number') {
-                throw Error('Third argument (endTime) must be a number or null');
+                throw illegalArgumentError('Event.fromTime: Third argument (endTime) must be a number or null');
             }
 
             event.timing.end = new TimePoint(endTime, {});
@@ -121,7 +122,7 @@ class Event {
      */
     set timing(value) {
         if (!TimePeriod.isTimePeriod(value)) {
-            throw Error('Value must be a TimePeriod');
+            throw illegalArgumentError('Event.timing: Value must be a TimePeriod');
         }
 
         this[PRIVATE].timing = value;
@@ -133,7 +134,7 @@ class Event {
      */
     addChild(event) {
         if (!Event.isEvent(event)) {
-            throw Error('First argument must be an Event object');
+            throw illegalArgumentError('Event.addChild: First argument must be an Event object');
         }
 
         this[PRIVATE].children.add(event);
@@ -244,7 +245,7 @@ class Event {
      */
     getMetaData(key) {
         if (typeof key !== 'string') {
-            throw Error('First argument (key) must be a string');
+            throw illegalArgumentError('Event.getMetaData: First argument (key) must be a string');
         }
 
         return this[PRIVATE].metaData.has(key)
@@ -259,7 +260,7 @@ class Event {
      */
     setMetaData(key, value) {
         if (typeof key !== 'string') {
-            throw Error('First argument (key) must be a string');
+            throw illegalArgumentError('Event.setMetaData: First argument (key) must be a string');
         }
 
         // jsonClone() ensures that everything is cloned, but also that the stored value can be properly converted to json when

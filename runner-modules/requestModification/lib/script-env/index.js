@@ -1,4 +1,5 @@
 'use strict';
+const {illegalArgumentError} = require('../../../../lib/scriptErrors');
 
 const parsePatternArg = patternsArg => {
     const patterns = Array.isArray(patternsArg)
@@ -7,7 +8,7 @@ const parsePatternArg = patternsArg => {
 
     for (const value of patterns) {
         if (typeof value !== 'string') {
-            throw Error('Invalid patterns argument');
+            throw illegalArgumentError('requestModification: Invalid patterns argument');
         }
     }
     return patterns;
@@ -17,7 +18,7 @@ const parseHeadersArg = headersArg => {
     const headers = [];
     for (const [name, value] of Object.entries(headersArg)) {
         if (value !== null && typeof value !== 'string') {
-            throw Error(`Invalid header value for ${name}`);
+            throw illegalArgumentError(`requestModification: Invalid header value for ${name}`);
         }
 
         headers.push([name, value]);

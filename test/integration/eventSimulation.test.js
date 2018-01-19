@@ -523,7 +523,7 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                     );
                     await assert.isRejected(
                         eventSimulation.keyboardKeys(textarea, ['foo']),
-                        /Invalid.*Argument.*key.*not.*supported.*foo/i
+                        /key.*not.*supported.*foo/i
                     );
                     await assert.isRejected(
                         eventSimulation.keyboardTextInput(document.createElement('div'), ['x']),
