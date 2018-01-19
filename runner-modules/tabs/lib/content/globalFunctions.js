@@ -2,7 +2,7 @@
 
 module.exports = async (getModule) => {
     const transaction = async (...args) => {
-        const runResult = getModule('runResult');
+        const runResult = await getModule('runResult');
         return runResult.scriptResult.transaction(...args);
     };
 
