@@ -66,7 +66,7 @@
     "bluebird": "^3.5.0",
     "bluefox": "^2.0.0",
     "brace": "^0.11.0",
-    "browserify": "^15.0.0",
+    "browserify": "^16.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-dom": "^1.5.0",
