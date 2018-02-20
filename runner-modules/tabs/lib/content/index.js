@@ -39,7 +39,7 @@ try {
         }
     });
 
-    window.openRunnerRegisterRunnerModule = async (moduleName, func) => {
+    const openRunnerRegisterRunnerModule = async (moduleName, func) => {
         try {
             if (typeof func !== 'function') {
                 throw Error('openRunnerRegisterRunnerModule(): Invalid `func`');
@@ -60,6 +60,14 @@ try {
             throw err;
         }
     };
+
+    window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
+    // Workaround for firefox bug (last tested to occur in v57)
+    // it seems that sometimes this content script is executed so early that firefox still has to perform some kind of house keeping,
+    // which causes our global variable to disappear. assigning the global variable again in a microtask works around this bug.
+    Promise.resolve().then(() => {
+        window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
+    });
 
     log.debug('Initialized... Notifying the background script');
     rpc.notify('tabs.mainContentInit')
