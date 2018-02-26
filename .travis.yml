@@ -7,7 +7,7 @@ env:
         - TEST_FIREFOX_BIN=/usr/bin/firefox
 install:
     - npm install
-    - npm ls
+    - npm ls; true
 jobs:
     include:
         - stage: test
