@@ -1,4 +1,6 @@
+#!/usr/bin/env node
 'use strict';
+/* eslint-disable no-console */
 /* eslint-env node */
 const yargs = require('yargs');
 

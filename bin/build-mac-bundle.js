@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict';
 /* eslint-env node */
 const {resolve: resolvePath, join: joinPath} = require('path');
