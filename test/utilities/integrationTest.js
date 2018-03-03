@@ -3,11 +3,11 @@
 const {resolve: resolvePath} = require('path');
 const {assert} = require('chai');
 
-const Process = require('./Process');
 const TestingServer = require('../server/TestingServer');
 const {buildFirefoxProfile, buildSources} = require('../../index');
 const log = require('../../lib/logger')({hostname: 'test', MODULE: 'integrationTest'});
 const {mergeCoverageReports} = require('../../lib/mergeCoverage');
+const {startFirefox} = require('../../lib/node/firefoxProcess');
 
 const {
     TEST_FIREFOX_BIN,
@@ -17,7 +17,7 @@ const {
     TEST_SERVER_BAD_TLS_PORT = '0', // 0 = pick a random free port
 } = process.env;
 
-let firefoxProcess;
+let firefoxProcessDisposer;
 let server;
 let startPromise;
 
@@ -29,45 +29,6 @@ const startTestServer = async () => {
     });
     await server.start();
     return {listenPort: server.listenPort};
-};
-
-const outputFilter = line => {
-    // hide a lot of useless noise during test runs
-
-    // Linux:
-    // (firefox:6881): GLib-GObject-CRITICAL **: g_object_ref: assertion 'object->ref_count > 0' failed
-    // (firefox:6881): GConf-WARNING **: Client failed to connect to the D-BUS daemon:
-    // //bin/dbus-launch terminated abnormally without any error message
-
-    // OS X:
-    // 2017-01-01 12:34:56.789 plugin-container[17512:1629725] *** CFMessagePort: bootstrap_register(): failed 1100 (0x44c)
-    //   'Permission denied', port = 0xb03f, name = 'com.apple.tsm.portname'
-    // See /usr/include/servers/bootstrap_defs.h for the error codes.
-    // Unable to read VR Path Registry from /Users/FOO/Library/Application Support/OpenVR/.openvr/openvrpaths.vrpath
-    if (
-        /^\(.*?firefox.*?\): (?:GLib-GObject-CRITICAL|GConf-WARNING) /.test(line) ||
-        line === '//bin/dbus-launch terminated abnormally without any error message' ||
-        /plugin-container.*?\*\*\* CFMessagePort: bootstrap_register\(\): failed 1100/.test(line) ||
-        line === 'See /usr/include/servers/bootstrap_defs.h for the error codes.' ||
-        /^Unable to read VR Path Registry from /.test(line)
-    ) {
-        return null; // skip the log line
-    }
-
-    return line;
-};
-
-const startFirefox = async () => {
-    firefoxProcess = new Process({
-        executablePath: TEST_FIREFOX_BIN,
-        args: [
-            '--no-remote',
-            '--profile',
-            TEST_FIREFOX_PROFILE,
-        ],
-        outputFilter,
-    });
-    await firefoxProcess.ensureStarted();
 };
 
 const doStart = async () => {
@@ -92,9 +53,8 @@ const doStart = async () => {
     };
     log.info(buildProfileOptions, 'Building firefox profile...');
     await buildFirefoxProfile(buildProfileOptions);
-
-    log.info({executablePath: TEST_FIREFOX_BIN}, 'Starting firefox...');
-    await startFirefox();
+    firefoxProcessDisposer = startFirefox({firefoxPath: TEST_FIREFOX_BIN, profilePath: TEST_FIREFOX_PROFILE});
+    await firefoxProcessDisposer.promise();
 
     log.info('Waiting for C&C connection');
     await server.waitForActiveCnCConnection();
@@ -113,8 +73,10 @@ const stop = async () => {
     await startPromise;
     await mergeCoverage();
 
-    log.info('Stopping firefox...');
-    await firefoxProcess.stop();
+    if (firefoxProcessDisposer) {
+        await firefoxProcessDisposer.tryDispose();
+        firefoxProcessDisposer = null;
+    }
     await server.stop();
 };
 
