@@ -4,7 +4,6 @@ const os = require('os');
 const {assert} = require('chai');
 const Promise = require('bluebird');
 const express = require('express');
-const http = require('http');
 const https = require('https');
 const serveIndex = require('serve-index');
 const Throttle = require('throttle');
@@ -20,16 +19,12 @@ const {CnCServer} = require('../..');
 const STATIC_CONTENT_PATH = pathResolve(__dirname, './static');
 const TLS_PRIVATE_KEY_PATH = pathResolve(__dirname, './tls/private.key');
 const TLS_CA_UNTRUSTED_ROOT_CERT = pathResolve(__dirname, './tls/ca-untrusted-root.crt');
-const HTTP_SOCKET_KEEPALIVE = 10 * 1000;
-const DEFAULT_HTTP_TIMEOUT = 30 * 1000;
 
 class TestingServer {
-    constructor({listenHost = 'localhost', listenPort = 0, badTLSListenPort = -1}) {
-        this.configuredListenHost = listenHost;
+    constructor({listenPort = 0, badTLSListenPort = -1}) {
         this.configuredListenPort = listenPort;
         this.configuredbadTLSListenPort = badTLSListenPort;
         this.expressApp = null;
-        this.httpServer = null;
         this.cncServer = null;
     }
 
@@ -174,21 +169,8 @@ class TestingServer {
             response.status(500).send('Something broke!');
         });
 
-        this.httpServer = http.createServer(app);
-        this.httpServer.on('connection', socket => {
-            socket.setKeepAlive(true, HTTP_SOCKET_KEEPALIVE);
-            socket.unref(); // Prevent these sockets from keeping the test runner process alive
-        });
-        this.httpServer.timeout = DEFAULT_HTTP_TIMEOUT;
-
-        this.httpServer.listen(this.configuredListenPort, this.configuredListenHost);
-        await new Promise(resolve => this.httpServer.once('listening', resolve));
-        const address = this.httpServer.address();
-
-        this.cncServer = new CnCServer({httpServer: this.httpServer});
+        this.cncServer = new CnCServer({httpPort: this.configuredListenPort, requestListener: app});
         await this.cncServer.start();
-
-        log.warn({address}, 'Started main HTTP server');
 
         if (this.configuredbadTLSListenPort >= 0) {
             const [key, cert] = await Promise.all([
@@ -200,7 +182,7 @@ class TestingServer {
                 response.writeHead(200);
                 response.end('Hello!');
             });
-            this.badTLSHttpServer.listen(this.configuredbadTLSListenPort, this.configuredListenHost);
+            this.badTLSHttpServer.listen(this.configuredbadTLSListenPort, '127.0.0.1');
             await new Promise(resolve => this.badTLSHttpServer.once('listening', resolve));
 
             const address = this.badTLSHttpServer.address();
@@ -216,12 +198,6 @@ class TestingServer {
             this.cncServer = null;
         }
 
-        if (this.httpServer) {
-            await Promise.fromCallback(cb => this.httpServer.close(cb));
-            this.httpServer = null;
-            log.info('Main HTTP server has been closed');
-        }
-
         if (this.badTLSHttpServer) {
             await Promise.fromCallback(cb => this.badTLSHttpServer.close(cb));
             this.badTLSHttpServer = null;
@@ -232,8 +208,8 @@ class TestingServer {
     }
 
     get listenPort() {
-        assert(this.httpServer, 'Main server has not been started');
-        return this.httpServer.address().port;
+        assert(this.cncServer, 'Main CncServer has not been started');
+        return this.cncServer.listenPort;
     }
 
     get badTLSListenPort() {

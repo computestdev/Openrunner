@@ -8,11 +8,6 @@ const TestingServer = require('../test/server/TestingServer');
 
 const {argv} = (
     yargs
-    .option('host', {
-        alias: 'h',
-        describe: 'HTTP Listen host',
-        default: 'localhost',
-    })
     .option('port', {
         alias: 'p',
         describe: 'HTTP Listen port',
@@ -30,7 +25,6 @@ const {argv} = (
 (async () => {
     try {
         const server = new TestingServer({
-            listenHost: argv.host,
             listenPort: argv.port,
             badTLSListenPort: argv['bad-cert-port'],
         });
