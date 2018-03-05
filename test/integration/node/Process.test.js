@@ -6,13 +6,13 @@ require('chai').use(require('chai-as-promised'));
 const {assert: {isNaN, lengthOf, strictEqual: eq, match, deepEqual: deq, isRejected, approximately, isAbove, instanceOf}} = require('chai');
 const {describe, it, beforeEach, afterEach} = require('mocha-sugar-free');
 
-const Process = require('../../lib/node/Process');
-const Wait = require('../utilities/Wait');
+const Process = require('../../../lib/node/Process');
+const Wait = require('../../utilities/Wait');
 
 const {env: testRunnerEnv} = process;
-const PROCESS_STUB_PATH = require.resolve('../utilities/process.js');
+const PROCESS_STUB_PATH = require.resolve('../../utilities/process.js');
 
-describe('Process', {timeout: 10000, slow: 5000}, () => {
+describe('node/Process', {timeout: 10000, slow: 5000}, () => {
     let process;
     let output;
     let waitForOutput;

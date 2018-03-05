@@ -38,6 +38,8 @@
     "README.md"
   ],
   "bin": {
+    "openrunner": "./bin/openrunner.js",
+    "openrunner-ide": "./bin/openrunner-ide.js",
     "openrunner-build-sources": "./bin/build-sources.js",
     "openrunner-build-firefox-profile": "./bin/build-firefox-profile.js",
     "openrunner-build-mac-bundle": "./bin/build-mac-bundle.js"

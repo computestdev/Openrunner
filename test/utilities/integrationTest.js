@@ -1,22 +1,16 @@
 'use strict';
 /* eslint-env node */
-const {resolve: resolvePath} = require('path');
 const {assert} = require('chai');
+const fs = require('fs-extra');
 
 const TestingServer = require('../server/TestingServer');
-const {buildFirefoxProfile, buildSources} = require('../../index');
+const {buildTempFirefoxProfile} = require('../../index');
 const log = require('../../lib/logger')({hostname: 'test', MODULE: 'integrationTest'});
 const {mergeCoverageReports} = require('../../lib/mergeCoverage');
 const {startFirefox} = require('../../lib/node/firefoxProcess');
+const {TEST_TEMP_DIR, TEST_FIREFOX_BIN, TEST_SERVER_PORT, TEST_SERVER_BAD_TLS_PORT} = require('./testEnv');
 
-const {
-    TEST_FIREFOX_BIN,
-    TEST_FIREFOX_PROFILE = resolvePath(__dirname, '..', '..', 'PRIV', 'test-profile'),
-    TEST_BUILD_OUTPUT = resolvePath(__dirname, '..', '..', 'PRIV', 'test-build'),
-    TEST_SERVER_PORT = '0', // 0 = pick a random free port
-    TEST_SERVER_BAD_TLS_PORT = '0', // 0 = pick a random free port
-} = process.env;
-
+let firefoxProfileDisposer;
 let firefoxProcessDisposer;
 let server;
 let startPromise;
@@ -34,26 +28,25 @@ const startTestServer = async () => {
 const doStart = async () => {
     assert.isString(TEST_FIREFOX_BIN, 'TEST_FIREFOX_BIN must be set');
     assert.isOk(TEST_FIREFOX_BIN, 'TEST_FIREFOX_BIN must not be empty');
-    assert.isOk(TEST_FIREFOX_PROFILE, 'TEST_FIREFOX_PROFILE must not be empty');
-    assert.isOk(TEST_BUILD_OUTPUT, 'TEST_BUILD_OUTPUT must not be empty');
+    assert.isOk(TEST_TEMP_DIR, 'TEST_TEMP_DIR must not be empty');
+
+    await fs.mkdirp(TEST_TEMP_DIR);
 
     const {listenPort} = await startTestServer();
 
-    const buildSourceOptions = {
-        outputPath: TEST_BUILD_OUTPUT,
+    const buildProfileOptions = {
         cncPort: listenPort,
+        tempDirectory: TEST_TEMP_DIR,
         instrumentCoverage: Boolean(global.__coverage__),
     };
-    log.info(buildSourceOptions, 'Building sources...');
-    await buildSources(buildSourceOptions);
-
-    const buildProfileOptions = {
-        sourceBuildInput: TEST_BUILD_OUTPUT,
-        outputPath: TEST_FIREFOX_PROFILE,
-    };
     log.info(buildProfileOptions, 'Building firefox profile...');
-    await buildFirefoxProfile(buildProfileOptions);
-    firefoxProcessDisposer = startFirefox({firefoxPath: TEST_FIREFOX_BIN, profilePath: TEST_FIREFOX_PROFILE});
+    firefoxProfileDisposer = buildTempFirefoxProfile(buildProfileOptions);
+
+    const profilePath = await firefoxProfileDisposer.promise();
+    firefoxProcessDisposer = startFirefox({
+        firefoxPath: TEST_FIREFOX_BIN,
+        profilePath,
+    });
     await firefoxProcessDisposer.promise();
 
     log.info('Waiting for C&C connection');
@@ -76,6 +69,10 @@ const stop = async () => {
     if (firefoxProcessDisposer) {
         await firefoxProcessDisposer.tryDispose();
         firefoxProcessDisposer = null;
+    }
+    if (firefoxProfileDisposer) {
+        await firefoxProfileDisposer.tryDispose();
+        firefoxProfileDisposer = null;
     }
     await server.stop();
 };
