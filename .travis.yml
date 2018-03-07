@@ -18,13 +18,8 @@ jobs:
               - lsb_release -a
               - sudo add-apt-repository -y ppa:ubuntu-mozilla-daily/firefox-aurora
               - sudo apt-get update
-              - sudo apt-get install -y xvfb openbox firefox
+              - sudo apt-get install -y firefox
               - '"$TEST_FIREFOX_BIN" --version'
-          before_script:
-              - Xvfb "$DISPLAY" -ac -noreset -screen 0 1024x768x16 &
-              # Firefox can crash if you do not have a window manager
-              # (for example when window.open() tries to maximize the new window)
-              - openbox &
           script:
               - npm run lint
               - npm run test:unit:coveralls

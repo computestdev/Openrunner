@@ -12,6 +12,7 @@ const {
     TEST_FIREFOX_BIN,
     TEST_SERVER_PORT = '0', // 0 = pick a random free port
     TEST_SERVER_BAD_TLS_PORT = '0', // 0 = pick a random free port
+    TEST_HEADLESS = '1',
 } = env;
 
 module.exports = Object.freeze({
@@ -19,4 +20,5 @@ module.exports = Object.freeze({
     TEST_FIREFOX_BIN,
     TEST_SERVER_PORT,
     TEST_SERVER_BAD_TLS_PORT,
+    TEST_HEADLESS,
 });

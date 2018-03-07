@@ -8,7 +8,7 @@ const {buildTempFirefoxProfile} = require('../../index');
 const log = require('../../lib/logger')({hostname: 'test', MODULE: 'integrationTest'});
 const {mergeCoverageReports} = require('../../lib/mergeCoverage');
 const {startFirefox} = require('../../lib/node/firefoxProcess');
-const {TEST_TEMP_DIR, TEST_FIREFOX_BIN, TEST_SERVER_PORT, TEST_SERVER_BAD_TLS_PORT} = require('./testEnv');
+const {TEST_TEMP_DIR, TEST_FIREFOX_BIN, TEST_SERVER_PORT, TEST_SERVER_BAD_TLS_PORT, TEST_HEADLESS} = require('./testEnv');
 
 let firefoxProfileDisposer;
 let firefoxProcessDisposer;
@@ -46,6 +46,7 @@ const doStart = async () => {
     firefoxProcessDisposer = startFirefox({
         firefoxPath: TEST_FIREFOX_BIN,
         profilePath,
+        headless: TEST_HEADLESS === '1',
     });
     await firefoxProcessDisposer.promise();
 
