@@ -14,13 +14,13 @@ Then you must make sure that you have node.js installed (version 8 or higher): [
 You can now install Openrunner using your terminal:
 
 ```bash
-npm install --global openrunner
+npm install --global openrunner@latest
 ```
 
 Using a different command you can open the Openrunner IDE whenever you would like to use it:
 
 ```bash
-openrunner-ide --firefox /Applications/Nightly.app/Contents/MacOS/firefox
+openrunner-ide --firefox '/Applications/Firefox Nightly.app/Contents/MacOS/firefox'
 ```
 (Update the path to firefox as needed)
 
@@ -38,7 +38,7 @@ Much more documentation on how to create scripts is available on the wiki on git
 Assuming Openrunner has been installed (see [Getting started](#getting-started)), you can run saved scripts using your terminal:
 
 ```bash
-openrunner --firefox /Applications/Nightly.app/Contents/MacOS/firefox --script myScript.js --result myResult.json --headless
+openrunner --firefox '/Applications/Firefox Nightly.app/Contents/MacOS/firefox' --script myScript.js --result myResult.json --headless
 ``` 
 
 After this command has completed, you can inspect/parse all the results in the `myResult.json` file.
