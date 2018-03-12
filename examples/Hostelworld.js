@@ -15,6 +15,7 @@ await requestBlocking.block([
 
 await transaction('HomePage', async t => {
     t.title = '00 HomePage';
+    //Navigates to the Hostelworld homepage and waits for at least 15 articles to be displayed.
     await tab.navigate('https://www.hostelworld.com/', {timeout: '10s'});
     await tab.wait(async () => {
         await wait.documentComplete().selectorAll('.small-12.medium-6').amount(15, Infinity).isDisplayed();
@@ -23,6 +24,7 @@ await transaction('HomePage', async t => {
 
 await transaction('EnterDetails', async t => {
     t.title = '01 EnterDetails';
+    //Sends a search term to the input field and clicks on the first suggestion that appears.
     await tab.run(async () => {
         const searchInput = await wait.selector('input#home-search-keywords').isDisplayed();
         await eventSimulation.keyboardTextInput(searchInput, [...'lima, Peru']); 
@@ -33,6 +35,7 @@ await transaction('EnterDetails', async t => {
 
 await transaction('Search', async t => {
     t.title = '02 Search';
+    //Clicks on the search button and waits for at least 15 results to be displayed.
     await tab.waitForNewPage(async () => {
         const go = await wait.selector('.orange_button');
         await eventSimulation.click(go);
@@ -44,6 +47,7 @@ await transaction('Search', async t => {
 
 await transaction('OpenItem', async t => {
     t.title = '03 OpenItem';
+    //Opens the first item and waits for elements to be displayed on the hostel page.
     await tab.waitForNewPage(async () => {
         const firstItem = await wait.selector('#fabResultsContainer .fabresult .moreinfo');
         await eventSimulation.click(firstItem);
@@ -56,6 +60,7 @@ await transaction('OpenItem', async t => {
 
 await transaction('ChooseRoomDetails', async t => {
     t.title = '04 ChooseRoom';
+    //Selects a room and clicks and adds it to the booking.
     await tab.run(async () => {
         const room = document.querySelector('.guests.hwta-room-select')
         room.selectedIndex = 1;
@@ -67,6 +72,7 @@ await transaction('ChooseRoomDetails', async t => {
 
 await transaction('BookNow', async t => {
     t.title = '05 BookNow';
+    //Clicks on 'Book now' and waits for input elements and the book button to be displayed.
     await tab.waitForNewPage(async () => {
         const book = await wait.selector('#bookNowButton');
         await eventSimulation.click(book);

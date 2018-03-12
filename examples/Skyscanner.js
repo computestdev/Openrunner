@@ -15,6 +15,7 @@ await requestBlocking.block([
 
 await transaction('HomePage', async t => {
     t.title = '00 HomePage';
+    //Navigates to the US homepage of skyscanner and waits for elements to be displayed.
     await tab.navigate('https://www.skyscanner.com/?locale=en-US&currency=USD&market=US', {timeout: '10s'});
     await tab.wait(async () => {
         await wait.documentComplete().selectorAll('.panelimage').amount(4).isDisplayed();
@@ -25,7 +26,7 @@ await transaction('HomePage', async t => {
 await transaction('EntryFlightDetails', async t => {
     t.title = '01 EntryFlightDetails';
     await tab.wait(async () => {
-        // This transactions contains double CSS selector values because the skyscanner website is an A/B test.
+        // Fills in the required input fields. This transactions contains double CSS selector values because the skyscanner website is an A/B test.
         const destination = await wait.selector('input#js-destination-input, input#destination-fsc-search').isDisplayed();
         await eventSimulation.click(destination);
         await eventSimulation.keyboardTextInput(destination, [...'Mexico City Juarez International (MEX']);
@@ -41,6 +42,7 @@ await transaction('EntryFlightDetails', async t => {
 
 await transaction('SearchFlights', async t => {
     t.title = '02 SearchFlights';
+    //Clicks on the search button and waits for the results to be displayed.
     await tab.waitForNewPage(async () => {
         const search = await wait.selector('.js-search-button');
         await eventSimulation.click(search);
