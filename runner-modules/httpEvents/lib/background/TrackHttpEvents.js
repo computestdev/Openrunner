@@ -5,6 +5,8 @@ const urlForShortTitle = require('../../../../lib/urlForShortTitle');
 
 const ERROR_SHORT_TITLE_MAX_LENGTH = 64;
 
+const filterExtensionUrl = url => (url && /^moz-extension:/.test(url) ? null : url);
+
 class TrackHttpEvents {
     constructor({runResult, browserWebRequest, browserWindowId}) {
         this.runResult = runResult;
@@ -69,7 +71,7 @@ class TrackHttpEvents {
             parentEvent.setMetaData('frameId', frameId);
             parentEvent.setMetaData('tabId', tabId);
             parentEvent.setMetaData('type', type);
-            parentEvent.setMetaData('originUrl', originUrl);
+            parentEvent.setMetaData('originUrl', filterExtensionUrl(originUrl));
         }
         catch (err) {
             log.error({err, requestId, url}, 'Error during webRequest.onBeforeRequest');
