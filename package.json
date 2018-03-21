@@ -60,7 +60,7 @@
     "morgan": "^1.9.0",
     "nyc": "^11.3.0",
     "serve-index": "^1.9.1",
-    "sinon": "^4.0.1",
+    "sinon": "^5.0.0",
     "throttle": "^1.0.3"
   },
   "dependencies": {
