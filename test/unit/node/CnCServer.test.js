@@ -5,9 +5,9 @@ const {assert: {deepEqual: deq, strictEqual: eq, isNaN, isRejected, isAtLeast, c
 const http = require('http');
 const Promise = require('bluebird');
 
-const connectCnCClient = require('../utilities/cncClient');
-const PromiseFateTracker = require('../utilities/PromiseFateTracker');
-const CnCServer = require('../../lib/CnCServer');
+const connectCnCClient = require('../../utilities/cncClient');
+const PromiseFateTracker = require('../../utilities/PromiseFateTracker');
+const CnCServer = require('../../../lib/node/CnCServer');
 
 describe('CnCServer', {slow: 200}, () => {
     let httpServer;

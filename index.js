@@ -6,7 +6,7 @@ const {
     buildSourcesAndFirefoxProfile,
     buildTempFirefoxProfile,
 } = require('./building');
-const CnCServer = require('./lib/CnCServer');
+const CnCServer = require('./lib/node/CnCServer');
 const getRunnerScriptMetadata = require('./lib/getRunnerScriptMetadata');
 
 module.exports = {
