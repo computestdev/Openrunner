@@ -12,6 +12,29 @@ module.exports = (tabManager) => {
         return tab.id;
     };
 
+    const setViewportSize = async ({width: viewportWidth, height: viewportHeight}) => {
+        if (typeof viewportWidth !== 'number' || !Number.isSafeInteger(viewportWidth) || viewportWidth < 1 || viewportWidth > 7680) {
+            throw illegalArgumentError('tabs.viewportSize(): invalid argument `width`');
+        }
+
+        if (typeof viewportHeight !== 'number' || !Number.isSafeInteger(viewportHeight) || viewportHeight < 1 || viewportHeight > 4320) {
+            throw illegalArgumentError('tabs.viewPortSize(): invalid argument `height`');
+        }
+
+        const {windowSizeMinusViewport} = tabManager;
+        const width = viewportWidth + windowSizeMinusViewport.width;
+        const height = viewportHeight + windowSizeMinusViewport.height;
+        const {width: resultWidth, height: resultHeight} = await tabManager.setWindowSize({width, height});
+
+        if (width !== resultWidth || height !== resultHeight) {
+            throw illegalArgumentError(
+                `tabs.viewportSize: Failed to set the viewport size to ${viewportWidth}x${viewportHeight}. ` +
+                `After resizing the window to ${width}x${height}, the actual size is ${resultWidth}x${resultHeight}. ` +
+                'The given size is probably too small, or too large for the screen.'
+            );
+        }
+    };
+
     const navigateTab = async ({id, url}) => {
         if (typeof id !== 'string' || !tabManager.hasTab(id)) {
             throw illegalArgumentError('tabs.navigate(): invalid argument `id`');
@@ -114,6 +137,7 @@ module.exports = (tabManager) => {
 
     return new Map([
         ['tabs.create', createTab],
+        ['tabs.setViewportSize', setViewportSize],
         ['tabs.navigate', navigateTab],
         ['tabs.run', run],
         ['tabs.wait', wait],

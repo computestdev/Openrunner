@@ -18,7 +18,14 @@ openRunnerRegisterRunnerModule('tabs', async ({script}) => {
         });
     };
 
+    const viewportSize = async ({width, height}) => {
+        return extendStack(async () => {
+            await script.rpcCall('tabs.setViewportSize', {width, height});
+        });
+    };
+
     return {
         create,
+        viewportSize,
     };
 });

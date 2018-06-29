@@ -19,7 +19,7 @@ class TabManager extends EventEmitter {
         this.browserTabs = browserTabs;
         this.browserWebNavigation = browserWebNavigation;
         // all tabs opened by the script end up in a single window:
-        this.scriptWindow = new ScriptWindow(browserWindows, browserTabs);
+        this.scriptWindow = new ScriptWindow({browserWindows, browserTabs, browserWebNavigation});
         this.myTabs = new TabTracker();
         this.tabContentRPC = new TabContentRPC({
             browserRuntime,
@@ -42,6 +42,7 @@ class TabManager extends EventEmitter {
 
     attach() {
         this.tabContentRPC.attach();
+        this.scriptWindow.attach();
         this.browserTabs.onCreated.addListener(this.handleTabCreated);
         this.browserWebNavigation.onBeforeNavigate.addListener(this.handleWebNavigationOnBeforeNavigate);
         this.browserWebNavigation.onCommitted.addListener(this.handleWebNavigationOnCommitted);
@@ -52,6 +53,7 @@ class TabManager extends EventEmitter {
     detach() {
         this._attached = false;
         this.tabContentRPC.detach();
+        this.scriptWindow.detach();
         this.browserTabs.onCreated.removeListener(this.handleTabCreated);
         this.browserWebNavigation.onBeforeNavigate.removeListener(this.handleWebNavigationOnBeforeNavigate);
         this.browserWebNavigation.onCommitted.removeListener(this.handleWebNavigationOnCommitted);
@@ -267,6 +269,13 @@ class TabManager extends EventEmitter {
         return this.scriptWindow.getBrowserWindowId();
     }
 
+    /**
+     * @return {{width: number, height: number}}
+     */
+    get windowSizeMinusViewport() {
+        return this.scriptWindow.sizeMinusViewport;
+    }
+
     async closeScriptWindow() {
         if (!this._attached) {
             throw illegalStateError('TabManager.closeScriptWindow: Not initialized yet or in the progress of cleaning up');
@@ -291,6 +300,10 @@ class TabManager extends EventEmitter {
         await Promise.all(promises);
 
         await this.scriptWindow.close();
+    }
+
+    async setWindowSize(options) {
+        return await this.scriptWindow.setWindowSize(options);
     }
 }
 

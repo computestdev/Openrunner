@@ -581,4 +581,66 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             eq(scriptStackFrames[0].runnerScriptContext, 'main');
         });
     });
+
+    specify('Changing the window size', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            const tab = await tabs.create();
+            await tab.navigate(injected.url, {timeout: '2s'});
+
+            {
+                await tabs.viewportSize({width: 400, height: 500});
+                const result = await tab.run(() => {
+                    return {
+                        innerHeight: window.innerHeight,
+                        outerHeight: window.outerHeight,
+                        innerWidth: window.innerWidth,
+                        outerWidth: window.outerWidth,
+                    };
+                });
+                assert.strictEqual(result.innerWidth, 400);
+                assert.strictEqual(result.innerHeight, 500);
+                assert.isAtLeast(result.outerWidth, 400);
+                assert.isAtLeast(result.outerHeight, 500);
+            }
+
+            await assert.isRejected(
+                tabs.viewportSize({width: 1, height: 2}),
+                Error,
+                /tabs.viewportSize.*failed.*set.*viewport.*size.*1x2/i
+            );
+
+            await assert.isRejected(
+                tabs.viewportSize({width: 10000, height: 500}),
+                Error,
+                /tabs.viewportSize.*invalid.*width/i
+            );
+
+            // make sure that we can recover from the prior errors
+            {
+                await tabs.viewportSize({width: 700, height: 400});
+                const result = await tab.run(() => {
+                    return {
+                        innerHeight: window.innerHeight,
+                        outerHeight: window.outerHeight,
+                        innerWidth: window.innerWidth,
+                        outerWidth: window.outerWidth,
+                    };
+                });
+                assert.strictEqual(result.innerWidth, 700);
+                assert.strictEqual(result.innerHeight, 400);
+                assert.isAtLeast(result.outerWidth, 700);
+                assert.isAtLeast(result.outerHeight, 400);
+            }
+
+        }, {url: `http://localhost:${testServerPort()}/static/static.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
 });
