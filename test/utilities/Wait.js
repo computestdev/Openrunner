@@ -1,9 +1,11 @@
 'use strict';
+const sinon = require('sinon');
 
 class Wait {
     constructor() {
         this.count = 0;
         this.waits = new Set();
+        this.spy = sinon.spy(() => this.advance());
     }
 
     advance() {
@@ -17,15 +19,22 @@ class Wait {
         }
     }
 
-    wait(n) {
-        return new Promise(resolve => this.waits.add([this.count + n, resolve]));
+    async wait(n) {
+        await new Promise(resolve => this.waits.add([this.count + n, resolve]));
     }
 
-    waitUntil(n) {
+    async waitUntil(n) {
         if (n <= this.count) {
-            return Promise.resolve();
+            return;
         }
-        return new Promise(resolve => this.waits.add([n, resolve]));
+        await new Promise(resolve => this.waits.add([n, resolve]));
+    }
+
+    async waitForSideEffect(n, func) {
+        const countBefore = this.count;
+        const result = await func();
+        await this.waitUntil(countBefore + n);
+        return result;
     }
 }
 

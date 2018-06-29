@@ -24,20 +24,24 @@ const cncClient = (port, instanceId = 'cafecafe') => {
             }
             else {
                 ws.once('close', resolve);
+                ws.once('close', () => client.waitForClose.advance());
                 ws.close(WS_CLOSE_NORMAL, 'Closed by test');
             }
         }),
         closed: false,
         messages: [],
         pingCount: 0,
+        replyToPings: true,
         send: obj => new Promise(resolve => ws.send(JSON.stringify(obj), {}, resolve)),
         waitForMessage: new Wait(),
         waitForPing: new Wait(),
+        waitForClose: new Wait(),
         ws,
     };
 
     ws.on('close', (code, message) => {
         client.closed = {code, message};
+        client.waitForClose.advance();
     });
 
     ws.on('message', message => {
@@ -45,8 +49,13 @@ const cncClient = (port, instanceId = 'cafecafe') => {
 
         if (obj.method === 'jsonbird.ping') {
             ++client.pingCount;
-            client.send({id: obj.id, jsonrpc: '2.0', result: true}).then(() => client.waitForPing.advance());
-
+            if (client.replyToPings) {
+                client.send({id: obj.id, jsonrpc: '2.0', result: true})
+                .then(() => client.waitForPing.advance());
+            }
+            else {
+                client.waitForPing.advance();
+            }
             return;
         }
 

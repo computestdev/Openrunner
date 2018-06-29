@@ -1,6 +1,7 @@
 'use strict';
 const {describe, it, beforeEach, afterEach} = require('mocha-sugar-free');
 require('chai').use(require('chai-as-promised'));
+const sinon = require('sinon');
 const {assert: {deepEqual: deq, strictEqual: eq, isNaN, isRejected, isAtLeast, closeTo, lengthOf}} = require('chai');
 const http = require('http');
 const Promise = require('bluebird');
@@ -8,8 +9,10 @@ const Promise = require('bluebird');
 const connectCnCClient = require('../../utilities/cncClient');
 const PromiseFateTracker = require('../../utilities/PromiseFateTracker');
 const CnCServer = require('../../../lib/node/CnCServer');
+const {PING_INTERVAL, PING_TIMEOUT, PING_CONSECUTIVE_FAILURE_DROP} = require('../../../lib/node/CnCServer');
 
-describe('CnCServer', {slow: 200}, () => {
+describe('CnCServer', suite => {
+    suite.slow(200);
     let httpServer;
     let port;
     let cncServer;
@@ -285,6 +288,37 @@ describe('CnCServer', {slow: 200}, () => {
         await isRejected(runScriptPromise, Error, 'The browser has restarted unexpectedly');
         eq(cncServer.isRunningScript, false);
     });
+
+    describe('Pinging', () => {
+        let clock;
+
+        beforeEach(() => {
+            clock = sinon.useFakeTimers();
+        });
+        afterEach(() => {
+            clock.restore();
+            clock = null;
+        });
+
+        it('Should close connections if they do not respond to pings', async () => {
+            await cncServer.start();
+            client = await connectCnCClient(port, 'instance FOO');
+            eq(cncServer.hasActiveConnection, true);
+            eq(client.closed, false);
+
+            client.replyToPings = false;
+
+            const tick = () => clock.tick(PING_INTERVAL + PING_TIMEOUT);
+            for (let n = 0; n < PING_CONSECUTIVE_FAILURE_DROP; ++n) {
+                await client.waitForPing.waitForSideEffect(1, tick);
+                eq(client.closed, false);
+            }
+
+            await client.waitForClose.waitUntil(1);
+            deq(client.closed, {code: 4000, message: 'Ping timeout'});
+        });
+    });
+
 
     describe('#closeActiveWebSocket', () => {
         it('Should close the current connection, but not abort any calls', async () => {
