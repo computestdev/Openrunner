@@ -4,8 +4,8 @@
   "description": "Computest Openrunner: Benchmark and functional testing for frontend-heavy web applications",
   "main": "index.js",
   "scripts": {
-    "build:sources": "node bin/build-sources.js --output build",
-    "build:profile": "node bin/build-firefox-profile --input build --output PRIV/profile",
+    "build:sources": "node bin/openrunner.js build source --output build",
+    "build:profile": "node bin/openrunner.js build firefox-profile --input build --output PRIV/profile",
     "build": "npm run build:sources && npm run build:profile",
     "lint": "eslint bin building core lib runner-modules test",
     "test:unit": "mocha 'test/**/*.test.js'",
@@ -38,11 +38,7 @@
     "README.md"
   ],
   "bin": {
-    "openrunner": "./bin/openrunner.js",
-    "openrunner-ide": "./bin/openrunner-ide.js",
-    "openrunner-build-sources": "./bin/build-sources.js",
-    "openrunner-build-firefox-profile": "./bin/build-firefox-profile.js",
-    "openrunner-build-mac-bundle": "./bin/build-mac-bundle.js"
+    "openrunner": "./bin/openrunner.js"
   },
   "devDependencies": {
     "babel-eslint": "^8.0.1",
