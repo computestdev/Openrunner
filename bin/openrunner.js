@@ -159,8 +159,10 @@ yargs
         })
         .command({
             command: 'firefox-mac-bundle',
-            describe: 'Generate an application bundle for macOS containing firefox and the Openrunner WebExtension. Launching ' +
-                      'this application is enough to start using the Openrunner IDE.',
+            describe: 'Generate an application bundle for macOS containing firefox and the Openrunner WebExtension. ' +
+                      'This bundle is then compressed into a disk image (.dmg). Launching this application is ' +
+                      'enough to start using the Openrunner IDE without any dependencies. (this build command will only ' +
+                      'function properly on macOS)',
             builder: yargs =>
                 yargs
                 .group(['profile', 'app', 'output'], 'Basic options')
@@ -176,12 +178,14 @@ yargs
                 })
                 .option('output', {
                     alias: 'o',
-                    describe: 'Output directory for the macOS application bundle',
+                    describe: 'Output file for the macOS application bundle',
                     demandOption: true,
                 })
+                .group(['tmp'], 'Advanced options')
+                .option(...tmpOption)
                 .example(
                     '$0 build firefox-mac-bundle --profile ./firefox-profile --app ' +
-                    '\'/Applications/Firefox Nightly.app\' --output ./Openrunner.app'
+                    '/Volumes/Nightly/Nightly.app --output ./Openrunner.dmg'
                 ),
             handler: args => executeCommandHandler(buildFirefoxMacBundleHandler, args),
         })

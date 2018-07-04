@@ -60,6 +60,7 @@
     "throttle": "^1.0.3"
   },
   "dependencies": {
+    "appdmg": "^0.5.2",
     "archiver": "^2.1.0",
     "bluebird": "^3.5.0",
     "bluefox": "^2.0.0",
