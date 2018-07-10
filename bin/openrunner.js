@@ -1,14 +1,9 @@
 #!/usr/bin/env node
 'use strict';
 /* eslint-env node */
+/* eslint-disable global-require */
 const yargs = require('yargs');
 const {tmpdir} = require('os');
-
-const {handler: ideHandler} = require('./_subcommands/ide');
-const {handler: runHandler} = require('./_subcommands/run');
-const {handler: buildSourceHandler} = require('./_subcommands/build-source');
-const {handler: buildFirefoxProfileHandler} = require('./_subcommands/build-firefox-profile');
-const {handler: buildFirefoxMacBundleHandler} = require('./_subcommands/build-firefox-mac-bundle');
 
 const firefoxOption = ['firefox', {
     describe: 'Filesystem path to the binary of Firefox Unbranded or Developer Edition or Nightly',
@@ -43,7 +38,11 @@ const coverageOption = ['coverage', {
     boolean: true,
 }];
 
-const executeCommandHandler = (func, args) => {
+const executeCommandHandler = (modulePath, args) => {
+    // We use a dynamic and lazy require here to prevent having to require the majority of the openrunner and
+    // node_module source whenever we invoke something like `--help`, `--get-yargs-completions`, etc.
+    const func = require(modulePath).handler;
+
     func(args).then(
         exitCode => {
             process.exitCode = exitCode;
@@ -69,7 +68,7 @@ yargs
         .group(['tmp'], 'Advanced options')
         .option(...tmpOption)
         .example('$0 ide --firefox \'/Applications/Firefox Nightly.app/Contents/MacOS/firefox\''),
-    handler: args => executeCommandHandler(ideHandler, args),
+    handler: args => executeCommandHandler('./_subcommands/ide', args),
 })
 .command({
     command: 'run',
@@ -103,7 +102,7 @@ yargs
             '$0 run --firefox \'/Applications/Firefox Nightly.app/Contents/MacOS/firefox\' ' +
             '--script example.js --result example.json'
         ),
-    handler: args => executeCommandHandler(runHandler, args),
+    handler: args => executeCommandHandler('./_subcommands/run', args),
 })
 .command({
     command: 'build',
@@ -132,7 +131,7 @@ yargs
                     defaultDescription: 'disabled',
                 })
                 .example('$0 build source --output ./openrunner-extension'),
-            handler: args => executeCommandHandler(buildSourceHandler, args),
+            handler: args => executeCommandHandler('./_subcommands/build-source', args),
         })
         .command({
             command: 'firefox-profile',
@@ -155,7 +154,7 @@ yargs
                 })
                 .example('$0 build firefox-profile --input ./openrunner-extension --output ./firefox-profile')
                 .example('\'/Applications/Firefox Nightly.app/Contents/MacOS/firefox\' --no-remote --profile ./firefox-profile'),
-            handler: args => executeCommandHandler(buildFirefoxProfileHandler, args),
+            handler: args => executeCommandHandler('./_subcommands/build-firefox-profile', args),
         })
         .command({
             command: 'firefox-mac-bundle',
@@ -187,7 +186,7 @@ yargs
                     '$0 build firefox-mac-bundle --profile ./firefox-profile --app ' +
                     '/Volumes/Nightly/Nightly.app --output ./Openrunner.dmg'
                 ),
-            handler: args => executeCommandHandler(buildFirefoxMacBundleHandler, args),
+            handler: args => executeCommandHandler('./_subcommands/build-firefox-mac-bundle', args),
         })
         .demandCommand(1, 'A subcommand must be provided'),
 })
