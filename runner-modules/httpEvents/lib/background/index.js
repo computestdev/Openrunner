@@ -38,6 +38,3 @@ module.exports = async script => {
     script.on('core.runEnd', wait => wait(handleRunEnd()));
     script.importScripts(scriptEnvUrl);
 };
-
-// TODO: Use `chrome.devtools.network.onRequestFinished` when it gets implemented
-// https://bugzilla.mozilla.org/show_bug.cgi?id=1311171
