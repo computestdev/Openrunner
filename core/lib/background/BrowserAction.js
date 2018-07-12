@@ -1,7 +1,7 @@
 'use strict';
 const log = require('../../../lib/logger')({hostname: 'parent', MODULE: 'core/background/BrowserAction'});
 const ScratchpadRPC = require('./ScratchpadRPC');
-const {SCRATCHPAD_HTML} = require('../scratchpad-content/urls');
+const {SCRATCHPAD_HTML} = require('../urls');
 
 class BrowserAction {
     constructor({browserBrowserAction, browserRuntime, browserTabs, browserWebNavigation, browserDownloads}) {

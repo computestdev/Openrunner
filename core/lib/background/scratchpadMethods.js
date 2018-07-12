@@ -3,7 +3,7 @@
 const log = require('../../../lib/logger')({hostname: 'background', MODULE: 'core/background/scratchpadMethods'});
 const RunnerScriptParent = require('./RunnerScriptParent');
 const errorToObject = require('../../../lib/errorToObject');
-const {SCRATCHPAD_RESULT_HTML, SCRATCHPAD_BREAKDOWN_HTML} = require('../scratchpad-content/urls');
+const {SCRATCHPAD_RESULT_HTML, SCRATCHPAD_BREAKDOWN_HTML} = require('../urls');
 
 let saveUrl;
 

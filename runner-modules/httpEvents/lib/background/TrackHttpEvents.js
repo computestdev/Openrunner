@@ -2,57 +2,80 @@
 const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'httpEvents/background/index'});
 const maxTextLengthWithEllipsis = require('../../../../lib/maxTextLengthWithEllipsis');
 const urlForShortTitle = require('../../../../lib/urlForShortTitle');
+const WebExtListeners = require('../../../../lib/WebExtListeners');
+const {SCRIPT_ENV: CORE_SCRIPT_ENV_URL} = require('../../../../core/lib/urls');
 
 const ERROR_SHORT_TITLE_MAX_LENGTH = 64;
-
 const filterExtensionUrl = url => (url && /^moz-extension:/.test(url) ? null : url);
 
 class TrackHttpEvents {
-    constructor({runResult, browserWebRequest, browserWindowId}) {
+    constructor({runResult, browserWebRequest}) {
         this.runResult = runResult;
         this.browserWebRequest = browserWebRequest;
-        this.browserWindowId = browserWindowId;
-        this.handleBeforeRequest = this.handleBeforeRequest.bind(this);
-        this.handleSendHeaders = this.handleSendHeaders.bind(this);
-        this.handleHeadersReceived = this.handleHeadersReceived.bind(this);
-        this.handleBeforeRedirect = this.handleBeforeRedirect.bind(this);
-        this.handleResponseStarted = this.handleResponseStarted.bind(this);
-        this.handleCompleted = this.handleCompleted.bind(this);
-        this.handleErrorOccurred = this.handleErrorOccurred.bind(this);
+        this._webRequestListeners = new WebExtListeners(this.browserWebRequest, this);
         this.events = new Map(); // requestId -> {parentEvent, pendingSendRequestEvent, pendingReceiveResponseEvent}
-        Object.freeze(this);
+        this._attachedBrowserWindows = new Set();
+        this._attached = false;
+        Object.seal(this);
     }
 
     attach() {
+        if (this._attached) {
+            throw Error(`TrackHttpEvents: Already attached`);
+        }
+        this._attached = true;
+
+        const scriptEnvFetchFilter = {
+            urls: ['*://*/*'],
+            tabId: -1,
+        };
+        this._attachToFilter(scriptEnvFetchFilter);
+    }
+
+    attachToBrowserWindow(browserWindowId) {
+        if (this._attachedBrowserWindows.has(browserWindowId)) {
+            throw Error(`TrackHttpEvents: Already attached to browserWindowId ${browserWindowId}`);
+        }
+        this._attachedBrowserWindows.add(browserWindowId);
+
         const filter = {
             urls: ['*://*/*'], // all http and https requests
-            windowId: this.browserWindowId,
+            windowId: browserWindowId,
         };
+        this._attachToFilter(filter);
+    }
 
-        this.browserWebRequest.onBeforeRequest.addListener(this.handleBeforeRequest, filter);
-        this.browserWebRequest.onSendHeaders.addListener(this.handleSendHeaders, filter, ['requestHeaders']);
-        this.browserWebRequest.onHeadersReceived.addListener(this.handleHeadersReceived, filter);
-        this.browserWebRequest.onBeforeRedirect.addListener(this.handleBeforeRedirect, filter);
-        this.browserWebRequest.onResponseStarted.addListener(this.handleResponseStarted, filter, ['responseHeaders']);
-        this.browserWebRequest.onCompleted.addListener(this.handleCompleted, filter);
-        this.browserWebRequest.onErrorOccurred.addListener(this.handleErrorOccurred, filter);
+    _attachToFilter(filter) {
+        const listeners = this._webRequestListeners;
+        listeners.add('onBeforeRequest', this.handleBeforeRequest, filter);
+        listeners.add('onSendHeaders', this.handleSendHeaders, filter, ['requestHeaders']);
+        listeners.add('onHeadersReceived', this.handleHeadersReceived, filter);
+        listeners.add('onBeforeRedirect', this.handleBeforeRedirect, filter);
+        listeners.add('onResponseStarted', this.handleResponseStarted, filter, ['responseHeaders']);
+        listeners.add('onCompleted', this.handleCompleted, filter);
+        listeners.add('onErrorOccurred', this.handleErrorOccurred, filter);
     }
 
     detach() {
-        this.browserWebRequest.onBeforeRequest.removeListener(this.handleBeforeRequest);
-        this.browserWebRequest.onSendHeaders.removeListener(this.handleSendHeaders);
-        this.browserWebRequest.onHeadersReceived.removeListener(this.handleHeadersReceived);
-        this.browserWebRequest.onBeforeRedirect.removeListener(this.handleBeforeRedirect);
-        this.browserWebRequest.onResponseStarted.removeListener(this.handleResponseStarted);
-        this.browserWebRequest.onCompleted.removeListener(this.handleCompleted);
-        this.browserWebRequest.onErrorOccurred.removeListener(this.handleErrorOccurred);
+        this._webRequestListeners.cleanup();
+        this._attachedBrowserWindows.clear();
+        this._attached = false;
     }
 
-    handleBeforeRequest({requestId, url, method, frameId, tabId, type, timeStamp, originUrl}) {
-        // (may be fired multiple times per request)
+    // (may be fired multiple times per request)
+    handleBeforeRequest({requestId, url, method, frameId, tabId, type, timeStamp, originUrl, documentUrl}) {
         try {
             if (this.events.has(requestId)) {
                 // redirect (TODO: test)
+                return;
+            }
+
+            // tabId = -1 means the request is from an extension / internal / etc and this is something that
+            // should be filtered.
+            // However if the originUrl or documentUrl matches the URL to our main script-env file, it means
+            // that the request was triggered by a fetch() request in the script (in the Worker)
+            if (tabId === -1 && originUrl !== CORE_SCRIPT_ENV_URL && documentUrl !== CORE_SCRIPT_ENV_URL) {
+                this.events.set(requestId, Object.freeze({filtered: true}));
                 return;
             }
 
@@ -82,6 +105,8 @@ class TrackHttpEvents {
         // (may be fired multiple times per request)
         try {
             const eventData = this.events.get(requestId);
+            if (eventData.filtered) { return; }
+
             const {parentEvent} = eventData;
             eventData.pendingSendRequestEvent = eventData.parentEvent.childTimeEvent('http:sendRequest', timeStamp, null);
             parentEvent.setMetaData('requestHeaders', requestHeaders);
@@ -95,6 +120,8 @@ class TrackHttpEvents {
         // (may be fired multiple times per request)
         try {
             const eventData = this.events.get(requestId);
+            if (eventData.filtered) { return; }
+
             const {pendingSendRequestEvent} = eventData;
             eventData.pendingSendRequestEvent = null;
             if (pendingSendRequestEvent) {
@@ -110,6 +137,8 @@ class TrackHttpEvents {
         // (may be fired multiple times per request)
         try {
             const eventData = this.events.get(requestId);
+            if (eventData.filtered) { return; }
+
             const {parentEvent} = eventData;
             const childEvent = parentEvent.childTimeEvent('http:redirect', timeStamp, timeStamp);
             childEvent.setMetaData('ip', ip);
@@ -128,6 +157,8 @@ class TrackHttpEvents {
         // (fired once per request)
         try {
             const eventData = this.events.get(requestId);
+            if (eventData.filtered) { return; }
+
             const {parentEvent} = eventData;
             parentEvent.setMetaData('ip', ip);
             parentEvent.setMetaData('fromCache', fromCache);
@@ -147,6 +178,8 @@ class TrackHttpEvents {
         // (fired once per request)
         try {
             const eventData = this.events.get(requestId);
+            if (eventData.filtered) { return; }
+
             const {parentEvent, pendingReceiveResponseEvent} = eventData;
             parentEvent.timing.endAtTime(timeStamp);
             if (pendingReceiveResponseEvent) {
@@ -165,6 +198,8 @@ class TrackHttpEvents {
             }
 
             const eventData = this.events.get(requestId);
+            if (eventData.filtered) { return; }
+
             const {parentEvent} = eventData;
             parentEvent.timing.endAtTime(timeStamp);
             parentEvent.setMetaData('error', error);

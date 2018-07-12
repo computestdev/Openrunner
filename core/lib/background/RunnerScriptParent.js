@@ -10,8 +10,8 @@ const loadModule = require('./loadModule');
 const ModuleRegister = require('../../../lib/ModuleRegister');
 const compileRunnerScript = require('./compileRunnerScript');
 const {mergeCoverageReports} = require('../../../lib/mergeCoverage');
+const {SCRIPT_ENV: SCRIPT_ENV_URL} = require('../urls');
 
-const scriptEnvUrl = browser.extension.getURL('/build/script-env.js');
 const PRIVATE = Symbol('RunnerScriptParent private');
 
 class RunnerScriptParent {
@@ -145,8 +145,8 @@ class RunnerScriptParentPrivate {
 
         this.runActive = true; // set this to true before doing anything async, so that this function can not be invoked in parallel
         try {
-            log.debug({scriptEnvUrl}, 'Creating Web Worker...');
-            const worker = new Worker(scriptEnvUrl, {name: 'Openrunner script environment'});
+            log.debug({SCRIPT_ENV_URL}, 'Creating Web Worker...');
+            const worker = new Worker(SCRIPT_ENV_URL, {name: 'Openrunner script environment'});
             const rpc = new JSONBird({
                 // take advantage of the structured clone algorithm
                 readableMode: 'object',

@@ -6,6 +6,9 @@ const {join: pathJoin} = require('path');
 
 const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
+const httpEventFilter = e => e.type === 'http';
+const httpEventNoFaviconFilter = e => httpEventFilter(e) && !/\/favicon.ico$/.test(e.metaData.url);
+
 describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
     let STATIC_HTML_SIZE;
     let FOO_JPG_SIZE;
@@ -45,7 +48,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         }
 
         const [transaction] = result.result.transactions;
-        const events = result.result.events.filter(e => e.type === 'http');
+        const events = result.result.events.filter(httpEventNoFaviconFilter);
         lengthOf(events, 4);
         eq(events[0].metaData.url, `${urlPrefix}/static.html?waitBeforeResponse=50&bytesPerSecond=100000`);
         eq(events[1].metaData.url, `${urlPrefix}/foo.jpg?noCache&waitBeforeResponse=50&bytesPerSecond=400000`);
@@ -133,7 +136,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         }
 
         const [transaction] = result.result.transactions;
-        const events = result.result.events.filter(e => e.type === 'http');
+        const events = result.result.events.filter(httpEventNoFaviconFilter);
         lengthOf(events, 4);
         eq(events[0].metaData.url, navigateUrl, 'Should use the url of the first request');
         eq(events[1].metaData.url, `http://${host}/static/foo.jpg?noCache&waitBeforeResponse=50&bytesPerSecond=400000`);
@@ -156,7 +159,6 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         eq(redirectChildEvents[0].metaData.statusLine, 'HTTP/1.1 307 Temporary Redirect');
         // todo test for redirectChildEvents[0].metaData.responseHeaders when that is supported by webRequest for redirects
     });
-
 
     specify('Tracking of JavaScript redirects', async () => {
         const host = `localhost:${testServerPort()}`;
@@ -187,7 +189,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         }
 
         const [transaction] = result.result.transactions;
-        const events = result.result.events.filter(e => e.type === 'http');
+        const events = result.result.events.filter(httpEventNoFaviconFilter);
         lengthOf(events, 5);
         eq(events[0].metaData.url, navigateUrl);
         eq(events[1].metaData.url, `http://${host}/static/static.html?waitBeforeResponse=50`);
@@ -228,7 +230,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         }
 
         const [transaction] = result.result.transactions;
-        const events = result.result.events.filter(e => e.type === 'http');
+        const events = result.result.events.filter(httpEventNoFaviconFilter);
         lengthOf(events, 1);
 
         const event = events[0];
@@ -240,6 +242,80 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         isAtLeast(event.metaData.error.length, 5);
     });
 
-    // TODO: We do not yet test for most of the child events. Because these will likely change
-    // when https://bugzilla.mozilla.org/show_bug.cgi?id=1311171 lands and we implement that here
+    specify('Tracking of script-env fetch() requests', async () => {
+        const host = `localhost:${testServerPort()}`;
+        const urlPrefix = `http://${host}/static`;
+
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const expect = await include('expect');
+            const {delay} = await include('wait');
+            await include('httpEvents');
+
+            // (without creating a tab or even loading the tabs module)
+
+            await transaction('First', async () => {
+                const response = await fetch(injected.url);
+                const body = await response.text();
+                expect(body).to.contain('Lorem ipsum');
+            });
+            await delay('1s');
+
+        }, {url: `${urlPrefix}/static.html?waitBeforeResponse=50&bytesPerSecond=100000`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        const [transaction] = result.result.transactions;
+        const events = result.result.events.filter(httpEventNoFaviconFilter);
+        lengthOf(events, 1);
+
+        {
+            const [event] = events;
+            eq(event.metaData.url, `${urlPrefix}/static.html?waitBeforeResponse=50&bytesPerSecond=100000`);
+            eq(event.metaData.finalUrl, `${urlPrefix}/static.html?waitBeforeResponse=50&bytesPerSecond=100000`);
+            eq(event.metaData.method, 'GET');
+            eq(event.metaData.type, 'xmlhttprequest');
+            eq(event.metaData.originUrl, null);
+            eq(event.longTitle, `GET ${urlPrefix}/static.html?waitBeforeResponse=50&bytesPerSecond=100000`);
+            eq(event.shortTitle, `GET static.html?waitBeforeResponse=50&bytesPerSecond=100000`);
+            approximately(event.timing.duration, 50 + STATIC_HTML_SIZE / 100000 * 1000, 250);
+            deq(event.metaData.responseHeaders.filter(h => h.name === 'Content-Type'), [{
+                name: 'Content-Type',
+                value: 'text/html',
+            }]);
+
+            isAtLeast(event.timing.begin.time, transaction.timing.begin.time);
+            isAtMost(event.timing.end.time, transaction.timing.end.time);
+            Array.isArray(event.metaData.requestHeaders);
+            deq(event.metaData.requestHeaders.filter(h => h.name === 'Host'), [{
+                name: 'Host',
+                value: host,
+            }]);
+            eq(event.metaData.ip, '127.0.0.1');
+            eq(event.metaData.statusCode, 200);
+            eq(event.metaData.fromCache, false);
+            eq(event.metaData.redirectUrl, null);
+            eq(event.metaData.statusLine, 'HTTP/1.1 200 OK');
+
+            lengthOf(event.children, 2);
+            const sendRequestEvent = event.children[0];
+            eq(sendRequestEvent.type, 'http:sendRequest');
+            isAtLeast(sendRequestEvent.timing.begin.time, event.timing.begin.time);
+            isAtMost(sendRequestEvent.timing.begin.time, event.timing.end.time);
+            isAtLeast(sendRequestEvent.timing.end.time, sendRequestEvent.timing.begin.time);
+            isAtMost(sendRequestEvent.timing.end.time, event.timing.end.time);
+
+            const receiveResponseEvent = event.children[1];
+            eq(receiveResponseEvent.type, 'http:receiveResponse');
+            isAtLeast(receiveResponseEvent.timing.begin.time, event.timing.begin.time);
+            isAtMost(receiveResponseEvent.timing.begin.time, event.timing.end.time);
+            isAtLeast(receiveResponseEvent.timing.end.time, receiveResponseEvent.timing.begin.time);
+            isAtMost(receiveResponseEvent.timing.end.time, event.timing.end.time);
+            isAtLeast(receiveResponseEvent.timing.begin.time, sendRequestEvent.timing.end.time);
+        }
+    });
 });

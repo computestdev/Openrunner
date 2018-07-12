@@ -2,7 +2,7 @@
 const TabContentRPC = require('../../../lib/TabContentRPC');
 const log = require('../../../lib/logger')({hostname: 'background', MODULE: 'core/background/ScratchpadRPC'});
 const scratchpadMethods = require('./scratchpadMethods');
-const scratchpadUrls = require('../scratchpad-content/urls');
+const scratchpadUrls = require('../urls');
 
 const VALID_URLS = new Set([
     scratchpadUrls.SCRATCHPAD_HTML,

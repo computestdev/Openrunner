@@ -5,35 +5,23 @@ const TrackHttpEvents = require('./TrackHttpEvents');
 const scriptEnvUrl = browser.extension.getURL('/build/httpEvents-script-env.js');
 
 module.exports = async script => {
-    const scriptResultPromise = script.include('runResult');
-    const trackers = new Map();
+    const runResultModule = await script.include('runResult');
+    const tracker = new TrackHttpEvents({
+        runResult: runResultModule.scriptResult,
+        browserWebRequest: browser.webRequest,
+    });
+    tracker.attach();
 
     script.on('tabs.windowCreated', async ({browserWindowId}) => {
         try {
-            if (trackers.has(browserWindowId)) {
-                log.error('Received a duplicate windowCreated event');
-                return;
-            }
-
-            const {scriptResult} = await scriptResultPromise;
-            const tracker = new TrackHttpEvents({
-                runResult: scriptResult,
-                browserWebRequest: browser.webRequest,
-                browserWindowId,
-            });
-            tracker.attach();
-            trackers.set(browserWindowId, tracker);
+            tracker.attachToBrowserWindow(browserWindowId);
         }
         catch (err) {
-            log.err({err}, 'Error during script.windowCreated');
+            log.error({err}, 'Error during script.windowCreated');
         }
     });
 
-    const handleRunEnd = async () => {
-        for (const tracker of trackers.values()) {
-            tracker.detach();
-        }
-    };
+    const handleRunEnd = async () => tracker.detach();
 
     script.on('core.runEnd', wait => wait(handleRunEnd()));
     script.importScripts(scriptEnvUrl);
