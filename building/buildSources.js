@@ -61,7 +61,8 @@ const buildBundles = async (outputDirectoryPath, buildConfigPath, {instrumentCov
         bundle(rootPath('runner-modules/wait/lib/content'), 'wait-content.js'),
         fs.copy(require.resolve('react/umd/react.development.js'), outputPath('react.js')),
         fs.copy(require.resolve('react-dom/umd/react-dom.production.min.js'), outputPath('react-dom.js')),
-        fs.copy(require.resolve('performr-runner-result-graph/bundle'), outputPath('performr-runner-result-graph.js')),
+        fs.copy(require.resolve('performr-runner-result-graph/dist/bundle.js'), outputPath('performr-runner-result-graph.js')),
+        fs.copy(require.resolve('performr-runner-result-graph/dist/bundle.css'), outputPath('performr-runner-result-graph.css')),
     ]);
 };
 
