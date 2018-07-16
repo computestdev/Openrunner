@@ -8,8 +8,16 @@ const {buildTempFirefoxProfile} = require('../../index');
 const log = require('../../lib/logger')({hostname: 'test', MODULE: 'integrationTest'});
 const {mergeCoverageReports} = require('../../lib/mergeCoverage');
 const {startFirefox} = require('../../lib/node/firefoxProcess');
-const {TEST_TEMP_DIR, TEST_FIREFOX_BIN, TEST_SERVER_PORT, TEST_SERVER_BAD_TLS_PORT, TEST_HEADLESS} = require('./testEnv');
+const {
+    TEST_TEMP_DIR,
+    TEST_FIREFOX_BIN,
+    TEST_SERVER_PORT,
+    TEST_SERVER_BAD_TLS_PORT,
+    TEST_HEADLESS,
+    TEST_DEBUG,
+} = require('./testEnv');
 
+const debugMode = TEST_DEBUG === '1';
 let firefoxProfileDisposer;
 let firefoxProcessDisposer;
 let server;
@@ -44,9 +52,10 @@ const doStart = async () => {
 
     const profilePath = await firefoxProfileDisposer.promise();
     firefoxProcessDisposer = startFirefox({
-        firefoxPath: TEST_FIREFOX_BIN,
+        firefoxPath: [TEST_FIREFOX_BIN, '--jsconsole'],
         profilePath,
-        headless: TEST_HEADLESS === '1',
+        headless: !debugMode && TEST_HEADLESS === '1',
+        extraArgs: debugMode ? ['--jsconsole'] : [],
     });
     await firefoxProcessDisposer.promise();
 
@@ -66,6 +75,10 @@ const start = async () => {
 const stop = async () => {
     await startPromise;
     await mergeCoverage();
+
+    if (debugMode) {
+        return;
+    }
 
     if (firefoxProcessDisposer) {
         await firefoxProcessDisposer.tryDispose();
