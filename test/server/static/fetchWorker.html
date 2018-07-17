@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch Worker</title>
+    <script>
+        addEventListener('DOMContentLoaded', () => {
+            const worker = new Worker('js/fetchWorker.js');
+            worker.postMessage({url: '/static/static.html?fromWorker'});
+            worker.onmessage = e => {
+                const result = document.createElement('div');
+                result.id = 'result';
+                result.textContent = e.data.body;
+                document.body.appendChild(result);
+            };
+        });
+    </script>
+</head>
+<body>
+<p>Hello</p>
+</body>
+</html>

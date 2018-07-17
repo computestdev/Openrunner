@@ -318,4 +318,38 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
             isAtLeast(receiveResponseEvent.timing.begin.time, sendRequestEvent.timing.end.time);
         }
     });
+
+    specify('Tracking of requests triggered by Web Workers', async () => {
+        const host = `localhost:${testServerPort()}`;
+        const urlPrefix = `http://${host}/static`;
+
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const {delay} = await include('wait');
+            await include('httpEvents');
+            const tabs = await include('tabs');
+            const tab = await tabs.create();
+
+            await transaction('First', async () => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                await tab.run(async () => {
+                    await wait.documentComplete();
+                });
+            });
+            await delay('1s');
+
+        }, {url: `${urlPrefix}/fetchWorker.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        const events = result.result.events.filter(httpEventNoFaviconFilter);
+        lengthOf(events, 3);
+        eq(events[0].metaData.url, `${urlPrefix}/fetchWorker.html`);
+        eq(events[1].metaData.url, `${urlPrefix}/js/fetchWorker.js`);
+        eq(events[2].metaData.url, `${urlPrefix}/static.html?fromWorker`);
+    });
 });
