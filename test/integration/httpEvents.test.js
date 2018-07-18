@@ -1,6 +1,6 @@
 'use strict';
 const {describe, specify, before} = require('mocha-sugar-free');
-const {assert: {lengthOf, deepEqual: deq, strictEqual: eq, approximately, isAtLeast, isAtMost, isString}} = require('chai');
+const {assert: {lengthOf, deepEqual: deq, strictEqual: eq, approximately, isAtLeast, isAtMost, isString, isOk}} = require('chai');
 const {stat} = require('fs-extra');
 const {join: pathJoin} = require('path');
 
@@ -8,6 +8,23 @@ const {runScriptFromFunction, testServerPort} = require('../utilities/integratio
 
 const httpEventFilter = e => e.type === 'http';
 const httpEventNoFaviconFilter = e => httpEventFilter(e) && !/\/favicon.ico$/.test(e.metaData.url);
+
+const assertCommonChildEvents = event => {
+    const sendRequestEvent = event.children.find(e => e.type === 'http:sendRequest');
+    isOk(sendRequestEvent);
+    isAtLeast(sendRequestEvent.timing.begin.time, event.timing.begin.time);
+    isAtMost(sendRequestEvent.timing.begin.time, event.timing.end.time);
+    isAtLeast(sendRequestEvent.timing.end.time, sendRequestEvent.timing.begin.time);
+    isAtMost(sendRequestEvent.timing.end.time, event.timing.end.time);
+
+    const receiveResponseEvent = event.children.find(e => e.type === 'http:receiveResponse');
+    isOk(receiveResponseEvent);
+    isAtLeast(receiveResponseEvent.timing.begin.time, event.timing.begin.time);
+    isAtMost(receiveResponseEvent.timing.begin.time, event.timing.end.time);
+    isAtLeast(receiveResponseEvent.timing.end.time, receiveResponseEvent.timing.begin.time);
+    isAtMost(receiveResponseEvent.timing.end.time, event.timing.end.time);
+    isAtLeast(receiveResponseEvent.timing.begin.time, sendRequestEvent.timing.end.time);
+};
 
 describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
     let STATIC_HTML_SIZE;
@@ -104,6 +121,9 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
             eq(event.metaData.fromCache, false);
             eq(event.metaData.redirectUrl, null);
             eq(event.metaData.statusLine, 'HTTP/1.1 200 OK');
+
+            lengthOf(event.children, 2);
+            assertCommonChildEvents(event);
         }
     });
 
@@ -152,6 +172,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         eq(redirectedEvent.metaData.type, 'main_frame');
         eq(redirectedEvent.metaData.statusCode, 200);
 
+        assertCommonChildEvents(redirectedEvent);
         const redirectChildEvents = redirectedEvent.children.filter(e => e.type === 'http:redirect');
         lengthOf(redirectChildEvents, 1);
         eq(redirectChildEvents[0].metaData.redirectUrl, `http://${host}/static/static.html?waitBeforeResponse=50`);
@@ -302,20 +323,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
             eq(event.metaData.statusLine, 'HTTP/1.1 200 OK');
 
             lengthOf(event.children, 2);
-            const sendRequestEvent = event.children[0];
-            eq(sendRequestEvent.type, 'http:sendRequest');
-            isAtLeast(sendRequestEvent.timing.begin.time, event.timing.begin.time);
-            isAtMost(sendRequestEvent.timing.begin.time, event.timing.end.time);
-            isAtLeast(sendRequestEvent.timing.end.time, sendRequestEvent.timing.begin.time);
-            isAtMost(sendRequestEvent.timing.end.time, event.timing.end.time);
-
-            const receiveResponseEvent = event.children[1];
-            eq(receiveResponseEvent.type, 'http:receiveResponse');
-            isAtLeast(receiveResponseEvent.timing.begin.time, event.timing.begin.time);
-            isAtMost(receiveResponseEvent.timing.begin.time, event.timing.end.time);
-            isAtLeast(receiveResponseEvent.timing.end.time, receiveResponseEvent.timing.begin.time);
-            isAtMost(receiveResponseEvent.timing.end.time, event.timing.end.time);
-            isAtLeast(receiveResponseEvent.timing.begin.time, sendRequestEvent.timing.end.time);
+            assertCommonChildEvents(event);
         }
     });
 
@@ -351,5 +359,8 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         eq(events[0].metaData.url, `${urlPrefix}/fetchWorker.html`);
         eq(events[1].metaData.url, `${urlPrefix}/js/fetchWorker.js`);
         eq(events[2].metaData.url, `${urlPrefix}/static.html?fromWorker`);
+        assertCommonChildEvents(events[0]);
+        assertCommonChildEvents(events[1]);
+        assertCommonChildEvents(events[2]);
     });
 });
