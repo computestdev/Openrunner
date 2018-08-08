@@ -5,7 +5,7 @@ const log = require('../../../../lib/logger')({hostname: 'background', MODULE: '
 const {contentScriptAbortedError, illegalStateError} = require('../../../../lib/scriptErrors');
 const ScriptWindow = require('./ScriptWindow');
 const TabTracker = require('./TabTracker');
-const TabContentRPC = require('../../../../lib/TabContentRPC');
+const TabContentRPC = require('../../../../lib/contentRpc/TabContentRPC');
 const {resolveScriptContentEvalStack} = require('../../../../lib/errorParsing');
 const {mergeCoverageReports} = require('../../../../lib/mergeCoverage');
 const WaitForEvent = require('../../../../lib/WaitForEvent');
@@ -98,9 +98,9 @@ class TabManager extends EventEmitter {
             return; // not my tab
         }
 
-        rpc.notification('tabs.mainContentInit', () => this.handleTabInitialized(browserTabId));
-        rpc.notification('tabs.contentInit', ({moduleName}) => this.handleTabModuleInitialized(browserTabId, moduleName));
-        rpc.notification('core.submitCodeCoverage', contentCoverage => {
+        rpc.method('tabs.mainContentInit', () => this.handleTabInitialized(browserTabId));
+        rpc.method('tabs.contentInit', ({moduleName}) => this.handleTabModuleInitialized(browserTabId, moduleName));
+        rpc.method('core.submitCodeCoverage', contentCoverage => {
             // eslint-disable-next-line camelcase, no-undef
             const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
             if (myCoverage) {
@@ -186,8 +186,7 @@ class TabManager extends EventEmitter {
             this.emit('initializedTabContent', {tab});
 
             const rpc = this.tabContentRPC.get(browserTabId);
-            rpc.call('tabs.initializedTabContent')
-            .catch(err => log.error({err}, 'Error while calling tabs.initializedTabContent in content'));
+            rpc.callAndForget('tabs.initializedTabContent');
         }
     }
 

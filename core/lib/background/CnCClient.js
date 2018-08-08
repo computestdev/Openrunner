@@ -56,18 +56,6 @@ class CnCClient {
         this.rpc.method(name, func);
     }
 
-    async notify(...args) {
-        return this.rpc.notify(...args);
-    }
-
-    notifications(methods) {
-        this.rpc.notifications(methods);
-    }
-
-    notification(name, func) {
-        this.rpc.notification(name, func);
-    }
-
     start() {
         this.rpc.start();
     }

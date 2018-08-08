@@ -1,5 +1,5 @@
 'use strict';
-const TabContentRPC = require('../../../lib/TabContentRPC');
+const TabContentRPC = require('../../../lib/contentRpc/TabContentRPC');
 const log = require('../../../lib/logger')({hostname: 'background', MODULE: 'core/background/ScratchpadRPC'});
 const scratchpadMethods = require('./scratchpadMethods');
 const scratchpadUrls = require('../urls');

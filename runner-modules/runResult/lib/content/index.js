@@ -25,7 +25,7 @@ openRunnerRegisterRunnerModule('runResult', ({eventEmitter, rpc}) => {
             );
             scriptResult.setPendingTransactionError(transactionError);
 
-            rpc.notify('runResult.scriptResult', scriptResult.toJSONObject());
+            rpc.callAndForget('runResult.scriptResult', scriptResult.toJSONObject());
         }
         catch (err) {
             log.error({err}, 'Error during tabs.contentUnload');

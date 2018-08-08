@@ -1,7 +1,7 @@
 'use strict';
 /* global window:false, document:false */
 const RunnerScratchpad = require('./RunnerScratchpad');
-const ContentRPC = require('../../../lib/ContentRPC');
+const ContentRPC = require('../../../lib/contentRpc/ContentRPC');
 const log = require('../../../lib/logger')({hostname: 'scratchpad-content', MODULE: 'scratchpad-content/scratchpad-result.html'});
 
 let scratchpad;
@@ -34,19 +34,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             else if (classList.contains('breakdownButton')) {
                 const resultObject = JSON.parse(scratchpad.getValue());
-
-                rpc.call('openResultBreakdown', resultObject)
-                .catch(err => log.error({err}, 'Error while calling openResultBreakdown'));
+                rpc.callAndForget('openResultBreakdown', resultObject);
             }
             else if (classList.contains('saveHistoricToCSV')) {
                 const content = historicTransactionsToCSV();
 
-                rpc.call('saveTextToFile', {
+                rpc.callAndForget('saveTextToFile', {
                     content,
                     mimeType: 'text/csv',
                     filename: 'results.csv',
-                })
-                .catch(err => log.error({err}, 'Error while calling "saveTextToFile"'));
+                });
             }
         });
 

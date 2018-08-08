@@ -2,7 +2,7 @@
 /* global window:false */
 const EventEmitter = require('events').EventEmitter;
 
-const ContentRPC = require('../../../../lib/ContentRPC');
+const ContentRPC = require('../../../../lib/contentRpc/ContentRPC');
 const tabsMethods = require('./tabsMethods');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/index'});
 const contentUnloadEvent = require('./contentUnloadEvent');
@@ -35,7 +35,7 @@ try {
         // eslint-disable-next-line camelcase, no-undef
         const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
         if (myCoverage) {
-            rpc.notify('core.submitCodeCoverage', myCoverage);
+            rpc.callAndForget('core.submitCodeCoverage', myCoverage);
         }
     });
 
@@ -53,7 +53,7 @@ try {
             moduleRegister.registerModule(moduleName, promise);
 
             log.debug({moduleName}, 'Runner module has been initialized. Notifying the background script');
-            await rpc.notify('tabs.contentInit', {moduleName});
+            await rpc.call('tabs.contentInit', {moduleName});
         }
         catch (err) {
             log.error({err}, 'Error during openRunnerRegisterRunnerModule()');
@@ -70,8 +70,7 @@ try {
     });
 
     log.debug('Initialized... Notifying the background script');
-    rpc.notify('tabs.mainContentInit')
-    .catch(err => log.error({err}, 'Unable to send tabs.mainContentInit to the background script'));
+    rpc.callAndForget('tabs.mainContentInit');
 }
 catch (err) {
     log.error({err}, 'Error during initialization');

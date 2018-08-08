@@ -13,7 +13,7 @@ module.exports = ({browserTabId, browserTabs, browserDownloads, rpc, scratchpadR
     let resultBrowserTabId = 0;
 
     const setRunState = ({state, iterationsLeft}) => {
-        rpc.call('setRunState', {state, iterationsLeft});
+        rpc.callAndForget('setRunState', {state, iterationsLeft});
     };
 
     const stopInterval = () => {

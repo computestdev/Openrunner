@@ -1,7 +1,7 @@
 'use strict';
 /* global document:false */
 const RunnerScratchpad = require('./RunnerScratchpad');
-const ContentRPC = require('../../../lib/ContentRPC');
+const ContentRPC = require('../../../lib/contentRpc/ContentRPC');
 const log = require('../../../lib/logger')({hostname: 'scratchpad-content', MODULE: 'scratchpad-content/scratchpad.html'});
 
 const rpc = new ContentRPC({
@@ -24,23 +24,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const interval = document.querySelector('.executeScriptInterval').valueAsNumber * 1000;
                     const iterations = document.querySelector('.executeScriptIterations').valueAsNumber || 1;
 
-                    rpc.call('executeScript', {content, interval, iterations})
-                    .catch(err => log.error({err}, 'Error while calling "executeScript"'));
+                    rpc.callAndForget('executeScript', {content, interval, iterations});
                 }
                 else if (classList.contains('stopScriptButton')) {
-                    rpc.call('stopScript')
-                    .catch(err => log.error({err}, 'Error while calling "stopScript"'));
+                    rpc.callAndForget('stopScript');
                 }
                 else if (classList.contains('openButton')) {
                     scratchpad.openDialog();
                 }
                 else if (classList.contains('saveButton')) {
-                    rpc.call('saveTextToFile', {
+                    rpc.callAndForget('saveTextToFile', {
                         content: scratchpad.getValue(),
                         mimeType: 'text/javascript',
                         filename: 'scratchpad.js',
-                    })
-                    .catch(err => log.error({err}, 'Error while calling "saveTextToFile"'));
+                    });
                 }
             }
             catch (err) {

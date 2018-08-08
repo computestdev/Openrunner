@@ -4,7 +4,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 const log = require('../../../lib/logger')({hostname: 'scratchpad-content', MODULE: 'scratchpad-content/scratchpad-breakdown.html'});
-const ContentRPC = require('../../../lib/ContentRPC');
+const ContentRPC = require('../../../lib/contentRpc/ContentRPC');
 
 const {PerformrRunnerResultGraph} = window;
 const rpc = new ContentRPC({
