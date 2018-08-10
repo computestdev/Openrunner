@@ -72,7 +72,7 @@ class ScratchpadRPC {
                 this._resetTabDataInitPromise(tabData);
             }
 
-            const rpc = this.tabContentRPC.reinitialize(browserTabId);
+            const rpc = this.tabContentRPC.reinitialize(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
             tabData.rpc = rpc;
 
             rpc.method('initialized', () => {

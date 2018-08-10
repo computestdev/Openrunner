@@ -91,11 +91,15 @@ class TabManager extends EventEmitter {
         this.myTabs.markClosed(browserTabId);
     }
 
-    handleRpcInitialize({browserTabId, rpc}) {
+    handleRpcInitialize({browserTabId, browserFrameId, rpc}) {
         const tab = this.myTabs.getByBrowserTabId(browserTabId);
 
         if (!tab) {
             return; // not my tab
+        }
+
+        if (browserFrameId) {
+            return; // todo
         }
 
         rpc.method('tabs.mainContentInit', () => this.handleTabInitialized(browserTabId));
@@ -151,7 +155,7 @@ class TabManager extends EventEmitter {
 
         this.myTabs.markUninitialized(browserTabId);
         this.myTabs.expectInitToken(browserTabId, 'tabs');
-        const rpc = this.tabContentRPC.get(browserTabId);
+        const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
 
         const files = [];
         const executeContentScript = (initToken, file) => {
@@ -185,7 +189,7 @@ class TabManager extends EventEmitter {
             const tab = this.myTabs.getByBrowserTabId(browserTabId);
             this.emit('initializedTabContent', {tab});
 
-            const rpc = this.tabContentRPC.get(browserTabId);
+            const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
             rpc.callAndForget('tabs.initializedTabContent');
         }
     }
@@ -235,7 +239,7 @@ class TabManager extends EventEmitter {
 
         const {browserTabId} = this.myTabs.get(id);
         await this.myTabs.waitForTabInitialization(browserTabId);
-        const rpc = this.tabContentRPC.get(browserTabId);
+        const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
 
         const rpcPromise = Promise.race([
             rpc.call({name: 'tabs.run', timeout: 0}, {code, arg, metadata}),
@@ -290,7 +294,7 @@ class TabManager extends EventEmitter {
                 continue;
             }
 
-            const rpc = this.tabContentRPC.get(browserTabId);
+            const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
             promises.push(
                 rpc.call({name: 'tabs.contentUnload', timeout: 5001})
                 .catch(err => log.warn({err, browserTabId}, 'Error calling tabs.contentUnload for tab'))

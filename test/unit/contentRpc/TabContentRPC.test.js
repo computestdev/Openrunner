@@ -81,12 +81,20 @@ describe('TabContentRPC', () => {
             eq(browserTabs.onRemoved.addListener.firstCall.args[0], browserTabs.onRemoved.removeListener.firstCall.args[0]);
         });
 
-        it('Should cleanup created rpc instances', () => {
+        it('Should cleanup created rpc instances', async () => {
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
-            const tabRpc = rpc.get('my tab id 123');
+            const tabRpc = rpc.get('my tab id 123', 0);
             rpc.detach();
-            isRejected(tabRpc.call('foo'), Error, /instance.*destroyed/i);
+            await isRejected(tabRpc.call('foo'), Error, /instance.*destroyed/i);
+        });
+
+        it('Should cleanup replaced rpc instances', async () => {
+            const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
+            rpc.attach();
+            const tabRpc0 = rpc.reinitialize('my tab id 123', 0);
+            rpc.reinitialize('my tab id 123', 0);
+            await isRejected(tabRpc0.call('foo'), Error, /instance.*destroyed/i);
         });
     });
 
@@ -95,16 +103,17 @@ describe('TabContentRPC', () => {
             const onRpcInitialize = sinon.spy();
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext', onRpcInitialize});
             rpc.attach();
-            const tabRpc = rpc.get(123);
+            const tabRpc = rpc.get(123, 0);
             isFunction(tabRpc.call);
             isFunction(tabRpc.method);
             isFunction(tabRpc.methods);
             eq(onRpcInitialize.callCount, 1);
             eq(onRpcInitialize.firstCall.args[0].rpc, tabRpc);
-            deq(onRpcInitialize.firstCall.args, [{
+            containSubset(onRpcInitialize.firstCall.args[0], {
                 browserTabId: 123,
-                rpc: tabRpc,
-            }]);
+                browserFrameId: 0,
+            });
+            eq(onRpcInitialize.firstCall.args[0].rpc, tabRpc);
         });
     });
 
@@ -112,7 +121,7 @@ describe('TabContentRPC', () => {
         it('Should validate its arguments', async () => {
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
-            const tabRpc = rpc.get('my tab id 123');
+            const tabRpc = rpc.get('my tab id 123', 0);
 
             await isRejected(tabRpc.call(123), Error, /first.*argument.*must.*string/i);
             await isRejected(tabRpc.call({timeout: 123}), Error, /first.*argument.*object.*name.*property/i);
@@ -121,7 +130,7 @@ describe('TabContentRPC', () => {
         it('Should send browser runtime messages and resolve with the result response', async () => {
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
-            const tabRpc = rpc.get('my tab id 123');
+            const tabRpc = rpc.get('my tab id 123', 0);
             const callPromise = tabRpc.call('foo', {bar: 123});
             await sendMessageWait.waitUntil(1);
 
@@ -137,6 +146,9 @@ describe('TabContentRPC', () => {
                     ],
                     rpcContext: 'fooContext',
                 },
+                {
+                    frameId: 0,
+                },
             ]);
 
             sendMessagePromises[0].resolve({result: 456});
@@ -146,7 +158,7 @@ describe('TabContentRPC', () => {
         it('Should send browser runtime messages and reject with the error response', async () => {
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
-            const tabRpc = rpc.get('my tab id 123');
+            const tabRpc = rpc.get('my tab id 123', 0);
             const callPromise = tabRpc.call({name: 'foo'}, {bar: 123});
             await sendMessageWait.waitUntil(1);
 
@@ -162,6 +174,9 @@ describe('TabContentRPC', () => {
                     ],
                     rpcContext: 'fooContext',
                 },
+                {
+                    frameId: 0,
+                },
             ]);
 
             sendMessagePromises[0].resolve({error: {name: 'FooError', message: 'Error from a unit test'}});
@@ -173,7 +188,7 @@ describe('TabContentRPC', () => {
             browserTabs.sendMessage = sinon.spy(() => undefined);
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
-            const tabRpc = rpc.get('my tab id 123');
+            const tabRpc = rpc.get('my tab id 123', 0);
             const callPromise = tabRpc.call({name: 'foo'}, {bar: 123});
             const err = await isRejected(callPromise, Error, /TabContentRPC.*remote.*call.*foo.*not.*receive.*response.*content/i);
             eq(err.name, 'RPCNoResponse');
@@ -182,7 +197,7 @@ describe('TabContentRPC', () => {
         it('Should reject with an error if sendMessage rejects with an error', async () => {
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
-            const tabRpc = rpc.get('my tab id 123');
+            const tabRpc = rpc.get('my tab id 123', 0);
             const callPromise = tabRpc.call({name: 'foo'}, {bar: 123});
             await sendMessageWait.waitUntil(1);
             sendMessagePromises[0].reject(Error('Another error from a unit test111'));
@@ -200,7 +215,7 @@ describe('TabContentRPC', () => {
             it('Should reject with an error if the response takes longer than the default timeout', async () => {
                 const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
                 rpc.attach();
-                const tabRpc = rpc.get('my tab id 123');
+                const tabRpc = rpc.get('my tab id 123', 0);
                 const callPromise = tabRpc.call('foo', {bar: 123});
                 clock.tick(15003);
                 await isRejected(callPromise, Error, /TabContentRPC.*remote.*call.*foo.*time.*out.*15003ms/i);
@@ -209,7 +224,7 @@ describe('TabContentRPC', () => {
             it('Should reject with an error if the response takes longer than the given timeout', async () => {
                 const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
                 rpc.attach();
-                const tabRpc = rpc.get('my tab id 123');
+                const tabRpc = rpc.get('my tab id 123', 0);
                 const callPromise = tabRpc.call({name: 'foo', timeout: 123}, {bar: 456});
                 clock.tick(123);
                 await isRejected(callPromise, Error, /TabContentRPC.*remote.*call.*foo.*time.*out.*123ms/i);
@@ -218,7 +233,7 @@ describe('TabContentRPC', () => {
             it('Should not crash if a result response is returned after the timeout', async () => {
                 const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
                 rpc.attach();
-                const tabRpc = rpc.get('my tab id 123');
+                const tabRpc = rpc.get('my tab id 123', 0);
                 const callPromise = tabRpc.call({name: 'foo', timeout: 123}, {bar: 456});
                 clock.tick(123);
                 await isRejected(callPromise, Error, /TabContentRPC.*remote.*call.*foo.*time.*out.*123ms/i);
@@ -228,7 +243,7 @@ describe('TabContentRPC', () => {
             it('Should not crash if sendMessage rejects after the timeout', async () => {
                 const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
                 rpc.attach();
-                const tabRpc = rpc.get('my tab id 123');
+                const tabRpc = rpc.get('my tab id 123', 0);
                 const callPromise = tabRpc.call({name: 'foo', timeout: 123}, {bar: 456});
                 clock.tick(123);
                 await isRejected(callPromise, Error, /TabContentRPC.*remote.*call.*foo.*time.*out.*123ms/i);
@@ -237,12 +252,42 @@ describe('TabContentRPC', () => {
         });
     });
 
+    describe('callAndForget()', () => {
+        it('Should ignore rejections', async () => {
+            const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
+            rpc.attach();
+            const tabRpc = rpc.get('my tab id 123', 0);
+            const returnValue = tabRpc.callAndForget({name: 'foo'}, {bar: 123});
+            eq(returnValue, undefined);
+            await sendMessageWait.waitUntil(1);
+
+            const sendMessageArgs = browserTabs.sendMessage.firstCall.args;
+            deq(sendMessageArgs, [
+                'my tab id 123',
+                {
+                    method: 'foo',
+                    params: [
+                        {
+                            bar: 123,
+                        },
+                    ],
+                    rpcContext: 'fooContext',
+                },
+                {
+                    frameId: 0,
+                },
+            ]);
+
+            sendMessagePromises[0].resolve({error: {name: 'FooError', message: 'Error from a unit test'}});
+        });
+    });
+
     describe('method registration and handling of incoming messages', () => {
         it('Should call registered methods when a browser runtime message has been received and return the resolved result', async () => {
             const onRpcInitialize = sinon.spy(({rpc}) => rpc.method('foo', x => Promise.resolve(x * 3)));
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext', onRpcInitialize});
             rpc.attach();
-            rpc.reinitialize('my tab id 1234');
+            rpc.reinitialize('my tab id 1234', 0);
             eq(onRpcInitialize.callCount, 1);
 
             const onMessageCallback = browserRuntime.onMessage.addListener.firstCall.args[0];
@@ -264,7 +309,7 @@ describe('TabContentRPC', () => {
 
             eq(typeof messageCallbackPromise.then, 'function');
             deq(await messageCallbackPromise, {result: 369});
-            eq(rpc.get('my tab id 1234'), onRpcInitialize.firstCall.args[0].rpc);
+            eq(rpc.get('my tab id 1234', 0), onRpcInitialize.firstCall.args[0].rpc);
             eq(onRpcInitialize.callCount, 1);
         });
 
@@ -279,8 +324,11 @@ describe('TabContentRPC', () => {
 
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext', onRpcInitialize});
             rpc.attach();
-            rpc.reinitialize('my tab id 1234');
+            rpc.reinitialize('my tab id 1234', 0);
             eq(onRpcInitialize.callCount, 1);
+            rpc.reinitialize('my tab id 1234', 0); // calling it a second time should not cause any issues
+            eq(onRpcInitialize.callCount, 2);
+
 
             const onMessageCallback = browserRuntime.onMessage.addListener.firstCall.args[0];
             const messageCallbackPromise = onMessageCallback(
@@ -307,8 +355,8 @@ describe('TabContentRPC', () => {
                 message: 'Error from a test! 123',
             });
 
-            eq(rpc.get('my tab id 1234'), onRpcInitialize.firstCall.args[0].rpc);
-            eq(onRpcInitialize.callCount, 1);
+            eq(rpc.get('my tab id 1234', 0), onRpcInitialize.secondCall.args[0].rpc);
+            eq(onRpcInitialize.callCount, 2);
         });
 
         it('Should automatically create a TabContentRPCTab instance when a message is received for a tab', async () => {
@@ -317,27 +365,56 @@ describe('TabContentRPC', () => {
             rpc.attach();
             // note: the id 'my tab id 1234' is not initialized before receiving the message
 
-            const onMessageCallback = browserRuntime.onMessage.addListener.firstCall.args[0];
-            const messageCallbackPromise = onMessageCallback(
-                {
-                    method: 'foo',
-                    params: [123],
-                    rpcContext: 'fooContext',
-                },
-                {
-                    id: 'openrunner@computest.nl',
-                    tab: {
-                        id: 'my tab id 1234',
+            {
+                const onMessageCallback = browserRuntime.onMessage.addListener.firstCall.args[0];
+                const messageCallbackPromise = onMessageCallback(
+                    {
+                        method: 'foo',
+                        params: [123],
+                        rpcContext: 'fooContext',
                     },
-                    frameId: 0,
-                    url: 'https://computest.nl/',
-                },
-            );
+                    {
+                        id: 'openrunner@computest.nl',
+                        tab: {
+                            id: 'my tab id 1234',
+                        },
+                        frameId: 0,
+                        url: 'https://computest.nl/',
+                    },
+                );
 
-            eq(typeof messageCallbackPromise.then, 'function');
-            deq(await messageCallbackPromise, {result: 369});
-            eq(rpc.get('my tab id 1234'), onRpcInitialize.firstCall.args[0].rpc);
-            eq(onRpcInitialize.callCount, 1);
+                eq(typeof messageCallbackPromise.then, 'function');
+                deq(await messageCallbackPromise, {result: 369});
+                containSubset(onRpcInitialize.firstCall.args[0].rpc, {browserTabId: 'my tab id 1234', browserFrameId: 0});
+                eq(rpc.get('my tab id 1234', 0), onRpcInitialize.firstCall.args[0].rpc);
+                eq(onRpcInitialize.callCount, 1);
+            }
+            // again, but now for something like an <iframe> (frameId > 0)
+            {
+                const onMessageCallback = browserRuntime.onMessage.addListener.firstCall.args[0];
+                const messageCallbackPromise = onMessageCallback(
+                    {
+                        method: 'foo',
+                        params: [122],
+                        rpcContext: 'fooContext',
+                    },
+                    {
+                        id: 'openrunner@computest.nl',
+                        tab: {
+                            id: 'my tab id 1234',
+                        },
+                        frameId: 1,
+                        url: 'https://computest.nl/',
+                    },
+                );
+
+                eq(typeof messageCallbackPromise.then, 'function');
+                deq(await messageCallbackPromise, {result: 366});
+                containSubset(onRpcInitialize.secondCall.args[0].rpc, {browserTabId: 'my tab id 1234', browserFrameId: 1});
+                eq(rpc.get('my tab id 1234', 1), onRpcInitialize.secondCall.args[0].rpc);
+                eq(onRpcInitialize.callCount, 2);
+            }
+
         });
 
         it('Should ignore browser runtime messages that did not originate from our content script and rpc context', async () => {
@@ -359,24 +436,6 @@ describe('TabContentRPC', () => {
                             id: 'my tab id 1234',
                         },
                         frameId: 0,
-                        url: 'https://computest.nl/',
-                    },
-                );
-                eq(messageCallbackPromise, undefined);
-            }
-            {
-                const messageCallbackPromise = onMessageCallback(
-                    {
-                        method: 'foo',
-                        params: [674],
-                        rpcContext: 'fooContext',
-                    },
-                    {
-                        id: 'openrunner@computest.nl',
-                        tab: {
-                            id: 'my tab id 1234',
-                        },
-                        frameId: 123, // invalid
                         url: 'https://computest.nl/',
                     },
                 );
@@ -433,27 +492,29 @@ describe('TabContentRPC', () => {
 
             eq(browserTabs.sendMessage.callCount, 0);
             eq(onRpcInitialize.callCount, 0);
-            eq(rpc.get('my tab id 1234'), onRpcInitialize.firstCall.args[0].rpc);
+            eq(rpc.get('my tab id 1234', 0), onRpcInitialize.firstCall.args[0].rpc);
         });
 
-        it('Should cleanup the rpc instance if a tab gets removed', () => {
+        it('Should cleanup the rpc instance if a tab gets removed', async () => {
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
-            const tabRpc = rpc.get('my tab id 123');
+            const tabRpc = rpc.get('my tab id 123', 0);
+            const tabRpcFrame = rpc.get('my tab id 123', 10);
             const onRemoveListener = browserTabs.onRemoved.addListener.firstCall.args[0];
             onRemoveListener('my tab id 123', {});
 
-            isRejected(tabRpc.call('foo'), Error, /instance.*destroyed/i);
-            eq(rpc.rpcByTabBrowserId.size, 0);
+            await isRejected(tabRpc.call('foo'), Error, /instance.*destroyed/i);
+            await isRejected(tabRpcFrame.call('foo'), Error, /instance.*destroyed/i);
+            eq(rpc.rpcMap.size, 0);
         });
 
         it('Should not crash if an unrelated tab gets removed', () => {
             const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext'});
             rpc.attach();
             const onRemoveListener = browserTabs.onRemoved.addListener.firstCall.args[0];
-            eq(rpc.rpcByTabBrowserId.size, 0);
+            eq(rpc.rpcMap.size, 0);
             onRemoveListener('my tab id 123', {});
-            eq(rpc.rpcByTabBrowserId.size, 0);
+            eq(rpc.rpcMap.size, 0);
         });
     });
 });

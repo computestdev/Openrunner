@@ -127,6 +127,28 @@ describe('ContentRPC', () => {
             eq(err.name, 'RPCRequestError<FooError>');
         });
 
+        it('Should not crash if the error response is falsy', async () => {
+            const rpc = new ContentRPC({browserRuntime, context: 'fooContext'});
+            rpc.attach();
+            const callPromise = rpc.call({name: 'foo'});
+            await sendMessageWait.waitUntil(1);
+
+            const sendMessageArgs = browserRuntime.sendMessage.firstCall.args;
+            deq(sendMessageArgs, [
+                'openrunner@computest.nl',
+                {
+                    method: 'foo',
+                    params: [],
+                    rpcContext: 'fooContext',
+                },
+                {},
+            ]);
+
+            sendMessagePromises[0].resolve({error: null});
+            const err = await isRejected(callPromise);
+            eq(err, null);
+        });
+
         it('Should reject with an error if there are 0 listeners that respond with a promise', async () => {
             browserRuntime.sendMessage = sinon.spy(() => undefined);
             const rpc = new ContentRPC({browserRuntime, context: 'fooContext'});
@@ -177,6 +199,33 @@ describe('ContentRPC', () => {
                 await isRejected(callPromise, Error, /ContentRPC.*remote.*call.*foo.*time.*out.*123ms/i);
                 sendMessagePromises[0].reject(Error('Error from test!!'));
             });
+        });
+    });
+
+    describe('callAndForget()', () => {
+        it('Should ignore rejections', async () => {
+            const rpc = new ContentRPC({browserRuntime, context: 'fooContext'});
+            rpc.attach();
+            const returnValue = rpc.callAndForget({name: 'foo'}, {bar: 123});
+            eq(returnValue, undefined); // not a promise
+            await sendMessageWait.waitUntil(1);
+
+            const sendMessageArgs = browserRuntime.sendMessage.firstCall.args;
+            deq(sendMessageArgs, [
+                'openrunner@computest.nl',
+                {
+                    method: 'foo',
+                    params: [
+                        {
+                            bar: 123,
+                        },
+                    ],
+                    rpcContext: 'fooContext',
+                },
+                {},
+            ]);
+
+            sendMessagePromises[0].resolve({error: {name: 'FooError', message: 'Error from a unit test'}});
         });
     });
 
