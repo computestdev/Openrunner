@@ -56,7 +56,7 @@ class ScriptWindow extends EventEmitter {
         this.firstTabCreation = true;
         this.openPromise = this.browserWindows.create({
             incognito: true,
-            state: 'maximized',
+            state: 'normal',
             url: 'about:blank',
         }).then(window => window.id);
 
@@ -64,6 +64,10 @@ class ScriptWindow extends EventEmitter {
         const {tabs: windowTabs} = await this.browserWindows.get(browserWindowId, {populate: true});
         const firstTabId = windowTabs[0].id;
         await this._gatherBrowserWindowDetails(browserWindowId, firstTabId);
+
+        // maximize after looking up the view port measurements in _gatherBrowserWindowDetails
+        // otherwise we are off by a few pixels on windows
+        await this.browserWindows.update(browserWindowId, {state: 'maximized'});
 
         log.debug({browserWindowId, firstTabId, sizeMinusViewport: this.sizeMinusViewport}, 'Created a new window');
 

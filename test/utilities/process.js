@@ -10,12 +10,16 @@ setInterval(() => {
 }, 30000);
 
 const ignoreExitSignals = process.argv[2] === 'IGNORE_EXIT_SIGNALS';
+const logExitSignals = process.argv[2] === 'LOG_EXIT_SIGNALS';
 
+// note: process.on('SIGTERM', ...) has no effect on windows
 if (ignoreExitSignals) {
     process.on('SIGINT', () => process.stderr.write('IGNORED SIGINT\n'));
     process.on('SIGTERM', () => process.stderr.write('IGNORED SIGTERM\n'));
 }
-else {
+else if (logExitSignals) {
+    // note: on the parent process, `childProcess.on('exit', (code, signal) => ...)`
+    // will have `signal` set to `null` instead of (for example) `SIGTERM` because of the code below:
     process.on('SIGINT', () => process.stderr.write('RECEIVED SIGINT\n', () => process.exit(130)));
     process.on('SIGTERM', () => process.stderr.write('RECEIVED SIGTERM\n', () => process.exit(143)));
 }

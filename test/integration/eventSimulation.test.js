@@ -1,7 +1,7 @@
 'use strict';
 const {describe, specify} = require('mocha-sugar-free');
 require('chai').use(require('chai-subset'));
-const {assert: {lengthOf, containSubset, strictEqual: eq, isAtLeast}} = require('chai');
+const {assert: {lengthOf, containSubset, strictEqual: eq, isAtLeast, approximately}} = require('chai');
 
 const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 const keyInputTestCases = require('./testCases/keyInput.json');
@@ -49,10 +49,6 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                 bubbles: true,
                 cancelable: true,
                 composed: true,
-                screenX: 142 + 200 / 2,
-                screenY: 142 + 20 / 2 + 72 - 100,
-                clientX: 142 + 200 / 2,
-                clientY: 142 + 20 / 2 - 100,
                 ctrlKey: false,
                 shiftKey: false,
                 altKey: false,
@@ -61,6 +57,10 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                 buttons: 1,
                 relatedTarget: null,
             });
+            approximately(event.screenX, 142 + 200 / 2, 1, 'event.screenX');
+            approximately(event.screenY, 142 + 20 / 2 + 72 - 100, 1, 'event.screenY');
+            approximately(event.clientX, 142 + 200 / 2, 1, 'event.clientX');
+            approximately(event.clientY, 142 + 20 / 2 - 100, 1, 'event.clientY');
         }
 
         isAtLeast(events[1].timeStamp - events[0].timeStamp, 250);

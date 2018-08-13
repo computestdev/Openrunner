@@ -9,8 +9,12 @@ const {describe, it, beforeEach, afterEach} = require('mocha-sugar-free');
 const Process = require('../../../lib/node/Process');
 const Wait = require('../../utilities/Wait');
 
+const IS_WINDOWS = process.platform === 'win32';
+
 const {env: testRunnerEnv} = process;
-const PROCESS_STUB_PATH = require.resolve('../../utilities/process.js');
+const PROCESS_STUB_PATH = IS_WINDOWS
+    ? require.resolve('../../utilities/process.js.cmd')
+    : require.resolve('../../utilities/process.js');
 
 describe('node/Process', {timeout: 10000, slow: 5000}, () => {
     let process;
@@ -128,7 +132,55 @@ describe('node/Process', {timeout: 10000, slow: 5000}, () => {
             await isRejected(process.start(), Error, /process.*already.*start/i);
         });
 
-        it('Should emit events for each line received on STDOUT and STDERR', async () => {
+        it('Should emit events for each line received on STDOUT and STDERR', async t => {
+            process = new Process({
+                executablePath: PROCESS_STUB_PATH,
+                args: ['321', 'an argument with spaces'],
+                env: {
+                    FOO: '123',
+                    BAR: 'env with spaces',
+                },
+            });
+            attachOutputListeners();
+
+            await process.start();
+            await waitForOutput.waitUntil(6);
+
+            deq(output[0], {line: 'HELLO!', type: 'STDOUT'});
+
+            const argv = JSON.parse(output[1].line);
+            lengthOf(argv, 4);
+            match(argv[0], /node(?:\.exe)?$/);
+            match(argv[1], /process\.js$/);
+            eq(argv[2], '321');
+            eq(argv[3], 'an argument with spaces');
+
+            const env = JSON.parse(output[2].line);
+            eq(env.FOO, '123');
+            eq(env.BAR, 'env with spaces');
+            eq(env.HOME, testRunnerEnv.HOME, 'should inherit environment variables');
+
+            deq(output.slice(3), [
+                {
+                    line: 'SOMETHING TO STDOUT',
+                    type: 'STDOUT',
+                },
+                {
+                    line: 'SOMETHING ELSE TO STDOUT',
+                    type: 'STDOUT',
+                },
+                {
+                    line: 'SOMETHING TO STDERR',
+                    type: 'STDERR',
+                },
+            ]);
+        });
+
+        it('Should emit events for each line received on STDOUT, STDERR and FD3', async t => {
+            if (IS_WINDOWS) {
+                t.skip(); // FD3 is not supported on windows
+            }
+
             process = new Process({
                 executablePath: PROCESS_STUB_PATH,
                 args: ['FD3', 'an argument with spaces'],
@@ -147,7 +199,7 @@ describe('node/Process', {timeout: 10000, slow: 5000}, () => {
 
             const argv = JSON.parse(output[1].line);
             lengthOf(argv, 4);
-            match(argv[0], /node$/);
+            match(argv[0], /node(?:\.exe)?$/);
             match(argv[1], /process\.js$/);
             eq(argv[2], 'FD3');
             eq(argv[3], 'an argument with spaces');
@@ -190,16 +242,40 @@ describe('node/Process', {timeout: 10000, slow: 5000}, () => {
             await process.start();
             await waitForOutput.waitUntil(1);
             await process.stop();
+
+            lengthOf(stopEvents, 1);
+            deq(stopEvents[0], {error: null, code: null, signal: 'SIGTERM'});
+        });
+
+        it('Should kill the process if running using SIGTERM on linux', async t => {
+            if (IS_WINDOWS) {
+                t.skip();
+            }
+
+            process = new Process({
+                executablePath: PROCESS_STUB_PATH,
+                args: ['LOG_EXIT_SIGNALS'],
+            });
+            const stopEvents = [];
+            process.on('stopped', (reason) => stopEvents.push(reason));
+            attachOutputListeners();
+            await process.start();
+            await waitForOutput.waitUntil(1);
+            await process.stop();
             const sigtermLines = output.filter(({line}) => line === 'RECEIVED SIGTERM');
             lengthOf(sigtermLines, 1);
             lengthOf(stopEvents, 1);
             deq(stopEvents[0], {error: null, code: 143, signal: null});
         });
 
-        it('Should do nothing if the process is already being stopped', async () => {
+        it('Should do nothing if the process is already being stopped', async t => {
+            if (IS_WINDOWS) {
+                t.skip();
+            }
+
             process = new Process({
                 executablePath: PROCESS_STUB_PATH,
-                args: [],
+                args: ['LOG_EXIT_SIGNALS'],
             });
             const stopEvents = [];
             process.on('stopped', (reason) => stopEvents.push(reason));
@@ -217,10 +293,14 @@ describe('node/Process', {timeout: 10000, slow: 5000}, () => {
             deq(stopEvents[0], {error: null, code: 143, signal: null});
         });
 
-        it('Should do nothing if the process is already being stopped, but still wait for the termination', async () => {
+        it('Should do nothing if the process is already being stopped, but still wait for the termination', async t => {
+            if (IS_WINDOWS) {
+                t.skip();
+            }
+
             process = new Process({
                 executablePath: PROCESS_STUB_PATH,
-                args: [],
+                args: ['LOG_EXIT_SIGNALS'],
             });
             const stopEvents = [];
             process.on('stopped', (reason) => stopEvents.push(reason));
@@ -249,7 +329,11 @@ describe('node/Process', {timeout: 10000, slow: 5000}, () => {
             lengthOf(stopEvents, 0);
         });
 
-        it('Should forcefully terminate the process if if does not quit cleanly within a timeout', async () => {
+        it('Should forcefully terminate the process if if does not quit cleanly within a timeout', async t => {
+            if (IS_WINDOWS) {
+                t.skip();
+            }
+
             process = new Process({
                 executablePath: [PROCESS_STUB_PATH, 'IGNORE_EXIT_SIGNALS'],
                 args: [],
