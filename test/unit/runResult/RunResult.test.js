@@ -428,6 +428,7 @@ describe('RunResult', () => {
                         metaData: {},
                         children: [],
                         tabId: null,
+                        frameId: null,
                         tabContentId: null,
                     },
                     {
@@ -454,6 +455,7 @@ describe('RunResult', () => {
                         metaData: {},
                         children: [],
                         tabId: null,
+                        frameId: null,
                         tabContentId: null,
                     },
                     {
@@ -480,6 +482,7 @@ describe('RunResult', () => {
                         metaData: {},
                         children: [],
                         tabId: null,
+                        frameId: null,
                         tabContentId: null,
                     },
                 ],
@@ -622,6 +625,7 @@ describe('RunResult', () => {
                         metaData: {},
                         children: [],
                         tabId: null,
+                        frameId: null,
                         tabContentId: null,
                     },
                     {
@@ -648,6 +652,7 @@ describe('RunResult', () => {
                         metaData: {},
                         children: [],
                         tabId: null,
+                        frameId: null,
                         tabContentId: null,
                     },
                     {
@@ -674,6 +679,7 @@ describe('RunResult', () => {
                         metaData: {},
                         children: [],
                         tabId: null,
+                        frameId: null,
                         tabContentId: null,
                     },
                 ],

@@ -1,12 +1,118 @@
 'use strict';
 const {generate: generateShortId} = require('shortid');
+const SymbolTree = require('symbol-tree');
+const {assert} = require('chai');
+
+const frameTree = new SymbolTree();
+const NULL_FRAME_ID = -1; // same as WebExtension
+const TOP_FRAME_ID = 0;
+
+class Frame {
+    constructor(tab, browserFrameId) {
+        const self = this;
+        frameTree.initialize(this);
+        this.browserFrameId = browserFrameId;
+        this.tab = tab;
+        this.initCount = 0;
+        this.initMarked = false;
+        this.destroyed = false;
+        this.currentContentId = null;
+        this.pendingInitTokens = new Set();
+        this.public = {
+            get browserFrameId() {
+                return self.browserFrameId;
+            },
+
+            get parentFrame() {
+                const parent = self.parentFrame;
+                return parent && parent.public;
+            },
+
+            get hasParentFrame() {
+                return self.hasParentFrame;
+            },
+
+            get parentBrowserFrameId() {
+                return self.parentBrowserFrameId;
+            },
+
+            get tab() {
+                return self.tab.public;
+            },
+
+            /**
+             * Has this frame been destroyed? This means that the parent frame has navigated away
+             * @return {boolean}
+             */
+            get destroyed() {
+                return self.destroyed;
+            },
+
+            /**
+             * Is this frame currently initialized? If `false`: the frame has just been created, or is busy navigating to a new URL
+             * @return {boolean}
+             */
+            get initialized() {
+                return self.initialized;
+            },
+
+            /**
+             * An unique ID which represents a single frame-content instance. Navigating to a new URL resets this id.
+             * This id might be null before the first navigation
+             * @return {?string}
+             */
+            get currentContentId() {
+                return self.currentContentId;
+            },
+
+            isChild(otherFrame) {
+                return self.isChild(otherFrame);
+            },
+        };
+        Object.freeze(this.public);
+        Object.seal(this);
+    }
+
+    /**
+     * @return {?Frame}
+     */
+    get parentFrame() {
+        return frameTree.parent(this);
+    }
+
+    get hasParentFrame() {
+        return Boolean(this.parentFrame);
+    }
+
+    get parentBrowserFrameId() {
+        const parent = this.parentFrame;
+        return parent ? parent.browserFrameId : NULL_FRAME_ID;
+    }
+
+    get initialized() {
+        return Boolean(!this.tab.closed && !this.destroyed && this.initMarked && this.pendingInitTokens.size === 0);
+    }
+
+    isChild(otherFrame) {
+        return Boolean(otherFrame && otherFrame.parentBrowserFrameId === this.browserFrameId);
+    }
+}
 
 class Tab {
     constructor(id, browserTabId) {
         const self = this;
-        this.public = Object.freeze({
-            id,
-            browserTabId,
+        this.id = id;
+        this.browserTabId = browserTabId;
+        this.frames = new Map(); // browserFrameId => Frame
+        this.closed = false;
+        this.public = {
+            get id() {
+                return self.id;
+            },
+
+            get browserTabId() {
+                return self.browserTabId;
+            },
             /**
              * Has this tab been closed?
              * @return {boolean}
@@ -30,25 +136,71 @@ class Tab {
             get currentContentId() {
                 return self.currentContentId;
             },
-        });
-        this.initCount = 0;
-        this.initMarked = false;
-        this.currentContentId = null;
-        this.pendingInitTokens = new Set();
-        this.closed = false;
+
+            hasFrame(browserFrameId) {
+                return self.hasFrame(browserFrameId);
+            },
+
+            getFrame(browserFrameId) {
+                const frame = self.getFrame(browserFrameId);
+                return frame && frame.public;
+            },
+
+            get topFrame() {
+                return this.getFrame(TOP_FRAME_ID);
+            },
+        };
+        Object.freeze(this.public);
         Object.seal(this);
     }
 
-    get id() {
-        return this.public.id;
+    hasFrame(browserFrameId) {
+        return this.frames.has(browserFrameId);
     }
 
-    get browserTabId() {
-        return this.public.browserTabId;
+    /**
+     * @param {number} browserFrameId
+     * @return {?Frame}
+     */
+    getFrame(browserFrameId) {
+        return this.frames.get(browserFrameId) || null;
     }
 
-    get initialized() {
-        return Boolean(!this.closed && this.initMarked && this.pendingInitTokens.size === 0);
+    /**
+     * @param {number} parentBrowserFrameId
+     * @param {number} browserFrameId
+     * @return {?Frame}
+     */
+    createFrame(parentBrowserFrameId, browserFrameId) {
+        assert.isFalse(this.hasFrame(browserFrameId), 'Tab#createFrame(): Given browserFrameId already exists');
+        const frame = new Frame(this, browserFrameId);
+
+        // -1 is used by the WebExtension api to indicate that there is no parent
+        if (parentBrowserFrameId >= 0) {
+            const parent = this.getFrame(parentBrowserFrameId);
+            assert.isOk(parent, 'Tab#createFrame(): Given parentBrowserFrameId does not exist');
+            frameTree.appendChild(parent, frame);
+        }
+
+        this.frames.set(browserFrameId, frame);
+        return this.getFrame(browserFrameId);
+    }
+
+    destroyFrame(browserFrameId, {descendantsOnly = false} = {}) {
+        const topFrame = this.getFrame(browserFrameId);
+        if (!topFrame) {
+            return;
+        }
+
+        for (const frame of frameTree.treeIterator(topFrame)) {
+            if (descendantsOnly && frame === topFrame) {
+                continue;
+            }
+
+            frame.destroyed = true;
+            this.frames.delete(browserFrameId);
+            frameTree.remove(frame);
+        }
     }
 }
 
@@ -67,7 +219,15 @@ class TabTracker {
         }
     }
 
-    register(browserTabId) {
+    * frames() {
+        for (const tab of this.tabs.values()) {
+            for (const frame of tab.frames.values()) {
+                yield frame.public;
+            }
+        }
+    }
+
+    registerTab(browserTabId) {
         {
             const tab = this.tabsByBrowserId.get(browserTabId);
             if (tab) {
@@ -75,20 +235,50 @@ class TabTracker {
             }
         }
 
-        const id = generateShortId();
+        const id = generateShortId(); // this id is visible to openrunner scripts, the browserTabId is not
         const tab = new Tab(id, browserTabId);
         this.tabs.set(id, tab);
         this.tabsByBrowserId.set(browserTabId, tab);
         return tab.public;
     }
 
-    has(id) {
-        return this.tabs.has(id);
+    registerFrame(browserTabId, parentBrowserFrameId, browserFrameId) {
+        const tab = this.tabsByBrowserId.get(browserTabId);
+        assert.isOk(tab, 'registerFrame(): the given browserTabId has not been registered');
+
+        {
+            const frame = tab.getFrame(browserFrameId);
+            if (frame) {
+                assert.strictEqual(
+                    frame.parentBrowserFrameId,
+                    parentBrowserFrameId,
+                    'TabTracker#registerFrame called multiple times with different values for parentBrowserFrameId'
+                );
+
+                return frame.public;
+            }
+        }
+
+        const frame = tab.createFrame(parentBrowserFrameId, browserFrameId);
+        return frame.public;
     }
 
-    get(id) {
-        const tab = this.tabs.get(id);
+    hasTab(tabId) {
+        return this.tabs.has(tabId);
+    }
+
+    getTab(tabId) {
+        const tab = this.tabs.get(tabId);
         return tab ? tab.public : null;
+    }
+
+    _getFramePrivate(browserTabId, browserFrameId) {
+        const tab = this.tabsByBrowserId.get(browserTabId);
+        if (!tab) {
+            return null;
+        }
+
+        return tab.getFrame(browserFrameId);
     }
 
     hasBrowserTabId(browserTabId) {
@@ -100,90 +290,100 @@ class TabTracker {
         return tab ? tab.public : null;
     }
 
-    markUninitialized(browserTabId) {
+    markUninitialized(browserTabId, browserFrameId) {
         const tab = this.tabsByBrowserId.get(browserTabId);
         if (!tab) {
             return;
         }
 
-        tab.initMarked = false;
+        const frame = tab.getFrame(browserFrameId);
+        if (!frame) {
+            return;
+        }
+
+        frame.initMarked = false;
 
         for (const resolver of this.waitForTabUninitializationResolvers) {
-            if (resolver.browserTabId === browserTabId) {
+            if (resolver.browserTabId === browserTabId && resolver.browserFrameId === browserFrameId) {
                 this.waitForTabUninitializationResolvers.delete(resolver);
                 resolver.resolve();
             }
         }
+
+        // This frame is navigating to somewhere else. All the DOM nodes will be destroyed, including the iframes
+        tab.destroyFrame(browserFrameId, {descendantsOnly: true});
     }
 
-    expectInitToken(browserTabId, initToken) {
-        const tab = this.tabsByBrowserId.get(browserTabId);
-        if (!tab) {
-            throw Error('expectInitToken(): the given browserTabId has not been registered');
-        }
-
-        tab.pendingInitTokens.add(initToken);
+    expectInitToken(browserTabId, browserFrameId, initToken) {
+        const frame = this._getFramePrivate(browserTabId, browserFrameId);
+        assert.isOk(frame, 'expectInitToken(): the given browserTabId and browserFrameId combination has not been registered');
+        frame.pendingInitTokens.add(initToken);
     }
 
-    markInitialized(browserTabId, initToken) {
-        const tab = this.tabsByBrowserId.get(browserTabId);
-        if (!tab) {
-            throw Error('markInitialized(): the given browserTabId has not been registered');
-        }
-
-        const wasInitialized = tab.initialized;
-        const wasInitMarked = tab.initMarked;
-        tab.initMarked = true;
-        tab.pendingInitTokens.delete(initToken);
+    markInitialized(browserTabId, browserFrameId, initToken) {
+        const frame = this._getFramePrivate(browserTabId, browserFrameId);
+        assert.isOk(frame, 'markInitialized(): the given browserTabId and browserFrameId combination has not been registered');
+        const wasInitialized = frame.initialized;
+        const wasInitMarked = frame.initMarked;
+        frame.initMarked = true;
+        frame.pendingInitTokens.delete(initToken);
 
         if (!wasInitMarked) {
-            tab.currentContentId = generateShortId();
+            frame.currentContentId = generateShortId();
         }
 
-        if (tab.initialized) {
+        if (frame.initialized) {
             if (!wasInitialized) {
-                ++tab.initCount;
+                ++frame.initCount;
             }
 
-            const {initCount} = tab;
+            const {initCount} = frame;
             for (const resolver of this.waitForTabInitializationResolvers) {
-                if (resolver.browserTabId === browserTabId && initCount >= resolver.expectedInitCount) {
+                if (resolver.browserTabId === browserTabId &&
+                    resolver.browserFrameId === browserFrameId &&
+                    initCount >= resolver.expectedInitCount
+                ) {
                     this.waitForTabInitializationResolvers.delete(resolver);
                     resolver.resolve();
                 }
             }
         }
 
-        return tab.initialized;
+        return frame.initialized;
     }
 
-    async waitForTabInitialization(browserTabId) {
-        const tab = this.tabsByBrowserId.get(browserTabId);
-        if (tab && tab.initialized) {
+    async waitForTabContentInitialization(browserTabId, browserFrameId) {
+        const frame = this._getFramePrivate(browserTabId, browserFrameId);
+        if (frame && frame.initialized) {
             return;
         }
 
-        await this.waitForNextTabInitialization(browserTabId);
+        await this.waitForNextTabContentInitialization(browserTabId, browserFrameId);
     }
 
-    async waitForNextTabInitialization(browserTabId) {
-        const tab = this.tabsByBrowserId.get(browserTabId);
-        const initCount = tab ? tab.initCount : 0;
+    async waitForNextTabContentInitialization(browserTabId, browserFrameId) {
+        const frame = this._getFramePrivate(browserTabId, browserFrameId);
+        const initCount = frame ? frame.initCount : 0;
 
         await new Promise(resolve => this.waitForTabInitializationResolvers.add({
             browserTabId,
+            browserFrameId,
             resolve,
             expectedInitCount: initCount + 1,
         }));
     }
 
-    async waitForTabUninitialization(browserTabId) {
-        const tab = this.tabsByBrowserId.get(browserTabId);
-        if (!tab || !tab.initialized) {
+    async waitForTabUninitialization(browserTabId, browserFrameId) {
+        const frame = this._getFramePrivate(browserTabId, browserFrameId);
+        if (!frame || !frame.initialized) {
             return;
         }
 
-        await new Promise(resolve => this.waitForTabUninitializationResolvers.add({browserTabId, resolve}));
+        await new Promise(resolve => this.waitForTabUninitializationResolvers.add({
+            browserTabId,
+            browserFrameId,
+            resolve,
+        }));
     }
 
     markClosed(browserTabId) {
@@ -193,6 +393,7 @@ class TabTracker {
         }
 
         tab.closed = true;
+        this.markUninitialized(browserTabId, 0);
     }
 }
 

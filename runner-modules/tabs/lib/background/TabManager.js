@@ -1,14 +1,17 @@
 'use strict';
 const EventEmitter = require('events').EventEmitter;
+const {assert} = require('chai');
 
 const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'tabs/background/TabManager'});
-const {contentScriptAbortedError, illegalStateError} = require('../../../../lib/scriptErrors');
+const {contentScriptAbortedError} = require('../../../../lib/scriptErrors');
 const ScriptWindow = require('./ScriptWindow');
 const TabTracker = require('./TabTracker');
 const TabContentRPC = require('../../../../lib/contentRpc/TabContentRPC');
 const {resolveScriptContentEvalStack} = require('../../../../lib/errorParsing');
 const {mergeCoverageReports} = require('../../../../lib/mergeCoverage');
 const WaitForEvent = require('../../../../lib/WaitForEvent');
+
+const TOP_FRAME_ID = 0;
 
 class TabManager extends EventEmitter {
     constructor({runtime: browserRuntime, windows: browserWindows, tabs: browserTabs, webNavigation: browserWebNavigation}) {
@@ -27,16 +30,16 @@ class TabManager extends EventEmitter {
             context: 'runner-modules/tabs',
             onRpcInitialize: obj => this.handleRpcInitialize(obj),
         });
-        this._navigationCommittedWait = new WaitForEvent(); // key is the browserTabId
+        this._navigationCommittedWait = new WaitForEvent(); // key is [browserTabId, browserFrameId]
 
         this.handleTabCreated = this.handleTabCreated.bind(this);
         this.handleWebNavigationOnBeforeNavigate = this.handleWebNavigationOnBeforeNavigate.bind(this);
         this.handleWebNavigationOnCommitted = this.handleWebNavigationOnCommitted.bind(this);
-        this.handleTabInitialized = this.handleTabInitialized.bind(this);
+        this.handleTabMainContentInitialized = this.handleTabMainContentInitialized.bind(this);
         this.handleTabsRemoved = this.handleTabsRemoved.bind(this);
         this.scriptWindow.on('windowCreated', ({browserWindowId}) => this.emit('windowCreated', {browserWindowId}));
         this.scriptWindow.on('windowClosed', ({browserWindowId}) => this.emit('windowClosed', {browserWindowId}));
-
+        this.TOP_FRAME_ID = TOP_FRAME_ID;
         Object.seal(this);
     }
 
@@ -67,7 +70,7 @@ class TabManager extends EventEmitter {
             log.debug({browserTabId: browserTabId, tabIsInMyWindow}, 'browser.tabs.onCreated');
 
             if (tabIsInMyWindow) {
-                this.myTabs.register(browserTabId);
+                this.myTabs.registerTab(browserTabId);
             }
             else {
                 return; // the tab does not belong to this script
@@ -91,19 +94,33 @@ class TabManager extends EventEmitter {
         this.myTabs.markClosed(browserTabId);
     }
 
-    handleRpcInitialize({browserTabId, browserFrameId, rpc}) {
+    async _registerAncestorFrames(tab, browserFrameId) {
+        const {browserTabId} = tab;
+        const {parentFrameId: parentBrowserFrameId} = await this.browserWebNavigation.getFrame({
+            tabId: browserTabId,
+            frameId: browserFrameId,
+        });
+
+        // top = 0; -1 = there is no parent
+        if (parentBrowserFrameId >= 0 && parentBrowserFrameId  !== browserFrameId && !tab.hasFrame(parentBrowserFrameId)) {
+            await this._registerAncestorFrames(tab, parentBrowserFrameId);
+        }
+
+        return this.myTabs.registerFrame(browserTabId, parentBrowserFrameId, browserFrameId);
+    }
+
+    async handleRpcInitialize({browserTabId, browserFrameId, rpc}) {
         const tab = this.myTabs.getByBrowserTabId(browserTabId);
+        log.debug({browserTabId, browserFrameId, myTab: Boolean(tab)}, 'handleRpcInitialize');
 
         if (!tab) {
             return; // not my tab
         }
 
-        if (browserFrameId) {
-            return; // todo
-        }
+        const frame = await this._registerAncestorFrames(tab, browserFrameId);
 
-        rpc.method('tabs.mainContentInit', () => this.handleTabInitialized(browserTabId));
-        rpc.method('tabs.contentInit', ({moduleName}) => this.handleTabModuleInitialized(browserTabId, moduleName));
+        rpc.method('tabs.mainContentInit', () => this.handleTabMainContentInitialized(browserTabId, browserFrameId));
+        rpc.method('tabs.contentInit', ({moduleName}) => this.handleTabModuleInitialized(browserTabId, browserFrameId, moduleName));
         rpc.method('core.submitCodeCoverage', contentCoverage => {
             // eslint-disable-next-line camelcase, no-undef
             const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
@@ -111,40 +128,30 @@ class TabManager extends EventEmitter {
                 mergeCoverageReports(myCoverage, contentCoverage);
             }
         });
-        this.emit('initializedTabRpc', {tab, rpc});
+        this.emit('initializedTabRpc', {tab, frame, rpc});
     }
 
-    handleWebNavigationOnBeforeNavigate({tabId: browserTabId, frameId, url}) {
+    handleWebNavigationOnBeforeNavigate({tabId: browserTabId, frameId: browserFrameId, url}) {
         try {
-            log.debug({browserTabId, frameId, url}, 'browser.webNavigation.onBeforeNavigate');
-
-            if (frameId) { // frameId === 0 is top; otherwise it is an iframe
-                return;
-            }
-
-            this.myTabs.markUninitialized(browserTabId);
+            log.debug({browserTabId, browserFrameId, url}, 'browser.webNavigation.onBeforeNavigate');
+            this.myTabs.markUninitialized(browserTabId, browserFrameId);
         }
         catch (err) {
             log.error({err}, 'Error in browser.webNavigation.onBeforeNavigate');
         }
     }
 
-    handleWebNavigationOnCommitted({tabId: browserTabId, frameId, url}) {
+    handleWebNavigationOnCommitted({tabId: browserTabId, frameId: browserFrameId, url}) {
         try {
-            log.debug({browserTabId, frameId, url}, 'browser.webNavigation.onCommitted');
-
-            if (frameId) { // frameId === 0 is top; otherwise it is an iframe
-                return;
-            }
-
-            this._navigationCommittedWait.resolve(browserTabId);
+            log.debug({browserTabId, browserFrameId, url}, 'browser.webNavigation.onCommitted');
+            this._navigationCommittedWait.resolve([browserTabId, browserFrameId], null);
         }
         catch (err) {
             log.error({err}, 'Error in browser.webNavigation.onCommitted');
         }
     }
 
-    handleTabInitialized(browserTabId) {
+    handleTabMainContentInitialized(browserTabId, browserFrameId) {
         const tab = this.myTabs.getByBrowserTabId(browserTabId);
         const isMyTab = Boolean(tab);
         log.info({browserTabId, isMyTab}, 'Main tab content script has been initialized');
@@ -153,97 +160,97 @@ class TabManager extends EventEmitter {
             return; // the tab does not belong to this script
         }
 
-        this.myTabs.markUninitialized(browserTabId);
-        this.myTabs.expectInitToken(browserTabId, 'tabs');
-        const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
+        this.myTabs.markUninitialized(browserTabId, browserFrameId);
+        this.myTabs.expectInitToken(browserTabId, browserFrameId, 'tabs');
+        const frame = tab.getFrame(browserFrameId);
+        assert.isOk(frame, 'frame');
+        const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
 
         const files = [];
         const executeContentScript = (initToken, file) => {
-            log.debug({browserTabId, initToken, file}, 'Executing content script for runner module');
-            this.myTabs.expectInitToken(browserTabId, String(initToken));
+            log.debug({browserTabId, browserFrameId, initToken, file}, 'Executing content script for runner module');
+            this.myTabs.expectInitToken(browserTabId, browserFrameId, String(initToken));
             files.push(String(file));
         };
 
-        this.emit('initializingTabContent', {tab, executeContentScript, rpc});
+        this.emit('initializingTabContent', {tab, frame, executeContentScript, rpc});
 
         for (const file of files) {
             this.browserTabs.executeScript(browserTabId, {
                 allFrames: false,
-                frameId: 0, // top
+                frameId: browserFrameId,
                 file,
                 runAt: 'document_start',
             });
         }
 
-        this._markInitialized(browserTabId, 'tabs');
+        this._markInitialized(browserTabId, browserFrameId, 'tabs');
     }
 
-    handleTabModuleInitialized(browserTabId, moduleName) {
+    handleTabModuleInitialized(browserTabId, browserFrameId, moduleName) {
         log.debug({browserTabId, moduleName}, 'Module tab content script has been initialized');
-        this._markInitialized(browserTabId, moduleName);
+        this._markInitialized(browserTabId, browserFrameId, moduleName);
     }
 
-    _markInitialized(browserTabId, initToken) {
-        if (this.myTabs.markInitialized(browserTabId, initToken)) {
-            log.info({browserTabId}, 'All tab content scripts have initialized');
-            const tab = this.myTabs.getByBrowserTabId(browserTabId);
-            this.emit('initializedTabContent', {tab});
+    _markInitialized(browserTabId, browserFrameId, initToken) {
+        if (this.myTabs.markInitialized(browserTabId, browserFrameId, initToken)) {
+            log.info({browserTabId, browserFrameId}, 'All tab content scripts have initialized');
 
-            const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
+            const tab = this.myTabs.getByBrowserTabId(browserTabId);
+            assert.isOk(tab, 'tab');
+            const frame = tab.getFrame(browserFrameId);
+            assert.isOk(frame, 'frame');
+            this.emit('initializedTabContent', {tab, frame});
+
+            const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
             rpc.callAndForget('tabs.initializedTabContent');
         }
     }
 
     async createTab() {
-        if (!this._attached) {
-            throw illegalStateError('TabManager.createTab: Not initialized yet or in the progress of cleaning up');
-        }
+        assert.isTrue(this._attached, 'TabManager#createTab: Not initialized yet or in the progress of cleaning up');
         // note: "about:blank" might cause our content scripts to not run, but that is okay: that will simply cause the tab to not be
         // marked as "initialized". runner scripts are expected to call tab.navigate(url) before interacting further with that tab
         const browserTab = await this.scriptWindow.createTab('about:blank');
         const {id: browserTabId} = browserTab;
 
-        this.myTabs.register(browserTabId);
+        this.myTabs.registerTab(browserTabId);
         return this.myTabs.getByBrowserTabId(browserTabId);
     }
 
     hasTab(id) {
-        return this.myTabs.has(id);
+        return this.myTabs.hasTab(id);
     }
 
     getTab(id) {
-        return this.myTabs.get(id);
+        return this.myTabs.getTab(id);
     }
 
     async navigateTab(id, url) {
-        if (!this._attached) {
-            throw illegalStateError('TabManager.navigateTab: Not initialized yet or in the progress of cleaning up');
-        }
+        assert.isTrue(this._attached, 'TabManager#navigateTab: Not initialized yet or in the progress of cleaning up');
 
-        const {browserTabId} = this.myTabs.get(id);
-        this.myTabs.markUninitialized(browserTabId);
+        const {browserTabId} = this.myTabs.getTab(id);
+        this.myTabs.markUninitialized(browserTabId, TOP_FRAME_ID);
 
         // wait for the onCommitted event (which occurs even if there was an error downloading the page)
         // a new navigation might fail if onCommitted has not fired yet (firefox 57).
-        await this._navigationCommittedWait.wait(browserTabId, async () => {
-            log.debug({browserTabId, url}, 'Navigating tab to new url');
-            await browser.tabs.update(browserTabId, {url});
-            await this.myTabs.waitForTabInitialization(browserTabId);
+        await this._navigationCommittedWait.wait([browserTabId, TOP_FRAME_ID], async () => {
+            log.debug({browserTabId, TOP_FRAME_ID, url}, 'Navigating tab to new url');
+            await this.browserTabs.update(browserTabId, {url});
+            await this.myTabs.waitForTabContentInitialization(browserTabId, TOP_FRAME_ID);
         });
     }
 
-    async runContentScript(id, code, {arg, metadata = {}} = {}) {
-        if (!this._attached) {
-            throw illegalStateError('TabManager.runContentScript: Not initialized yet or in the progress of cleaning up');
-        }
+    async runContentScript(id, browserFrameId, code, {arg, metadata = {}} = {}) {
+        assert.isTrue(this._attached, 'TabManager#runContentScript: Not initialized yet or in the progress of cleaning up');
 
-        const {browserTabId} = this.myTabs.get(id);
-        await this.myTabs.waitForTabInitialization(browserTabId);
-        const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
+        const {browserTabId} = this.myTabs.getTab(id);
+        await this.myTabs.waitForTabContentInitialization(browserTabId, browserFrameId);
+        const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
 
         const rpcPromise = Promise.race([
             rpc.call({name: 'tabs.run', timeout: 0}, {code, arg, metadata}),
-            this.myTabs.waitForTabUninitialization(browserTabId).then(() => {
+            this.myTabs.waitForTabUninitialization(browserTabId, browserFrameId).then(() => {
                 throw contentScriptAbortedError(
                     'The web page has navigated away while the execution of the content script was pending'
                 );
@@ -259,13 +266,11 @@ class TabManager extends EventEmitter {
         return {resolve, reject};
     }
 
-    async waitForNewContent(id) {
-        if (!this._attached) {
-            throw illegalStateError('TabManager.waitForNewContent: Not initialized yet or in the progress of cleaning up');
-        }
+    async waitForNewContent(id, browserFrameId) {
+        assert.isTrue(this._attached, 'TabManager#waitForNewContent: Not initialized yet or in the progress of cleaning up');
 
-        const {browserTabId} = this.myTabs.get(id);
-        await this.myTabs.waitForNextTabInitialization(browserTabId);
+        const {browserTabId} = this.myTabs.getTab(id);
+        await this.myTabs.waitForNextTabContentInitialization(browserTabId, browserFrameId);
     }
 
     async getBrowserWindowId() {
@@ -280,24 +285,25 @@ class TabManager extends EventEmitter {
     }
 
     async closeScriptWindow() {
-        if (!this._attached) {
-            throw illegalStateError('TabManager.closeScriptWindow: Not initialized yet or in the progress of cleaning up');
-        }
+        assert.isTrue(this._attached, 'TabManager.closeScriptWindow: Not initialized yet or in the progress of cleaning up');
+
+        const frames = [...this.myTabs.frames()];
 
         log.debug({
-            browserTabIds: [...this.myTabs].map(tab => tab.browserTabId),
-        }, 'Calling tabs.contentUnload for all active tabs');
+            frames: frames.map(frame => ({tab: frame.tab.browserTabId, frame: frame.browserFrameId})),
+        }, 'Calling tabs.contentUnload for all active frames');
 
         const promises = [];
-        for (const {browserTabId, initialized} of this.myTabs) {
+        for (const frame of frames) {
+            const {tab: {browserTabId}, browserFrameId, initialized} = frame;
             if (!initialized) {
                 continue;
             }
 
-            const rpc = this.tabContentRPC.get(browserTabId, TabContentRPC.TOP_LEVEL_FRAME_ID);
+            const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
             promises.push(
                 rpc.call({name: 'tabs.contentUnload', timeout: 5001})
-                .catch(err => log.warn({err, browserTabId}, 'Error calling tabs.contentUnload for tab'))
+                .catch(err => log.warn({err, browserTabId, browserFrameId}, 'Error calling tabs.contentUnload for frame'))
             );
         }
         await Promise.all(promises);

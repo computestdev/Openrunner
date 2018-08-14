@@ -16,12 +16,13 @@ TimePoint.setCounterFunc(() => ({
 }));
 
 module.exports = script => {
-    const handleTabsInitializedTabRpc = ({tab, rpc}) => {
+    const handleTabsInitializedTabRpc = ({tab, frame, rpc}) => {
         rpc.method('runResult.scriptResult', result => {
             try {
                 log.debug('Received script result object from content');
                 for (const event of result.events) {
                     event.tabId = tab.id;
+                    event.frameId = frame.browserFrameId;
                     event.tabContentId = tab.currentContentId;
                 }
                 scriptResult.mergeJSONObject(result);

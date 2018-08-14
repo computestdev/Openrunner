@@ -59,7 +59,7 @@ module.exports = (tabManager) => {
             runBeginTime: Date.now(),
         });
 
-        return await tabManager.runContentScript(id, code, {arg, metadata});
+        return await tabManager.runContentScript(id, tabManager.TOP_FRAME_ID, code, {arg, metadata});
     };
 
     const waitForNewPage = async ({id, code, arg, timeoutMs}) => {
@@ -75,9 +75,9 @@ module.exports = (tabManager) => {
             runBeginTime: Date.now(),
         });
 
-        const waitForNewContentPromise = tabManager.waitForNewContent(id);
+        const waitForNewContentPromise = tabManager.waitForNewContent(id, tabManager.TOP_FRAME_ID);
         try {
-            const {reject} = await tabManager.runContentScript(id, code, {arg, metadata});
+            const {reject} = await tabManager.runContentScript(id, tabManager.TOP_FRAME_ID, code, {arg, metadata});
             // do not return `resolve` to avoid timing inconsistencies (e.g. the script may have been canceled because of the navigation)
             if (reject) {
                 return {reject};
@@ -120,7 +120,7 @@ module.exports = (tabManager) => {
                     attemptNumber,
                     runBeginTime: Date.now(),
                 }, waitMetadata);
-                return await tabManager.runContentScript(id, code, {arg, metadata});
+                return await tabManager.runContentScript(id, tabManager.TOP_FRAME_ID, code, {arg, metadata});
             }
             catch (err) {
                 if (err.name === CONTENT_SCRIPT_ABORTED_ERROR) {

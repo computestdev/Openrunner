@@ -41,7 +41,7 @@
             "matches": [
                 "*://*/*"
             ],
-            "all_frames": false,
+            "all_frames": true,
             "js": [
                 "build/tabs-content.js"
             ],

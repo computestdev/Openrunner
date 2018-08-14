@@ -15,7 +15,7 @@ class ScriptWindow extends EventEmitter {
         this.openPromise = null;
         this.firstTabCreation = true;
         this.closed = false;
-        this._navigationCompletedWait = new WaitForEvent(); // key is the browserTabId
+        this._navigationCompletedWait = new WaitForEvent(); // key is [browserTabId]
         this._sizeMinusViewport = Object.freeze({width: 0, height: 0});
         this.handleWebNavigationCompleted = this.handleWebNavigationCompleted.bind(this);
         Object.seal(this);
@@ -39,7 +39,7 @@ class ScriptWindow extends EventEmitter {
                 return;
             }
 
-            this._navigationCompletedWait.resolve(browserTabId);
+            this._navigationCompletedWait.resolve([browserTabId]);
         }
         catch (err) {
             log.error({err}, 'Error in browser.webNavigation.onCompleted');
@@ -82,7 +82,7 @@ class ScriptWindow extends EventEmitter {
      */
     async _gatherBrowserWindowDetails(browserWindowId, firstTabId) {
         // navigate to blank.html and wait for the load event
-        await this._navigationCompletedWait.wait(firstTabId, async () => {
+        await this._navigationCompletedWait.wait([firstTabId], async () => {
             await this.browserTabs.update(firstTabId, {url: BLANK_HTML});
         });
 

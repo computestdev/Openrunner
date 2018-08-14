@@ -5,6 +5,7 @@ require('chai').use(require('chai-subset'));
 const {assert: {deepEqual: deq, strictEqual: eq, throws, isFunction, isRejected, containSubset}} = require('chai');
 const sinon = require('sinon');
 
+const PromiseFateTracker = require('../../utilities/PromiseFateTracker');
 const Wait = require('../../utilities/Wait');
 const TabContentRPC = require('../../../lib/contentRpc/TabContentRPC');
 const explicitPromise = require('../../../lib/explicitPromise');
@@ -311,6 +312,46 @@ describe('TabContentRPC', () => {
             deq(await messageCallbackPromise, {result: 369});
             eq(rpc.get('my tab id 1234', 0), onRpcInitialize.firstCall.args[0].rpc);
             eq(onRpcInitialize.callCount, 1);
+        });
+
+        it('Should wait for onRpcInitialize to resolve', async () => {
+            const fate = new PromiseFateTracker();
+            const fooMethod = sinon.spy(a => a * 2);
+            let onRpcInitializeResolve;
+            const onRpcInitialize = sinon.spy(async ({rpc}) => {
+                await new Promise(r => {onRpcInitializeResolve = r;});
+                rpc.method('foo', fooMethod);
+            });
+            const rpc = new TabContentRPC({browserRuntime, browserTabs, context: 'fooContext', onRpcInitialize});
+            rpc.attach();
+            rpc.reinitialize('my tab id 1234', 0);
+            eq(onRpcInitialize.callCount, 1);
+
+            const onMessageCallback = browserRuntime.onMessage.addListener.firstCall.args[0];
+            fate.track('foo', onMessageCallback(
+                {
+                    method: 'foo',
+                    params: [123],
+                    rpcContext: 'fooContext',
+                },
+                {
+                    id: 'openrunner@computest.nl',
+                    tab: {
+                        id: 'my tab id 1234',
+                    },
+                    frameId: 0,
+                    url: 'https://computest.nl/',
+                },
+            ));
+
+            await new Promise(r => setTimeout(r, 100));
+            eq(fooMethod.callCount, 0);
+            fate.assertPending('foo');
+
+            onRpcInitializeResolve();
+            await fate.waitForAllSettled();
+            fate.assertResolved('foo', {result: 246});
+            eq(fooMethod.callCount, 1);
         });
 
         it('Should call registered methods when a browser runtime message has been received and return the rejected error', async () => {

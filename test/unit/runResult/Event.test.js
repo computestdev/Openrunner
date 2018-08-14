@@ -28,6 +28,7 @@ describe('Event', () => {
             eq(event.longTitle, '');
             eq(event.shortTitle, '');
             isNull(event.tabId);
+            isNull(event.frameId);
             isNull(event.tabContentId);
             lengthOf([...event.metaData], 0);
             isNull(event.getMetaData('foo'));
@@ -50,12 +51,14 @@ describe('Event', () => {
             event.shortTitle = 'my short title';
             event.longTitle = 'my very looooong title';
             event.tabId = 'f1234';
+            event.frameId = 1001;
             event.tabContentId = 'f6574';
 
             eq(event.comment, 'my comment!');
             eq(event.shortTitle, 'my short title');
             eq(event.longTitle, 'my very looooong title');
             eq(event.tabId, 'f1234');
+            eq(event.frameId, 1001);
             eq(event.tabContentId, 'f6574');
         });
 
@@ -65,12 +68,14 @@ describe('Event', () => {
             event.shortTitle = 456;
             event.longTitle = 789;
             event.tabId = 1234;
+            event.frameId = 4321;
             event.tabContentId = 5678;
 
             eq(event.comment, '123');
             eq(event.shortTitle, '456');
             eq(event.longTitle, '789');
             eq(event.tabId, '1234');
+            eq(event.frameId, 4321);
             eq(event.tabContentId, '5678');
         });
 
@@ -149,6 +154,7 @@ describe('Event', () => {
             event.shortTitle = 'my short title';
             event.longTitle = 'my very looooong title';
             event.tabId = 'f1234';
+            event.frameId = 1247;
             event.tabContentId = 'f6574';
             event.addChild(new Event('child type'));
             event.setMetaData('foo', 'bar');
@@ -201,10 +207,12 @@ describe('Event', () => {
                         metaData: {},
                         children: [],
                         tabId: null,
+                        frameId: null,
                         tabContentId: null,
                     },
                 ],
                 tabId: 'f1234',
+                frameId: 1247,
                 tabContentId: 'f6574',
             });
 

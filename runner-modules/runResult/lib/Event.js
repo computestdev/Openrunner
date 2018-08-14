@@ -93,6 +93,7 @@ class Event {
             timing: new TimePeriod(),
             type: String(type),
             tabId: null,
+            frameId: null,
             tabContentId: null,
         });
         Object.freeze(this);
@@ -288,6 +289,22 @@ class Event {
 
     /**
      *
+     * @return {?number}
+     */
+    get frameId() {
+        return this[PRIVATE].frameId;
+    }
+
+    /**
+     *
+     * @param {?number} value
+     */
+    set frameId(value) {
+        this[PRIVATE].frameId = value ? Number(value) : null;
+    }
+
+    /**
+     *
      * @return {?string}
      */
     get tabContentId() {
@@ -333,6 +350,7 @@ class Event {
             metaData: metaData,
             children: [...this.children].map(event => event.toJSONObject()),
             tabId: this.tabId,
+            frameId: this.frameId,
             tabContentId: this.tabContentId,
         };
         /* eslint-enable sort-keys */
