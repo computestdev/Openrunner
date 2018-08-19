@@ -75,6 +75,38 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
         }
     });
 
+    specify('Calling rpc methods on an invalid tab', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+
+            const tab = new tabs.Tab(123);
+            {
+                const err = await assert.isRejected(tab.navigate(injected.url), /navigate.*invalid.*id/i);
+                assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
+            }
+            {
+                const err = await assert.isRejected(tab.run(() => {}), /run.*invalid.*id/i);
+                assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
+            }
+            {
+                const err = await assert.isRejected(tab.wait(() => {}), /wait\b.*invalid.*id/i);
+                assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
+            }
+            {
+                const err = await assert.isRejected(tab.waitForNewPage(() => {}), /waitForNewPage.*invalid.*id/i);
+                assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
+            }
+        }, {url: `http://localhost:${testServerPort()}/headers/html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
     specify('Running a content script once', async () => {
         /* eslint-disable no-undef */
         const result = await runScriptFromFunction(async () => {
@@ -410,6 +442,304 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             await assert.isRejected(waitPromise, Error, 'Error from test!!');
 
         }, {url: `http://localhost:${testServerPort()}/headers/html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
+    specify('Running a content script once in a cross origin iframe tag', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            await include('wait');
+            const tab = await tabs.create();
+
+            await transaction('tabs.frame() should throw for invalid arguments', async () => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                const okay = await tab.run(async () => {
+                    const check = async arg => {
+                        const err = await assert.isRejected(
+                            tabs.frame(arg),
+                            Error,
+                            /tabs.frame.*first.*argument.*must.*iframe.*WindowProxy/i
+                        );
+                        assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
+                    };
+
+                    await check(null);
+                    await check({});
+                    await check(document.body);
+                    await check(document.createTextNode('foo'));
+                    return 'okay';
+                });
+                assert.strictEqual(okay, 'okay');
+            });
+
+            await transaction('Frame rpc methods should throw for an invalid frame', async () => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                const okay = await tab.run(async () => {
+                    const frame = new tabs.Frame(123456);
+                    await assert.isRejected(frame.run(() => {}), Error, /invalid.*frameId/i);
+                    await assert.isRejected(frame.wait(() => {}), Error, /invalid.*frameId/i);
+                    await assert.isRejected(frame.waitForNewPage(() => {}), Error, /invalid.*frameId/i);
+                    return 'okay';
+                });
+                assert.strictEqual(okay, 'okay');
+            });
+
+            await transaction('find content in frame1, which is present statically with a cross origin src', async t => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                const frameBodyId = await tab.run(async () => {
+                    const iframe = await wait.documentInteractive().selector('#frame1');
+                    const frame = await tabs.frame(iframe, {timeout: '10s'});
+                    const frame2 = await tabs.frame(iframe, {timeout: '1s'});
+                    const frame3 = await tabs.frame(iframe, {timeout: '1s'});
+                    assert(frame2 === frame, 'Multiple invocations with the same argument should return the same Frame object, from cache');
+                    assert(frame3 === frame, 'Multiple invocations with the same argument should return the same Frame object, from cache');
+
+                    return await frame.run(async () => {
+                        const body = await wait.documentInteractive().selector('body');
+                        return body.getAttribute('id');
+                    });
+                });
+                assert.strictEqual(frameBodyId, 'frame1body');
+            });
+
+            await transaction('Cross frame content messaging should not interfere with site content, and visa versa', async t => {
+                const okay = await tab.run(async () => {
+                    const messageNodes = await wait.selectorAll('#messages > p').amount(2);
+                    const messages = messageNodes.map(n => JSON.parse(n.textContent));
+                    assert.deepEqual(messages, [
+                        {foo: 'first hello from frame1.html'},
+                        'second hello from frame1.html',
+                    ]);
+
+                    const iframe = await wait.documentInteractive().selector('#frame1');
+                    const frame = await tabs.frame(iframe, {timeout: '10s'});
+                    return await frame.run(async () => {
+                        const messageNodes = await wait.selectorAll('#messages > p').amount(2);
+                        const messages = messageNodes.map(n => JSON.parse(n.textContent));
+                        assert.deepEqual(messages, [
+                            {foo: 'first hello from frames.html'},
+                            'second hello from frames.html',
+                        ]);
+                        return 'okay';
+                    });
+                });
+                assert.strictEqual(okay, 'okay');
+            });
+
+            await transaction(
+                'find content in frame2, which is present statically with about:blank, and get its src replaced ' +
+                'with a cross origin src after a timeout',
+                async t => {
+                    await tab.navigate(injected.url, {timeout: '10s'});
+                    const frameBodyId = await tab.run(async () => {
+                        const iframe = await wait.documentInteractive().selector('#frame2');
+                        const frame = await tabs.frame(iframe, {timeout: '10s'});
+
+                        return await frame.run(async () => {
+                            const body = await wait.documentInteractive().selector('body');
+                            return body.getAttribute('id');
+                        });
+                    });
+                    assert.strictEqual(frameBodyId, 'frame2body');
+                }
+            );
+
+            await transaction('find content in frame3, which is added dynamically with a cross origin src after a timeout', async t => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                const frameBodyId = await tab.run(async () => {
+                    const iframe = await wait.documentInteractive().selector('#frame3');
+                    const frame = await tabs.frame(iframe, {timeout: '10s'});
+
+                    return await frame.run(async () => {
+                        const body = await wait.documentInteractive().selector('body');
+                        return body.getAttribute('id');
+                    });
+                });
+                assert.strictEqual(frameBodyId, 'frame3body');
+            });
+
+            await transaction('Handle timeout on frame_blank, which is present statically and always stays on about:blank', async t => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                const ret = await tab.run(async () => {
+                    const iframe = await wait.documentInteractive().selector('#frame_blank');
+                    await assert.isRejected(
+                        tabs.frame(iframe, {timeout: '3s'}),
+                        Error,
+                        /tabs\.frame.*waiting.*content.*document.*iframe.*time.*out.*\b3\b.*second/i
+                    );
+                    return 123;
+                });
+                assert.strictEqual(ret, 123);
+            });
+        }, {url: `http://localhost:${testServerPort()}/frames/frames.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
+    specify('Running a content script once in a cross origin object tag', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            await include('wait');
+            const tab = await tabs.create();
+
+            await transaction('Find stuff in #frame1', async t => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                const frameBodyId = await tab.run(async () => {
+                    await wait.documentComplete();
+                    // <object> can not yet be used directly, but we can use window[i] or window.frames[i]
+                    const frame = await tabs.frame(window.frames[0], {timeout: '10s'});
+
+                    return await frame.run(async () => {
+                        const body = await wait.documentInteractive().selector('body');
+                        return body.getAttribute('id');
+                    });
+                });
+                assert.strictEqual(frameBodyId, 'frame1body');
+            });
+        }, {url: `http://localhost:${testServerPort()}/frames/object-html.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
+    specify('Running a content script once in a nested iframe tag', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            await include('wait');
+            const tab = await tabs.create();
+
+            await transaction('Find stuff in #frames => #frame1', async t => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+
+                const frameBodyIds = await tab.run(async () => {
+                    const iframe = await wait.documentInteractive().selector('#frames');
+                    const frame = await tabs.frame(iframe, {timeout: '10s'});
+                    return await frame.run(async () => {
+                        const iframes = await wait.documentInteractive().selectorAll('#frame1, #frame2, #frame3').amount(3);
+                        return await Promise.all(iframes.map(iframe =>
+                            tabs.frame(iframe, {timeout: '10s'}).then(frame => frame.run(async () => {
+                                const body = await wait.documentInteractive().selector('body');
+                                return body.getAttribute('id');
+                            }))
+                        ));
+                    });
+                });
+                assert.deepEqual(frameBodyIds, ['frame1body', 'frame2body', 'frame3body']);
+            });
+        }, {url: `http://localhost:${testServerPort()}/static/frames/nested-frames.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
+    specify('Running a content script in a cross origin iframe tag and repeating it if the page navigates away', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            await include('wait');
+            const tab = await tabs.create();
+
+            await transaction('Find specific element in #frame1', async t => {
+                await tab.navigate(injected.url, {timeout: '10s'});
+                const frameBodyId = await tab.run(async () => {
+                    const iframe = await wait.documentInteractive().selector('#frame1');
+                    const frame = await tabs.frame(iframe, {timeout: '10s'});
+
+                    return await frame.wait(async () => {
+                        const body = await wait.documentInteractive().selector('body#frame3body');
+                        return body.getAttribute('id');
+                    });
+                });
+                assert.strictEqual(frameBodyId, 'frame3body');
+            });
+        }, {url: `http://localhost:${testServerPort()}/frames/navigating-frame.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
+    specify('Running a content script in a cross origin firame tag and waiting until it triggers a navigation', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            await include('wait');
+            const tab = await tabs.create();
+
+            await tab.navigate(injected.url, {timeout: '10s'});
+            await tab.run(async () => {
+                const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+                const iframe = await wait.documentInteractive().selector('#frame1');
+                const frame = await tabs.frame(iframe, {timeout: '10s'});
+
+                {
+                    let waitPromiseResolved = false;
+                    const waitPromise = frame.waitForNewPage(async () => {
+                        return 123; // the return value should be ignored
+                    });
+                    waitPromise.then(() => {
+                        waitPromiseResolved = true;
+                    });
+
+                    await delay(50);
+                    assert.isFalse(waitPromiseResolved);
+
+                    await frame.waitForNewPage(async () => {
+                        const link = await wait.selector('#gotoframe2');
+                        link.click();
+                    });
+                    assert.strictEqual(await waitPromise, undefined);
+                }
+
+                {
+                    let waitPromiseResolved = false;
+                    const waitPromise = frame.waitForNewPage(async () => {
+                        return new Promise(() => {}); // pending
+                    });
+                    waitPromise.then(() => {
+                        waitPromiseResolved = true;
+                    });
+
+                    await delay(50);
+                    assert.isFalse(waitPromiseResolved);
+
+                    await frame.waitForNewPage(async () => {
+                        const link = await wait.selector('#gotoframe3');
+                        link.click();
+                    });
+                    await delay(50);
+                    assert.isTrue(waitPromiseResolved);
+                    assert.strictEqual(await waitPromise, undefined);
+                }
+            });
+
+
+        }, {url: `http://localhost:${testServerPort()}/frames/frames.html`});
         /* eslint-enable no-undef */
 
         if (result.error) {

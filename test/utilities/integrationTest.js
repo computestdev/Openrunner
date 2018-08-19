@@ -12,6 +12,7 @@ const {
     TEST_TEMP_DIR,
     TEST_FIREFOX_BIN,
     TEST_SERVER_PORT,
+    TEST_SERVER_EXTRA_PORT,
     TEST_SERVER_BAD_TLS_PORT,
     TEST_HEADLESS,
     TEST_DEBUG,
@@ -27,6 +28,7 @@ const startTestServer = async () => {
     server = new TestingServer({
         listenHost: 'localhost',
         listenPort: Number(TEST_SERVER_PORT),
+        extraListenPort: Number(TEST_SERVER_EXTRA_PORT),
         badTLSListenPort: Number(TEST_SERVER_BAD_TLS_PORT),
     });
     await server.start();

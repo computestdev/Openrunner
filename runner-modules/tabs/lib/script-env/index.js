@@ -25,6 +25,7 @@ openRunnerRegisterRunnerModule('tabs', async ({script}) => {
     };
 
     return {
+        Tab,
         create,
         viewportSize,
     };

@@ -8,8 +8,8 @@ const ScriptWindow = require('./ScriptWindow');
 const TabTracker = require('./TabTracker');
 const TabContentRPC = require('../../../../lib/contentRpc/TabContentRPC');
 const {resolveScriptContentEvalStack} = require('../../../../lib/errorParsing');
-const {mergeCoverageReports} = require('../../../../lib/mergeCoverage');
 const WaitForEvent = require('../../../../lib/WaitForEvent');
+const contentMethods = require('./contentMethods');
 
 const TOP_FRAME_ID = 0;
 
@@ -118,16 +118,7 @@ class TabManager extends EventEmitter {
         }
 
         const frame = await this._registerAncestorFrames(tab, browserFrameId);
-
-        rpc.method('tabs.mainContentInit', () => this.handleTabMainContentInitialized(browserTabId, browserFrameId));
-        rpc.method('tabs.contentInit', ({moduleName}) => this.handleTabModuleInitialized(browserTabId, browserFrameId, moduleName));
-        rpc.method('core.submitCodeCoverage', contentCoverage => {
-            // eslint-disable-next-line camelcase, no-undef
-            const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
-            if (myCoverage) {
-                mergeCoverageReports(myCoverage, contentCoverage);
-            }
-        });
+        rpc.methods(contentMethods(this, frame));
         this.emit('initializedTabRpc', {tab, frame, rpc});
     }
 
@@ -154,16 +145,16 @@ class TabManager extends EventEmitter {
     handleTabMainContentInitialized(browserTabId, browserFrameId) {
         const tab = this.myTabs.getByBrowserTabId(browserTabId);
         const isMyTab = Boolean(tab);
-        log.info({browserTabId, isMyTab}, 'Main tab content script has been initialized');
+        log.info({browserTabId, browserFrameId, isMyTab}, 'Main tab content script has been initialized');
 
         if (!isMyTab) {
             return; // the tab does not belong to this script
         }
 
         this.myTabs.markUninitialized(browserTabId, browserFrameId);
-        this.myTabs.expectInitToken(browserTabId, browserFrameId, 'tabs');
         const frame = tab.getFrame(browserFrameId);
-        assert.isOk(frame, 'frame');
+        assert.isOk(frame, `Frame ${browserFrameId} has not been registered for tab ${browserTabId}`);
+        this.myTabs.expectInitToken(browserTabId, browserFrameId, 'tabs');
         const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
 
         const files = [];
@@ -204,6 +195,11 @@ class TabManager extends EventEmitter {
 
             const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
             rpc.callAndForget('tabs.initializedTabContent');
+
+            if (frame && frame.hasParentFrame) {
+                const parentRpc = this.tabContentRPC.get(browserTabId, frame.parentBrowserFrameId);
+                parentRpc.callAndForget('tabs.childFrameInitialized', {browserFrameId});
+            }
         }
     }
 

@@ -14,6 +14,12 @@ const {argv} = (
         default: 0,
         number: true,
     })
+    .option('extra-port', {
+        alias: 'q',
+        describe: 'HTTP Extra Listen port',
+        default: 0,
+        number: true,
+    })
     .option('bad-cert-port', {
         describe: 'HTTPS Listen port which provides a bad certificate',
         default: -1,
@@ -26,6 +32,7 @@ const {argv} = (
     try {
         const server = new TestingServer({
             listenPort: argv.port,
+            extraListenPort: argv['extra-port'],
             badTLSListenPort: argv['bad-cert-port'],
         });
         await server.start();

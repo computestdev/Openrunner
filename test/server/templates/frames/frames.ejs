@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Frames</title>
+    <script>
+        setTimeout(() => {
+            frame2.src = `http://${document.body.getAttribute('data-host')}/static/frames/frame2.html`;
+        }, 500);
+        setTimeout(() => {
+            document.body.insertAdjacentHTML('beforeend', '<iframe id="frame3" width="600" height="300">Fallback of Frame 3</iframe>');
+            frame3.src = `http://${document.body.getAttribute('data-host')}/static/frames/frame3.html`;
+        }, 1000);
+    </script>
+</head>
+<body id="framesbody" data-host="<%= extraHost %>">
+    <div id="messages"></div>
+    <script>{
+        let sentOurMessages = false;
+        addEventListener('message', e => {
+            const message = document.createElement('p');
+            message.textContent = JSON.stringify(e.data);
+            message.id = 'message' + messages.childElementCount;
+            messages.appendChild(message);
+
+            if (!sentOurMessages) {
+                sentOurMessages = true;
+                frame1.contentWindow.postMessage({foo: 'first hello from frames.html'}, '*');
+                setTimeout(() => frame1.contentWindow.postMessage('second hello from frames.html', '*'), 500);
+            }
+        })
+    }</script>
+    <p>Test cases:</p>
+    <ul>
+        <li>#frame1 is present statically with a cross origin src</li>
+        <li>#frame2 is present statically with about:blank, and get its src replaced with a cross origin src after a timeout</li>
+        <li>#frame3 is added dynamically with a cross origin src after a timeout</li>
+        <li>#frame_blank is present statically and always stays on about:blank</li>
+    </ul>
+    <iframe src="http://<%= extraHost %>/static/frames/frame1.html" id="frame1" width="600" height="300">Fallback of Frame 1</iframe>
+    <p>Aliquam nisl ex, egestas sed augue ut, eleifend sodales neque. Donec quis ligula sed mauris pellentesque varius id a tellus.</p>
+    <iframe src="about:blank" id="frame2" width="600" height="300">Fallback of Frame 2</iframe>
+    <p>Cras rutrum erat et erat ultricies, vitae accumsan mauris semper. Quisque efficitur nisi eget sollicitudin ornare.</p>
+    <iframe src="about:blank" id="frame_blank" width="600" height="300">Fallback of Frame_blank</iframe>
+    <p>Praesent laoreet nisl sed mauris cursus dignissim</p>
+</body>
+</html>

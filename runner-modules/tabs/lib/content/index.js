@@ -7,6 +7,7 @@ const tabsMethods = require('./tabsMethods');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/index'});
 const contentUnloadEvent = require('./contentUnloadEvent');
 const ModuleRegister = require('../../../../lib/ModuleRegister');
+const tabsModule = require('./tabsModule');
 
 log.debug('Initializing...');
 
@@ -34,6 +35,7 @@ try {
     eventEmitter.on('tabs.contentUnload', () => {
         // eslint-disable-next-line camelcase, no-undef
         const myCoverage = typeof __runner_coverage__ === 'object' && __runner_coverage__;
+        /* istanbul ignore else */
         if (myCoverage) {
             rpc.callAndForget('core.submitCodeCoverage', myCoverage);
         }
@@ -61,12 +63,35 @@ try {
         }
     };
 
+    const handleWindowMessage = event => {
+        // Note!! These messages could come from anywhere (the web)!
+        const {data} = event;
+        if (typeof data !== 'object') {
+            return;
+        }
+
+        const {openrunnerTabsFrameToken} = data;
+
+        if (typeof openrunnerTabsFrameToken !== 'string' || Object.keys(data).length !== 1) {
+            return;
+        }
+
+        const frameToken = String(openrunnerTabsFrameToken);
+        event.stopImmediatePropagation();
+        log.debug({frameToken}, 'Received frame token from parent frame');
+        rpc.callAndForget('tabs.receivedFrameToken', frameToken);
+    };
+
+    moduleRegister.registerModule('tabs', Promise.resolve(tabsModule({eventEmitter, getModule, rpc})));
+
     window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
+    window.addEventListener('message', handleWindowMessage, false);
     // Workaround for firefox bug (last tested to occur in v57)
     // it seems that sometimes this content script is executed so early that firefox still has to perform some kind of house keeping,
     // which causes our global variable to disappear. assigning the global variable again in a microtask works around this bug.
     Promise.resolve().then(() => {
         window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
+        window.addEventListener('message', handleWindowMessage, false); // has no effect if already added
     });
 
     log.debug('Initialized... Notifying the background script');

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>object with html</title>
+</head>
+<body id="object-html-body" data-host="<%= extraHost %>">
+    <p>Test cases:</p>
+    <ul>
+        <li>#frame1 is present statically with a cross origin src and using the object tag</li>
+    </ul>
+    <object id="frame1" data="http://<%= extraHost %>/static/frames/frame1.html" width="600" height="300">Fallback for frame 1</object>
+</body>
+</html>

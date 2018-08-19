@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frame 1</title>
+</head>
+<body id="frame1body">
+    <div id="messages"></div>
+    <script>
+    parent.postMessage({foo: 'first hello from frame1.html'}, '*')
+    setTimeout(() => parent.postMessage('second hello from frame1.html', '*'), 100)
+    addEventListener('message', e => {
+        const message = document.createElement('p');
+        message.textContent = JSON.stringify(e.data);
+        message.id = 'message' + messages.childElementCount;
+        messages.appendChild(message);
+    })
+    </script>
+
+    <p>Lorem ipsum <a id="gotoframe2" href="frame2.html">dolor</a> sit amet, consectetur adipiscing elit. Nulla tincidunt nisl ut ante pellentesque, eu viverra velit gravida. Sed quis risus ex. Ut bibendum risus vitae urna convallis, non tincidunt massa faucibus. Cras tincidunt lectus vel nulla fringilla rhoncus. Vivamus maximus urna libero, nec rutrum mauris pellentesque sit amet. Cras sodales lorem vel congue commodo. Suspendisse volutpat eget nibh vel tincidunt. Morbi eu laoreet sem, vel eleifend neque. Cras tincidunt, nisi a vehicula tincidunt, nibh urna fermentum arcu, finibus placerat elit orci a odio. Nulla elementum, turpis sed luctus tincidunt, est turpis dignissim tellus, at posuere velit justo efficitur elit. Proin ut ex placerat, interdum risus ac, iaculis nunc. Cras eget molestie enim, sed faucibus libero. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus nisi nulla, tincidunt quis posuere aliquam, ultrices at justo. Duis elementum fringilla aliquam. Phasellus sit amet sem commodo, convallis purus non, iaculis lacus.</p>
+    <img src="../foo.jpg?noCache&waitBeforeResponse=60&bytesPerSecond=400000">
+    <p>Curabitur dignissim eros lectus, ac feugiat leo pharetra vitae. In hac habitasse platea dictumst. Integer quis odio ac mi hendrerit elementum ut et urna. Mauris nibh nibh, interdum ac lorem id, aliquam porttitor nulla. Aliquam sodales nunc erat, semper dignissim orci dignissim id. Morbi ac lorem vestibulum tellus tempor rutrum. Etiam et auctor nisl, id interdum dolor. Donec congue porttitor nulla, eu venenatis lorem. Nam eleifend tortor vitae nulla tristique lobortis. Integer sit amet lectus libero. Pellentesque purus ante, interdum et metus ut, posuere elementum nisi. Aenean cursus condimentum mi, ut consequat justo pharetra sed.</p>
+</body>
+</html>

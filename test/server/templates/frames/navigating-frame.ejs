@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Navigating frame</title>
+    <script>
+        {
+            const pages = [
+                "frame3.html",
+                "frame1.html",
+                "frame2.html",
+                "frame1.html",
+                "frame2.html", // 3rd
+                "frame2.html", // 2nd
+                "frame1.html", // 1st
+            ];
+            setInterval(() => {
+                if (pages.length) {
+                    frame1.src = `http://${document.body.getAttribute('data-host')}/static/frames/${pages.pop()}`;
+                }
+            }, 500);
+        }
+    </script>
+</head>
+<body id="navigatingframesbody" data-host="<%= extraHost %>">
+    <p>Test cases:</p>
+    <ul>
+        <li>#frame1 is present statically and periodically navigates to a different page</li>
+    </ul>
+    <iframe id="frame1" width="600" height="300">Fallback of Frame 1</iframe>
+</body>
+</html>

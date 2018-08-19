@@ -4,6 +4,7 @@ const os = require('os');
 const {assert} = require('chai');
 const Promise = require('bluebird');
 const express = require('express');
+const http = require('http');
 const https = require('https');
 const serveIndex = require('serve-index');
 const Throttle = require('throttle');
@@ -17,15 +18,19 @@ const log = require('../../lib/logger')({pid: process.pid, hostname: os.hostname
 const {CnCServer} = require('../..');
 
 const STATIC_CONTENT_PATH = pathResolve(__dirname, './static');
+const TEMPLATES_CONTENT_PATH = pathResolve(__dirname, './templates');
 const TLS_PRIVATE_KEY_PATH = pathResolve(__dirname, './tls/private.key');
 const TLS_CA_UNTRUSTED_ROOT_CERT = pathResolve(__dirname, './tls/ca-untrusted-root.crt');
 
 class TestingServer {
-    constructor({listenPort = 0, badTLSListenPort = -1}) {
+    constructor({listenPort = 0, extraListenPort = 0, badTLSListenPort = -1}) {
         this.configuredListenPort = listenPort;
+        this.configuredExtraListenPort = extraListenPort; // used for cross-origin tests
         this.configuredbadTLSListenPort = badTLSListenPort;
         this.expressApp = null;
         this.cncServer = null;
+        this.extraHttpServer = null;
+        this.badTLSHttpServer = null;
     }
 
     async start() {
@@ -35,6 +40,8 @@ class TestingServer {
         this.expressApp = app;
 
         app.set('x-powered-by', false);
+        app.set('view engine', 'ejs');
+        app.set('views', TEMPLATES_CONTENT_PATH);
         app.use(morgan('dev'));
 
         /**
@@ -66,6 +73,17 @@ class TestingServer {
         app.get('/', (request, response) => {
             response.status(404).send(`<a href="/static">Interesting stuff is at /static`);
         });
+
+        const templateVars = () => ({
+            listenPort: this.listenPort,
+            extraListenPort: this.extraListenPort,
+            host: `127.0.0.1:${this.listenPort}`,
+            extraHost: `127.0.0.1:${this.extraListenPort}`,
+        });
+
+        app.get('/frames/frames.html', (request, response) => response.render('frames/frames', templateVars()));
+        app.get('/frames/object-html.html', (request, response) => response.render('frames/object-html', templateVars()));
+        app.get('/frames/navigating-frame.html', (request, response) => response.render('frames/navigating-frame', templateVars()));
 
         app.get('/static/*', (request, response, next) => {
             const path = pathResolve(STATIC_CONTENT_PATH, './' + request.path.substr('/static/'.length));
@@ -172,6 +190,14 @@ class TestingServer {
         this.cncServer = new CnCServer({httpPort: this.configuredListenPort, requestListener: app});
         await this.cncServer.start();
 
+        if (this.configuredExtraListenPort >= 0) {
+            this.extraHttpServer = http.createServer(app);
+            this.extraHttpServer.listen(this.configuredExtraListenPort, '127.0.0.1');
+            await new Promise(resolve => this.extraHttpServer.once('listening', resolve));
+            const address = this.extraHttpServer.address();
+            log.warn({address}, 'Started extra HTTP server');
+        }
+
         if (this.configuredbadTLSListenPort >= 0) {
             const [key, cert] = await Promise.all([
                 readFile(TLS_PRIVATE_KEY_PATH),
@@ -198,6 +224,12 @@ class TestingServer {
             this.cncServer = null;
         }
 
+        if (this.extraHttpServer) {
+            await Promise.fromCallback(cb => this.extraHttpServer.close(cb));
+            this.extraHttpServer = null;
+            log.info('Extra HTTP server has been closed');
+        }
+
         if (this.badTLSHttpServer) {
             await Promise.fromCallback(cb => this.badTLSHttpServer.close(cb));
             this.badTLSHttpServer = null;
@@ -210,6 +242,11 @@ class TestingServer {
     get listenPort() {
         assert(this.cncServer, 'Main CncServer has not been started');
         return this.cncServer.listenPort;
+    }
+
+    get extraListenPort() {
+        assert(this.extraHttpServer, 'Main CncServer has not been started');
+        return this.extraHttpServer.address().port;
     }
 
     get badTLSListenPort() {

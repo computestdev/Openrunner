@@ -3,6 +3,8 @@ const {generate: generateShortId} = require('shortid');
 const SymbolTree = require('symbol-tree');
 const {assert} = require('chai');
 
+const WaitForEvent = require('../../../../lib/WaitForEvent');
+
 const frameTree = new SymbolTree();
 const NULL_FRAME_ID = -1; // same as WebExtension
 const TOP_FRAME_ID = 0;
@@ -18,6 +20,7 @@ class Frame {
         this.destroyed = false;
         this.currentContentId = null;
         this.pendingInitTokens = new Set();
+        this.childFrameTokenWait = new WaitForEvent(); // key is [frameToken]
         this.public = {
             get browserFrameId() {
                 return self.browserFrameId;
@@ -65,8 +68,17 @@ class Frame {
                 return self.currentContentId;
             },
 
+            async waitForChildFrameToken(token) {
+                return await self.childFrameTokenWait.wait([String(token)]);
+            },
+
             isChild(otherFrame) {
                 return self.isChild(otherFrame);
+            },
+
+            resolveChildFrameToken(token, childFrame) {
+                assert.isTrue(this.isChild(childFrame), 'Frame#resolveChildFrameToken() was called with a frame that is not a child');
+                self.childFrameTokenWait.resolve([String(token)], Number(childFrame.browserFrameId));
             },
         };
         Object.freeze(this.public);
@@ -198,7 +210,7 @@ class Tab {
             }
 
             frame.destroyed = true;
-            this.frames.delete(browserFrameId);
+            this.frames.delete(frame.browserFrameId);
             frameTree.remove(frame);
         }
     }

@@ -77,8 +77,14 @@ module.exports = (moduleRegister, eventEmitter) => {
         }
     };
 
+    const childFrameInitialized = ({browserFrameId}) => {
+        log.debug({browserFrameId}, 'childFrameInitialized');
+        eventEmitter.emit('tabs.childFrameInitialized', {browserFrameId});
+    };
+
     return new Map([
         ['tabs.initializedTabContent', initializedTabContent],
         ['tabs.run', run],
+        ['tabs.childFrameInitialized', childFrameInitialized],
     ]);
 };
