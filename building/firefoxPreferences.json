@@ -66,9 +66,6 @@
     // allow unsigned extensions (firefox unbranded only):
     "xpinstall.signatures.required": false,
 
-    // enable console.log, console.info, etc from extensions:
-    "extensions.sdk.console.logLevel": "all",
-
     // always ask where to save downloads
     "browser.download.useDownloadDir": false,
 
