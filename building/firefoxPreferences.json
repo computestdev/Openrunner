@@ -43,6 +43,7 @@
     "toolkit.telemetry.enabled": false, // might cause unexpected networking traffic
     "toolkit.telemetry.prompted": 2,
     "toolkit.telemetry.rejected": true,
+    "general.warnOnAboutConfig": false,
     "javascript.options.showInConsole": true,
     "browser.dom.window.dump.enabled": true,
     "dom.max_script_run_time": 30,
