@@ -23,20 +23,10 @@
     "extensions.logging.enabled": false,
     "extensions.update.enabled": false,
     "extensions.update.notifyUser": false,
-    "network.http.phishy-userpass-length": 255, // do not warn about urls with a user & pass
     "offline-apps.allow_by_default": true,
     "prompts.tab_modal.enabled": false,
     "security.fileuri.origin_policy": 3,
     "security.fileuri.strict_origin_policy": false,
-    "security.warn_entering_secure": false,
-    "security.warn_entering_secure.show_once": false,
-    "security.warn_entering_weak": false,
-    "security.warn_entering_weak.show_once": false,
-    "security.warn_leaving_secure": false,
-    "security.warn_leaving_secure.show_once": false,
-    "security.warn_submit_insecure": false,
-    "security.warn_viewing_mixed": false,
-    "security.warn_viewing_mixed.show_once": false,
     "signon.rememberSignons": false,
     "toolkit.networkmanager.disable": true, // Do not use NetworkManager to detect offline/online status on linux
     "network.manage-offline-status": false, // never set offline status automatically
@@ -78,5 +68,21 @@
     "browser.link.open_newwindow": 3,
     "browser.link.open_newwindow.restriction": 0,
 
-    "dom.disable_beforeunload": true // there is not an API to dismiss these yet
+    // there is not an API to dismiss dialogs related to these settings:
+    "security.warn_entering_secure": false,
+    "security.warn_entering_secure.show_once": false,
+    "security.warn_entering_weak": false,
+    "security.warn_entering_weak.show_once": false,
+    "security.warn_leaving_secure": false,
+    "security.warn_leaving_secure.show_once": false,
+    "security.warn_submit_insecure": false,
+    "security.warn_viewing_mixed": false,
+    "security.warn_viewing_mixed.show_once": false,
+    "network.http.phishy-userpass-length": 255, // do not warn about urls with a user & pass
+    "dom.disable_beforeunload": true,
+    "permissions.default.camera": 2,
+    "permissions.default.desktop-notification": 2,
+    "permissions.default.geo": 2,
+    "permissions.default.microphone": 2,
+    "media.autoplay.default": 0
 }
