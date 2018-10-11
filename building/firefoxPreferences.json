@@ -62,7 +62,9 @@
     "network.allow-experiments": false,
     "browser.cache.frecency_experiment": -1, // https://trac.torproject.org/projects/tor/ticket/13575
 
-    "privacy.trackingprotection.pbmode.enabled": false, // interferes with page load times
+    // interferes with page load times:
+    "privacy.trackingprotection.pbmode.enabled": false,
+    "browser.contentblocking.enabled": false,
 
     // allow unsigned extensions (firefox unbranded only):
     "xpinstall.signatures.required": false,
