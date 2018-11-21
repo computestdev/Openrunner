@@ -1,6 +1,7 @@
 'use strict';
 const chai = require('../chai');
+const registerRunnerModule = require('../../../content-register');
 
-openRunnerRegisterRunnerModule('chai', () => {
+registerRunnerModule('chai', () => {
     return chai();
 });

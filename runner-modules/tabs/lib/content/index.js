@@ -86,12 +86,15 @@ try {
 
     window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
     window.addEventListener('message', handleWindowMessage, false);
-    // Workaround for firefox bug (last tested to occur in v57)
+    // Workaround for firefox bug (last tested to occur in v57 and v65)
     // it seems that sometimes this content script is executed so early that firefox still has to perform some kind of house keeping,
     // which causes our global variable to disappear. assigning the global variable again in a microtask works around this bug.
     Promise.resolve().then(() => {
         window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
-        window.addEventListener('message', handleWindowMessage, false); // has no effect if already added
+    });
+    window.addEventListener('openrunnerinitmoduleframework', e => {
+        e.stopImmediatePropagation();
+        window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
     });
 
     log.debug('Initialized... Notifying the background script');

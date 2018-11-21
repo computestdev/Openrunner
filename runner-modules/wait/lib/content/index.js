@@ -4,8 +4,9 @@ const Bluefox = require('bluefox');
 
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'wait/content/index'});
 const trackRunResultEvents = require('./trackRunResultEvents');
+const registerRunnerModule = require('../../../content-register');
 
-openRunnerRegisterRunnerModule('wait', async ({eventEmitter, getModule}) => {
+registerRunnerModule('wait', async ({eventEmitter, getModule}) => {
     const runResultModule = await getModule('runResult');
     const bluefox = new Bluefox();
     const wait = bluefox.target(window);

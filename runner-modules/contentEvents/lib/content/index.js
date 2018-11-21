@@ -1,6 +1,6 @@
 /* global window, document */
 'use strict';
-
+const registerRunnerModule = require('../../../content-register');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'contentEvents/content/index'});
 
 const SLOW_PAINT_THRESHOLD = 50; // 60hz = 16.6...ms
@@ -10,7 +10,7 @@ const SLOW_PAINT_THRESHOLD = 50; // 60hz = 16.6...ms
 const requestAnimationFrame = callback => window.requestAnimationFrame(callback);
 const timing = () => window.performance.timing;
 
-openRunnerRegisterRunnerModule('contentEvents', async ({getModule}) => {
+registerRunnerModule('contentEvents', async ({getModule}) => {
     const {scriptResult, TimePoint} = await getModule('runResult');
     let lastAnimationFrame = null;
 

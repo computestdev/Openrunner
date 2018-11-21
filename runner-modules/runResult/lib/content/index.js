@@ -1,5 +1,4 @@
 'use strict';
-
 const {transactionAbortedError} = require('../../../../lib/scriptErrors');
 const TimePoint = require('../TimePoint');
 const TimePeriod = require('../TimePeriod');
@@ -7,8 +6,9 @@ const Event = require('../Event');
 const Transaction = require('../Transaction');
 const RunResult = require('../RunResult');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'runResult/content/index'});
+const registerRunnerModule = require('../../../content-register');
 
-openRunnerRegisterRunnerModule('runResult', ({eventEmitter, rpc}) => {
+registerRunnerModule('runResult', ({eventEmitter, rpc}) => {
     TimePoint.setCounterFunc(() => ({
         backgroundCounter: undefined,
         scriptCounter: undefined,

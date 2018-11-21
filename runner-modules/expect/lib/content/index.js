@@ -1,6 +1,7 @@
 'use strict';
+const registerRunnerModule = require('../../../content-register');
 
-openRunnerRegisterRunnerModule('expect', async ({getModule}) => {
+registerRunnerModule('expect', async ({getModule}) => {
     const chai = await getModule('chai');
     return chai.expect;
 });

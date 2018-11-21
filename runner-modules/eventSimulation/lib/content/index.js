@@ -2,12 +2,13 @@
 const {click} = require('./mouse');
 const {keyboardKeys, keyboardTextInput} = require('./keyboard');
 const {focus} = require('./focus');
+const registerRunnerModule = require('../../../content-register');
 
 const DEFAULT_MOUSE_DOWN_DURATION = 64;
 const DEFAULT_KEY_INTERVAL = 10;
 const DEFAULT_KEY_DOWN_DURATION = 5;
 
-openRunnerRegisterRunnerModule('eventSimulation', async ({getModule}) => {
+registerRunnerModule('eventSimulation', async ({getModule}) => {
     const {scriptResult} = await getModule('runResult');
 
     return Object.freeze({
