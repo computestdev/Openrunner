@@ -159,7 +159,7 @@ class RunnerScriptPrivate {
     }
 
     async stop({name = 'Error', message = ''}) {
-        log.info({name, message}, 'Stopping...');
+        log.info({errorName: name, message}, 'Stopping...');
         const err = new Error(`Script stopped: ${message}`);
         err.name = name;
         this.stopReason = err;
