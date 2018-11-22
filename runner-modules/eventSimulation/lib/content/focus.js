@@ -43,7 +43,7 @@ const focus = element => {
         previousFocus.dispatchEvent(new FocusEvent('focusout', {
             bubbles: true,
             cancelable: false,
-            composed: false,
+            composed: true,
             relatedTarget: element,
             view: window,
         }));
@@ -62,7 +62,7 @@ const focus = element => {
     element.dispatchEvent(new FocusEvent('focusin', {
         bubbles: true,
         cancelable: false,
-        composed: false,
+        composed: true,
         relatedTarget: previousFocus,
         view: window,
     }));

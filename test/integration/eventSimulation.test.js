@@ -85,7 +85,7 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                 relatedTarget: null,
                 bubbles: true,
                 cancelable: false,
-                composed: false,
+                composed: true,
             });
 
             containSubset(events[2], {
@@ -105,7 +105,7 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                 relatedTarget: '#target2',
                 bubbles: true,
                 cancelable: false,
-                composed: false,
+                composed: true,
             });
 
             containSubset(events[4], {
@@ -125,7 +125,7 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                 relatedTarget: '#target1',
                 bubbles: true,
                 cancelable: false,
-                composed: false,
+                composed: true,
             });
 
             lengthOf(events, 6);
@@ -423,7 +423,7 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                     target: '#target1',
                     bubbles: true,
                     cancelable: false,
-                    composed: false,
+                    composed: true,
                     relatedTarget: '#target2',
                     activeElement: '<body>',
                 });
@@ -441,7 +441,7 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
                     target: '#target2',
                     bubbles: true,
                     cancelable: false,
-                    composed: false,
+                    composed: true,
                     relatedTarget: '#target1',
                     activeElement: '#target2',
                 });
