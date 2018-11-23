@@ -831,15 +831,15 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
 
             lengthOf(scriptStackFrames, 2);
-            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
-            eq(scriptStackFrames[0].lineNumber, 4);
-            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.run"
-            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js#content');
+            eq(scriptStackFrames[0].lineNumber, 3);
+            eq(scriptStackFrames[0].columnNumber, 11); // Position of "new Error"
+            eq(scriptStackFrames[0].runnerScriptContext, 'content');
 
-            eq(scriptStackFrames[1].fileName, 'integrationTest.js#content');
-            eq(scriptStackFrames[1].lineNumber, 3);
-            eq(scriptStackFrames[1].columnNumber, 11); // Position of "new Error"
-            eq(scriptStackFrames[1].runnerScriptContext, 'content');
+            eq(scriptStackFrames[1].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[1].lineNumber, 4);
+            eq(scriptStackFrames[1].columnNumber, 7); // Position of "tab.run"
+            eq(scriptStackFrames[1].runnerScriptContext, 'main');
         });
 
         specify('tab.wait() rejected by a runner content script', async () => {
@@ -856,15 +856,15 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
 
             lengthOf(scriptStackFrames, 2);
-            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
-            eq(scriptStackFrames[0].lineNumber, 4);
-            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.wait"
-            eq(scriptStackFrames[0].runnerScriptContext, 'main');
-
-            eq(scriptStackFrames[1].fileName, 'integrationTest.js#content');
-            eq(scriptStackFrames[1].lineNumber, 1);
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js#content');
+            eq(scriptStackFrames[0].lineNumber, 1);
             // columnNumber is not tested here; a correct columnNumber is not guaranteed on the first line
-            eq(scriptStackFrames[1].runnerScriptContext, 'content');
+            eq(scriptStackFrames[0].runnerScriptContext, 'content');
+
+            eq(scriptStackFrames[1].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[1].lineNumber, 4);
+            eq(scriptStackFrames[1].columnNumber, 7); // Position of "tab.wait"
+            eq(scriptStackFrames[1].runnerScriptContext, 'main');
         });
 
         specify('tab.waitForNewPage() rejected by a runner content script', async () => {
@@ -883,15 +883,15 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
 
             lengthOf(scriptStackFrames, 2);
-            eq(scriptStackFrames[0].fileName, 'integrationTest.js');
-            eq(scriptStackFrames[0].lineNumber, 4);
-            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.waitForNewPage"
-            eq(scriptStackFrames[0].runnerScriptContext, 'main');
+            eq(scriptStackFrames[0].fileName, 'integrationTest.js#content');
+            eq(scriptStackFrames[0].lineNumber, 3);
+            eq(scriptStackFrames[0].columnNumber, 19); // Position of "new Error"
+            eq(scriptStackFrames[0].runnerScriptContext, 'content');
 
-            eq(scriptStackFrames[1].fileName, 'integrationTest.js#content');
-            eq(scriptStackFrames[1].lineNumber, 3);
-            eq(scriptStackFrames[1].columnNumber, 19); // Position of "new Error"
-            eq(scriptStackFrames[1].runnerScriptContext, 'content');
+            eq(scriptStackFrames[1].fileName, 'integrationTest.js');
+            eq(scriptStackFrames[1].lineNumber, 4);
+            eq(scriptStackFrames[1].columnNumber, 7); // Position of "tab.waitForNewPage"
+            eq(scriptStackFrames[1].runnerScriptContext, 'main');
         });
 
         specify('tab.waitForNewPage() rejected by a timeout', async () => {
