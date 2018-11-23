@@ -71,7 +71,7 @@ describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
         isNumber(event.metaData.checkOverhead);
         isAtLeast(event.timing.begin.time, transaction.timing.begin.time);
         isAtMost(event.timing.end.time, transaction.timing.end.time);
-        isAtLeast(event.timing.duration, 100);
+        isAtLeast(transaction.timing.duration, 100);
     });
 
     specify('Failing a wait expression', async () => {
@@ -199,6 +199,6 @@ describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
         isAtMost(events[2].timing.begin.time, thirdTrans.timing.end.time);
         isAtLeast(events[2].timing.end.time, thirdTrans.timing.begin.time);
         isAtMost(events[2].timing.end.time, thirdTrans.timing.end.time);
-        isAtLeast(events[2].timing.duration, 100);
+        isAtLeast(thirdTrans.timing.duration, 100);
     });
 });
