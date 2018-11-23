@@ -11,7 +11,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             'Openrunner-Script: v1';
             const tabs = await include('tabs');
             const tab = await tabs.create();
-            await tab.navigate(injected.url, {timeout: '2s'});
+            await tab.navigate(injected.url, {timeout: '10s'});
         }, {url: `http://localhost:${testServerPort()}/headers/html`});
         /* eslint-enable no-undef */
 
@@ -30,7 +30,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             {
                 const err = await assert.isRejected(
-                    tab.navigate('foo://bar', {timeout: '2s'}),
+                    tab.navigate('foo://bar', {timeout: '10s'}),
                     /url.*must.*absolute.*HTTP.*URL/
                 );
                 assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
@@ -38,7 +38,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             {
                 const err = await assert.isRejected(
-                    tab.navigate('foo.html', {timeout: '2s'}),
+                    tab.navigate('foo.html', {timeout: '10s'}),
                     /url.*must.*absolute.*HTTP.*URL/i
                 );
                 assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
@@ -114,7 +114,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const tabs = await include('tabs');
             const assert = await include('assert');
             const tab = await tabs.create();
-            await tab.navigate(injected.url, {timeout: '2s'});
+            await tab.navigate(injected.url, {timeout: '10s'});
 
             {
                 // returning a value and passing an argument
@@ -243,7 +243,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const assert = await include('assert');
             const tab = await tabs.create();
 
-            await tab.navigate(injected.url, {timeout: '2s'});
+            await tab.navigate(injected.url, {timeout: '10s'});
             const runPromise = tab.run(() => {
                 return new Promise(() => {}); // always pending
             });
@@ -251,7 +251,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             runPromise.catch(() => { runPromiseRejectionTime = Date.now(); });
 
             const secondNavigationTime = Date.now();
-            await tab.navigate(injected.url + '?foo', {timeout: '2s'});
+            await tab.navigate(injected.url + '?foo', {timeout: '10s'});
             const err = await assert.isRejected(runPromise, Error, /page.*navigated.*away.*while.*execution.*content script.*pending/i);
             assert.strictEqual(err.name, 'Openrunner:ContentScriptAbortedError');
             assert.approximately(runPromiseRejectionTime - secondNavigationTime, 0, 100);
@@ -274,7 +274,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-            await tab.navigate(injected.url + '?initial', {timeout: '2s'});
+            await tab.navigate(injected.url + '?initial', {timeout: '10s'});
 
             let waitPromiseResolved = false;
             const waitPromise = tab.wait(async () => {
@@ -290,23 +290,23 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             const getProgress = async () => tab.run(() => sessionStorage.progress);
 
-            await tab.navigate(injected.url + '?pending1', {timeout: '2s'});
+            await tab.navigate(injected.url + '?pending1', {timeout: '10s'});
             await delay(50);
             assert.deepEqual(await getProgress(), ',?initial,?pending1');
             assert.isFalse(waitPromiseResolved);
 
-            await tab.navigate(injected.url + '?pending2', {timeout: '2s'});
+            await tab.navigate(injected.url + '?pending2', {timeout: '10s'});
             await delay(50);
             assert.deepEqual(await getProgress(), ',?initial,?pending1,?pending2');
             assert.isFalse(waitPromiseResolved);
 
-            await tab.navigate(injected.url + '?resolve1', {timeout: '2s'});
+            await tab.navigate(injected.url + '?resolve1', {timeout: '10s'});
             await delay(50);
             assert.deepEqual(await getProgress(), ',?initial,?pending1,?pending2,?resolve1');
             assert.isTrue(waitPromiseResolved);
             assert.strictEqual(await waitPromise, '?resolve1');
 
-            await tab.navigate(injected.url + '?previouslyResolved', {timeout: '2s'});
+            await tab.navigate(injected.url + '?previouslyResolved', {timeout: '10s'});
             await delay(50);
             assert.strictEqual(await getProgress(), ',?initial,?pending1,?pending2,?resolve1'); // should not call the wait script again
         }, {url: `http://localhost:${testServerPort()}/headers/html`});
@@ -327,7 +327,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-            await tab.navigate(injected.url + '?initial', {timeout: '2s'});
+            await tab.navigate(injected.url + '?initial', {timeout: '10s'});
 
             let waitPromiseRejected = false;
             const waitPromise = tab.wait(async () => {
@@ -343,18 +343,18 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             const getProgress = async () => tab.run(() => sessionStorage.progress);
 
-            await tab.navigate(injected.url + '?pending', {timeout: '2s'});
+            await tab.navigate(injected.url + '?pending', {timeout: '10s'});
             await delay(50);
             assert.deepEqual(await getProgress(), ',?initial,?pending');
             assert.isFalse(waitPromiseRejected);
 
-            await tab.navigate(injected.url + '?reject', {timeout: '2s'});
+            await tab.navigate(injected.url + '?reject', {timeout: '10s'});
             await delay(50);
             assert.deepEqual(await getProgress(), ',?initial,?pending,?reject');
             assert.isTrue(waitPromiseRejected);
             await assert.isRejected(waitPromise, Error, 'Error from test!');
 
-            await tab.navigate(injected.url + '?previouslyRejected', {timeout: '2s'});
+            await tab.navigate(injected.url + '?previouslyRejected', {timeout: '10s'});
             await delay(50);
             assert.strictEqual(await getProgress(), ',?initial,?pending,?reject'); // should not call the wait script again
         }, {url: `http://localhost:${testServerPort()}/headers/html`});
@@ -376,7 +376,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
             {
-                await tab.navigate(injected.url + '?initial', {timeout: '2s'});
+                await tab.navigate(injected.url + '?initial', {timeout: '10s'});
 
                 let waitPromiseResolved = false;
                 const waitPromise = tab.waitForNewPage(async () => {
@@ -389,7 +389,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 await delay(50);
                 assert.isFalse(waitPromiseResolved);
 
-                await tab.navigate(injected.url + '?pending1', {timeout: '2s'});
+                await tab.navigate(injected.url + '?pending1', {timeout: '10s'});
                 await delay(50);
                 assert.isTrue(waitPromiseResolved);
                 assert.strictEqual(await waitPromise, undefined);
@@ -397,7 +397,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             {
                 // if the content script is still pending, waitForNewPage should still resolve after the navigation occurs
-                await tab.navigate(injected.url + '?initial', {timeout: '2s'});
+                await tab.navigate(injected.url + '?initial', {timeout: '10s'});
 
                 let waitPromiseResolved = false;
                 const waitPromise = tab.waitForNewPage(async () => {
@@ -410,7 +410,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 await delay(50);
                 assert.isFalse(waitPromiseResolved);
 
-                await tab.navigate(injected.url + '?pending1', {timeout: '2s'});
+                await tab.navigate(injected.url + '?pending1', {timeout: '10s'});
                 await delay(50);
                 assert.isTrue(waitPromiseResolved);
                 assert.strictEqual(await waitPromise, undefined);
@@ -433,7 +433,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const assert = await include('assert');
             const tab = await tabs.create();
 
-            await tab.navigate(injected.url + '?initial', {timeout: '2s'});
+            await tab.navigate(injected.url + '?initial', {timeout: '10s'});
 
             const waitPromise = tab.waitForNewPage(async () => {
                 throw Error('Error from test!!');
@@ -756,14 +756,14 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const tab = await tabs.create();
 
             const err = await assert.isRejected(
-                tab.navigate(injected.badURL, {timeout: '2s'}),
+                tab.navigate(injected.badURL, {timeout: '10s'}),
                 Error,
                 /navigating.*https:\/\/localhost.*time.*out/i
             );
             assert.strictEqual(err.name, 'Openrunner:NavigateError');
 
             // should be able to navigate again
-            await tab.navigate(injected.goodURL + '?foo', {timeout: '2s'});
+            await tab.navigate(injected.goodURL + '?foo', {timeout: '10s'});
             assert.strictEqual(await tab.run(() => location.search), '?foo');
         }, {
             badURL: `https://localhost:${testServerBadTLSPort()}/`,
@@ -786,7 +786,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const result = await runScript(
                 `${SCRIPT_INIT} // line 1\n` +
                 `  // line 2\n` +
-                `    await tab.navigate('foo://bar', {timeout: '2s'}); // line 3; Error here\n` +
+                `    await tab.navigate('foo://bar', {timeout: '10s'}); // line 3; Error here\n` +
                 `// line 4`
             );
             eq(result.error.name, 'Openrunner:IllegalArgumentError');
@@ -921,7 +921,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const tabs = await include('tabs');
             const assert = await include('assert');
             const tab = await tabs.create();
-            await tab.navigate(injected.url, {timeout: '2s'});
+            await tab.navigate(injected.url, {timeout: '10s'});
 
             {
                 await tabs.viewportSize({width: 400, height: 500});

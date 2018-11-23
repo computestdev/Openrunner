@@ -89,7 +89,7 @@ describe('integration/screenshot', {timeout: 60000, slow: 20000}, () => {
             const tab = await tabs.create();
 
             await assert.isRejected(
-                tab.navigate(injected.badURL, {timeout: '2s'}),
+                tab.navigate(injected.badURL, {timeout: '10s'}),
                 Error,
                 /navigating.*https:\/\/localhost.*time.*out/i
             );
