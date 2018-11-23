@@ -1,6 +1,6 @@
 'use strict';
 const {describe, specify} = require('mocha-sugar-free');
-const {assert: {lengthOf, strictEqual: eq}} = require('chai');
+const {assert: {lengthOf, strictEqual: eq, oneOf}} = require('chai');
 
 const {runScriptFromFunction, runScript, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
 
@@ -806,7 +806,9 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             eq(result.error.name, 'Openrunner:NavigateError');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
-            lengthOf(scriptStackFrames, 1);
+            // it appears that newer versions of firefox already include the same stack. For now we accept a double stack (until this
+            // version of firefox is out of alpha)
+            oneOf(scriptStackFrames.length, [1, 2]);
             eq(scriptStackFrames[0].fileName, 'integrationTest.js');
             eq(scriptStackFrames[0].lineNumber, 2);
             eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.navigate"
