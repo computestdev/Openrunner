@@ -245,7 +245,14 @@ class TabManager extends EventEmitter {
         const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
 
         const rpcPromise = Promise.race([
-            rpc.call({name: 'tabs.run', timeout: 0}, {code, arg, metadata}),
+            rpc.call({name: 'tabs.run', timeout: 0}, {code, arg, metadata}).catch(err => {
+                if (err.name === 'RPCNoResponse') {
+                    throw contentScriptAbortedError(
+                        'The web page has navigated away while the execution of the content script was pending (RPCNoResponse)'
+                    );
+                }
+                throw err;
+            }),
             this.myTabs.waitForTabUninitialization(browserTabId, browserFrameId).then(() => {
                 throw contentScriptAbortedError(
                     'The web page has navigated away while the execution of the content script was pending'
