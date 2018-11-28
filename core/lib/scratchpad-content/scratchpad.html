@@ -35,23 +35,23 @@ await requestBlocking.block([
 ]);
 
 await transaction('HomePage', async t => {
-    t.title = '00 HomePage';
+    t.title = '00 Open the Home Page';
     await tab.navigate('http://computest.nl/', {timeout: '10s'});
     await tab.wait(async () => {
-        await wait.documentComplete().selector('#layerslider_1 p.slider-text').isDisplayed();
+        performanceLink = await wait.documentComplete().selectorAll('.section--intro a').containsText('Performance').isDisplayed().first();
     });
 });
 
 await transaction('Actueel', async t => {
-    t.title = '01 Actueel';
+    t.title = '01 Click on Performance';
     await tab.waitForNewPage(async () => {
-        const links = await wait.selectorAll('#menu-main-header-menu > li > a').containsText('Actueel').amount(1);
-        await eventSimulation.click(links[0]);
+        await eventSimulation.click(performanceLink);
     });
     await tab.wait(async () => {
         await wait.documentComplete();
     });
 });
+
 </pre>
     </body>
 </html>
