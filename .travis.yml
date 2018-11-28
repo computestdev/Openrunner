@@ -3,23 +3,32 @@ node_js:
     - "node"
 env:
     global:
-        - DISPLAY=:100
         - TEST_FIREFOX_BIN=/usr/bin/firefox
+        - TEST_HEADLESS=1
+dist: xenial
 install:
+    - lsb_release -a
     - npm install
     - npm ls; true
 jobs:
     include:
-        - stage: test
-          env: TEST_SUITE=lint,unit,integration
-          sudo: required
-          dist: trusty
-          before_install:
-              - lsb_release -a
-              - sudo add-apt-repository -y ppa:ubuntu-mozilla-daily/firefox-aurora
-              - sudo apt-get update
-              - sudo apt-get install -y firefox
-              - '"$TEST_FIREFOX_BIN" --version'
+        - stage: lint
+          env: TEST_SUITE=lint
           script:
               - npm run lint
+
+        - stage: test
+          env: TEST_SUITE=unit,integration
+          # the firefox deb download from the ppa is very very slow (~3 minutes), cache it
+          cache:
+              directories:
+                  - /home/travis/apt-firefox-cache
+          before_install:
+              - sudo add-apt-repository -y ppa:ubuntu-mozilla-daily/firefox-aurora
+              - sudo chown --recursive root /home/travis/apt-firefox-cache
+              - sudo apt-get update
+              - sudo apt-get install -o dir::cache::archives=/home/travis/apt-firefox-cache --no-install-recommends -y firefox
+              - sudo chown --recursive travis /home/travis/apt-firefox-cache
+          script:
+              - '"$TEST_FIREFOX_BIN" --version'
               - npm run test:unit:coveralls
