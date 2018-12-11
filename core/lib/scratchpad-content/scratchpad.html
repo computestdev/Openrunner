@@ -38,7 +38,7 @@ await transaction('HomePage', async t => {
     t.title = '00 Open the Home Page';
     await tab.navigate('http://computest.nl/', {timeout: '10s'});
     await tab.wait(async () => {
-        performanceLink = await wait.documentComplete().selectorAll('.section--intro a').containsText('Performance').isDisplayed().first();
+        performanceLink = await wait.documentComplete().selectorAll('.article a').containsText('Performance').isDisplayed().first();
     });
 });
 
