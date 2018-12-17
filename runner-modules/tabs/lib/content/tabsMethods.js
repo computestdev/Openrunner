@@ -2,6 +2,7 @@
 const {illegalArgumentError} = require('../../../../lib/scriptErrors');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/tabsMethods'});
 const constructGlobalFunctions = require('./globalFunctions');
+const sanitizeForJsonSerialization = require('../../../../lib/sanitizeForJsonSerialization');
 
 // "not being evaluated by a direct call": http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.
 const evalNoScope = eval; // eslint-disable-line no-eval
@@ -16,6 +17,7 @@ const getModuleValues = function* (modulesMap, metadata) {
         }
     }
 };
+
 
 module.exports = (moduleRegister, eventEmitter) => {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
@@ -60,7 +62,7 @@ module.exports = (moduleRegister, eventEmitter) => {
         try {
             const resolve = await func(arg);
             return {
-                resolve,
+                resolve: sanitizeForJsonSerialization(resolve, '[INVALID RETURN VALUE FROM CONTENT SCRIPT]'),
                 reject: null,
             };
         }

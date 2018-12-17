@@ -747,6 +747,41 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
         }
     });
 
+    specify('Returning non serializable values from content scripts', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const assert = await include('assert');
+            const tab = await tabs.create();
+            await tab.navigate(injected.url, {timeout: '10s'});
+
+            {
+                const result = await tab.run(async () => {
+                    return document.body;
+                });
+                assert.strictEqual(result, '[INVALID RETURN VALUE FROM CONTENT SCRIPT]');
+            }
+            {
+                const result = await tab.wait(async () => document.body);
+                assert.strictEqual(result, '[INVALID RETURN VALUE FROM CONTENT SCRIPT]');
+            }
+            {
+                const result = await tab.waitForNewPage(async () => {
+                    setTimeout(() => { location.search = '?foo'; }, 10);
+                    return document.body;
+                });
+                assert.strictEqual(result, undefined);
+            }
+
+        }, {url: `http://localhost:${testServerPort()}/static/static.html`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+    });
+
     specify('Navigating to an URL with a TLS error', async () => {
         /* eslint-disable no-undef */
         const result = await runScriptFromFunction(async () => {
