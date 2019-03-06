@@ -32,7 +32,7 @@ class CoverageInstrumentationStream extends Transform {
         let instrumented = instrumenter.instrumentSync(this[scriptContent], this[scriptFileName]);
 
         // Hack for CSP Compatibility
-        instrumented = instrumented.replace(/global\s*=\s*new\s+Function\('return this'\)\(\),/g, 'global = self,');
+        instrumented = instrumented.replace(/global\s*=\s*new\s+Function\(['"]return this['"]\)\(\)/g, 'global = self');
         callback(null, instrumented);
     }
 }
