@@ -1,5 +1,5 @@
 'use strict';
-/* global window:false, performance:false */
+/* global window:false */
 const Bluefox = require('bluefox');
 
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'wait/content/index'});
