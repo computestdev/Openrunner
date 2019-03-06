@@ -1,6 +1,6 @@
 'use strict';
 const {describe, specify} = require('mocha-sugar-free');
-const {assert: {strictEqual: eq}} = require('chai');
+const {assert: {strictEqual: eq, deepEqual: deq}} = require('chai');
 
 const {runScript, runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
@@ -43,5 +43,37 @@ describe('integration/scriptingEnvironment', {timeout: 60000, slow: 10000}, () =
             throw result.error;
         }
         eq(result.value, 123);
+    });
+
+    specify('Exposing the script api version', async () => {
+        /* eslint-disable no-undef */
+        const result = await runScriptFromFunction(async () => {
+            'Openrunner-Script: v1';
+            const tabs = await include('tabs');
+            const tab = await tabs.create();
+
+            await tab.navigate(injected.url, {timeout: '10s'});
+            const {contentVersion} = await tab.run(async () => {
+                return {
+                    contentVersion: runMetadata.scriptApiVersion,
+                };
+            });
+
+            return {
+                contentVersion,
+                scriptEnvVersion: include.scriptApiVersion,
+            };
+
+        }, {url: `http://localhost:${testServerPort()}/static/static.html?waitBeforeResponse=50&bytesPerSecond=100000`});
+        /* eslint-enable no-undef */
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        deq(result.value, {
+            contentVersion: 1,
+            scriptEnvVersion: 1,
+        });
     });
 });

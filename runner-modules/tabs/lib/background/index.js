@@ -6,7 +6,13 @@ const tabsMethods = require('./tabsMethods');
 const scriptEnvUrl = browser.extension.getURL('/build/tabs-script-env.js');
 
 module.exports = script => {
-    const tabManager = new TabManager(browser);
+    const tabManager = new TabManager({
+        runtime: browser.runtime,
+        windows: browser.windows,
+        tabs: browser.tabs,
+        webNavigation: browser.webNavigation,
+        scriptApiVersion: script.scriptApiVersion,
+    });
     tabManager.on('windowCreated', data => script.emit('tabs.windowCreated', data));
     tabManager.on('windowClosed', data => script.emit('tabs.windowClosed', data));
     tabManager.on('tabCreated', data => script.emit('tabs.tabCreated', data));

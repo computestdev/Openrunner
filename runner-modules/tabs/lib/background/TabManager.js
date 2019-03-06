@@ -14,7 +14,13 @@ const contentMethods = require('./contentMethods');
 const TOP_FRAME_ID = 0;
 
 class TabManager extends EventEmitter {
-    constructor({runtime: browserRuntime, windows: browserWindows, tabs: browserTabs, webNavigation: browserWebNavigation}) {
+    constructor({
+        runtime: browserRuntime,
+        windows: browserWindows,
+        tabs: browserTabs,
+        webNavigation: browserWebNavigation,
+        scriptApiVersion,
+    }) {
         super();
         this._attached = false;
         this.browserRuntime = browserRuntime;
@@ -30,6 +36,7 @@ class TabManager extends EventEmitter {
             context: 'runner-modules/tabs',
             onRpcInitialize: obj => this.handleRpcInitialize(obj),
         });
+        this.scriptApiVersion = scriptApiVersion;
         this._navigationCommittedWait = new WaitForEvent(); // key is [browserTabId, browserFrameId]
 
         this.handleTabCreated = this.handleTabCreated.bind(this);
@@ -142,7 +149,7 @@ class TabManager extends EventEmitter {
         }
     }
 
-    handleTabMainContentInitialized(browserTabId, browserFrameId) {
+    async handleTabMainContentInitialized(browserTabId, browserFrameId) {
         const tab = this.myTabs.getByBrowserTabId(browserTabId);
         const isMyTab = Boolean(tab);
         log.info({browserTabId, browserFrameId, isMyTab}, 'Main tab content script has been initialized');
@@ -156,6 +163,10 @@ class TabManager extends EventEmitter {
         assert.isOk(frame, `Frame ${browserFrameId} has not been registered for tab ${browserTabId}`);
         this.myTabs.expectInitToken(browserTabId, browserFrameId, 'tabs');
         const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
+
+        await rpc.call('tabs.initializedMainTabContent', {
+            scriptApiVersion: this.scriptApiVersion,
+        });
 
         const files = [];
         const executeContentScript = (initToken, file) => {

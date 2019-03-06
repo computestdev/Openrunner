@@ -14,7 +14,7 @@ describe('compileRunnerScript', () => {
         const result = compileRunnerScript(scriptContent);
         deq(result, {
             scriptCompiledContent: scriptContent,
-            scriptApiVersion: 'v1',
+            scriptApiVersion: 1,
             runTimeoutMs: 60000,
         });
     });
@@ -28,7 +28,7 @@ describe('compileRunnerScript', () => {
         const result = compileRunnerScript(scriptContent);
         deq(result, {
             scriptCompiledContent: scriptContent,
-            scriptApiVersion: 'v1',
+            scriptApiVersion: 1,
             runTimeoutMs: 300000,
         });
     });
@@ -42,7 +42,7 @@ describe('compileRunnerScript', () => {
         const result = compileRunnerScript(scriptContent);
         deq(result, {
             scriptCompiledContent: scriptContent,
-            scriptApiVersion: 'v1',
+            scriptApiVersion: 1,
             runTimeoutMs: 300,
         });
     });

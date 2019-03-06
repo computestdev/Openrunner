@@ -19,11 +19,15 @@ const getModuleValues = function* (modulesMap, metadata) {
 };
 
 
-module.exports = (moduleRegister, eventEmitter) => {
+module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
     const globalFunctionsPromise = constructGlobalFunctions(getModule);
 
-    const compileFunction = async (functionCode, globalFunctions, metadata) => {
+    const compileFunction = async (functionCode, globalFunctions, metadataArg) => {
+        const metadata = {
+            ...metadataArg,
+            scriptApiVersion: getScriptApiVersion(),
+        };
         const modules = await moduleRegister.getAllModules();
         const argNames = [
             'runMetadata',

@@ -22,13 +22,22 @@ try {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
     const eventEmitter = new EventEmitter();
     const fireContentUnload = contentUnloadEvent(eventEmitter);
+    let backgroundScriptInitData = null;
+    const scriptApiVersion = () => backgroundScriptInitData && backgroundScriptInitData.scriptApiVersion;
+    const initializedMainTabContent = async (data) => {
+        // when we send 'tabs.mainContentInit' to the background script, the background script will then in turn send us
+        // 'tabs.initializedMainTabContent', after which it will begin to load runner modules
+        // backgroundScriptInitData = {scriptApiVersion}
+        backgroundScriptInitData = data;
+    };
     const rpc = new ContentRPC({
         browserRuntime: browser.runtime,
         context: 'runner-modules/tabs',
     });
     rpc.attach();
-    rpc.methods(tabsMethods(moduleRegister, eventEmitter));
+    rpc.methods(tabsMethods(moduleRegister, eventEmitter, scriptApiVersion));
     rpc.method('tabs.contentUnload', fireContentUnload);
+    rpc.method('tabs.initializedMainTabContent', initializedMainTabContent);
     window.addEventListener('unload', fireContentUnload);
     eventEmitter.on('tabs.contentUnload', () => log.debug('Content is about to unload'));
 
@@ -47,8 +56,20 @@ try {
                 throw Error('openRunnerRegisterRunnerModule(): Invalid `func`');
             }
 
+            if (!backgroundScriptInitData) {
+                throw Error(
+                    'openRunnerRegisterRunnerModule(): Called too early. Background script has not yet sent ' +
+                    '\'tabs.initializedMainTabContent\' to content script'
+                );
+            }
+
             const initModule = async () => {
-                return await func({eventEmitter, getModule, rpc});
+                return await func({
+                    eventEmitter,
+                    getModule,
+                    rpc,
+                    scriptApiVersion: scriptApiVersion(),
+                });
             };
 
             const promise = initModule();

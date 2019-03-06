@@ -6,8 +6,11 @@ module.exports = script => {
         await script.stop(reason);
     };
 
-    const runScript = async ({scriptContent, stackFileName}) => {
-        script.compileScript(scriptContent, stackFileName);
+    const compileScript = async ({scriptContent, stackFileName, scriptApiVersion}) => {
+        script.compileScript(scriptContent, stackFileName, scriptApiVersion);
+    };
+
+    const runScript = async () => {
         const {scriptError, scriptValue} = await script.run();
         return {scriptError, scriptValue};
     };
@@ -35,6 +38,7 @@ module.exports = script => {
     };
 
     return new Map([
+        ['core.compileScript', compileScript],
         ['core.stopScript', stopScript],
         ['core.runScript', runScript],
         ['core.importScripts', (...urls) => importScripts(...urls)],

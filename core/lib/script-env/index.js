@@ -13,10 +13,14 @@ try {
     self.openRunnerRegisterRunnerModule = async (moduleName, func) => {
         try {
             if (!isValidModuleName(moduleName)) {
-                throw Error('openRunnerRegisterRunnerModule(); Invalid argument `moduleName`');
+                throw Error('openRunnerRegisterRunnerModule(): Invalid argument `moduleName`');
             }
             if (typeof func !== 'function') {
                 throw Error('openRunnerRegisterRunnerModule(): Invalid argument `func`');
+            }
+
+            if (!script.compiled) {
+                throw Error('openRunnerRegisterRunnerModule(): Called too soon; The RunnerScript has not been compiled yet');
             }
 
             const initModule = async () => {

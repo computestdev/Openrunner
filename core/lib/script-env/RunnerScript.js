@@ -57,8 +57,16 @@ class RunnerScript {
         await this[PRIVATE].stop(reason);
     }
 
-    compileScript(scriptContent, stackFileName) {
-        this[PRIVATE].compileScript(scriptContent, stackFileName);
+    compileScript(scriptContent, stackFileName, scriptApiVersion) {
+        this[PRIVATE].compileScript(scriptContent, stackFileName, scriptApiVersion);
+    }
+
+    get compiled() {
+        return this[PRIVATE].compiled;
+    }
+
+    get scriptApiVersion() {
+        return this[PRIVATE].scriptApiVersion;
     }
 
     async run() {
@@ -80,8 +88,10 @@ class RunnerScriptPrivate {
         });
         this.rpcRegisterMethods(coreMethods(this.publicInterface));
         this.attached = false;
+        this.compiled = false;
         this.scriptFunction = null;
         this.stackFileName = null;
+        this.scriptApiVersion = null;
         this.moduleRegister = new ModuleRegister();
         this.stopReason = null;
         this.stopPromise = new Promise((resolve, reject) => {
@@ -166,9 +176,11 @@ class RunnerScriptPrivate {
         this.stopPromiseReject(err);
     }
 
-    compileScript(scriptContent, stackFileName) {
+    compileScript(scriptContent, stackFileName, scriptApiVersion) {
         this.scriptFunction = compileRunnerScript(scriptContent);
         this.stackFileName = stackFileName;
+        this.scriptApiVersion = scriptApiVersion;
+        this.compiled = true;
     }
 
     async include(name) {

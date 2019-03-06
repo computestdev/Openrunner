@@ -44,6 +44,10 @@ class RunnerScriptParent {
         return this[PRIVATE].compileScript(content, stackFileName);
     }
 
+    get scriptApiVersion() {
+        return this[PRIVATE].scriptApiVersion;
+    }
+
     async run() {
         return this[PRIVATE].run();
     }
@@ -171,6 +175,19 @@ class RunnerScriptParentPrivate {
             await this.rpcCall({name: 'ping', timeout: 1001});
 
             const {runTimeoutMs, stackFileName} = this;
+            await this.rpcCall(
+                {
+                    name: 'core.compileScript',
+                    timeout: 10002,
+                },
+                {
+                    runTimeout: runTimeoutMs,
+                    scriptContent: this.scriptContent,
+                    stackFileName,
+                    scriptApiVersion: this.scriptApiVersion,
+                }
+            );
+
             this.scriptTimeoutTimer = setTimeout(() => {
                 this.scriptTimeoutTimer = 0;
                 this.stop({
@@ -192,11 +209,7 @@ class RunnerScriptParentPrivate {
                         // note: if this timeout hits, the result log will be fairly empty, it is only used as a last resort:
                         timeout: runTimeoutMs + 30000,
                     },
-                    {
-                        runTimeout: runTimeoutMs,
-                        scriptContent: this.scriptContent,
-                        stackFileName,
-                    }
+                    {}
                 );
                 await this.emitRunScriptResult(runScriptResult);
                 scriptResult.timing.endNow();
