@@ -87,7 +87,7 @@
     "split": "^1.0.1",
     "symbol-tree": "^3.2.2",
     "ws": "^6.0.0",
-    "yargs": "^12.0.1"
+    "yargs": "^13.2.2"
   },
   "optionalDependencies": {
     "appdmg": "^0.5.2"
