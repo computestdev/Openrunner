@@ -97,7 +97,7 @@ describe('integration/screenshot', {timeout: 60000, slow: 20000}, () => {
             assert.isRejected(screenshot.take(), Error, /screenshot.*take.*unable/i);
 
             // should be able to navigate again
-            await tab.navigate(injected.goodURL + '?foo', {timeout: '2s'});
+            await tab.navigate(injected.goodURL + '?foo', {timeout: '10s'});
             assert.strictEqual(await tab.run(() => location.search), '?foo');
         }, {
             badURL: `https://localhost:${testServerBadTLSPort()}/`,

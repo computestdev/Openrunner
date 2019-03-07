@@ -54,7 +54,7 @@ describe('integration/requestBlocking', {timeout: 60000, slow: 10000}, () => {
 
             await requestBlocking.block(['http://localhost/static/foo.jpg*']);
 
-            await tab.navigate(injected.url, {timeout: '2s'});
+            await tab.navigate(injected.url, {timeout: '10s'});
             await tab.wait(async () => {
                 await wait.documentComplete();
             });
@@ -91,7 +91,7 @@ describe('integration/requestBlocking', {timeout: 60000, slow: 10000}, () => {
 
             await requestBlocking.block('http://localhost/headers/json');
 
-            await tab.navigate(injected.url, {timeout: '2s'});
+            await tab.navigate(injected.url, {timeout: '10s'});
 
             await tab.run(async () => {
                 const fetchPromise = content.fetch(`http://${location.host}/headers/json`, {cache: 'no-cache'});
@@ -114,7 +114,7 @@ describe('integration/requestBlocking', {timeout: 60000, slow: 10000}, () => {
             const requestBlocking = await include('requestBlocking');
             const tab = await tabs.create();
 
-            await tab.navigate(injected.url, {timeout: '2s'});
+            await tab.navigate(injected.url, {timeout: '10s'});
 
             await requestBlocking.block('http://localhost/headers/json', async () => {
                 await tab.run(async () => {
