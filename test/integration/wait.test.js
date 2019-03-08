@@ -3,6 +3,7 @@ const {describe, specify} = require('mocha-sugar-free');
 require('chai').use(require('chai-subset'));
 const {assert: {strictEqual: eq, lengthOf, isNumber, isAtLeast, isAtMost, isNull}} = require('chai');
 
+const {isMeasurementDuration} = require('../utilities/assertions');
 const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
 describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
@@ -10,18 +11,19 @@ describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
         /* eslint-disable no-undef */
         const result = await runScriptFromFunction(async () => {
             'Openrunner-Script: v1';
-            const assert = await include('assert');
             const wait = await include('wait');
 
             const before = Date.now();
             await wait.delay(250);
-            assert.approximately(Date.now() - before, 250, 50);
+            return Date.now() - before;
         });
         /* eslint-enable no-undef */
 
         if (result.error) {
             throw result.error;
         }
+
+        isMeasurementDuration(result.value, 250 - 10, 50);
     });
 
     specify('Waiting for a wait expression', async () => {

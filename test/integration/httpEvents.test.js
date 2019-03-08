@@ -1,9 +1,8 @@
 'use strict';
-const {describe, specify, before} = require('mocha-sugar-free');
-const {assert: {lengthOf, deepEqual: deq, strictEqual: eq, approximately, isAtLeast, isAtMost, isString, isOk}} = require('chai');
-const {stat} = require('fs-extra');
-const {join: pathJoin} = require('path');
+const {describe, specify} = require('mocha-sugar-free');
+const {assert: {lengthOf, deepEqual: deq, strictEqual: eq, isAtLeast, isAtMost, isString, isOk}} = require('chai');
 
+const {isMeasurementDuration} = require('../utilities/assertions');
 const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
 
 const httpEventFilter = e => e.type === 'http';
@@ -27,16 +26,6 @@ const assertCommonChildEvents = event => {
 };
 
 describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
-    let STATIC_HTML_SIZE;
-    let FOO_JPG_SIZE;
-
-    before(async () => {
-        [STATIC_HTML_SIZE, FOO_JPG_SIZE] = (await Promise.all([
-            stat(pathJoin(__dirname, '..', 'server', 'static', 'static.html')),
-            stat(pathJoin(__dirname, '..', 'server', 'static', 'foo.jpg')),
-        ])).map(s => s.size);
-    });
-
     specify('Tracking of simple http requests', async () => {
         const host = `localhost:${testServerPort()}`;
         const urlPrefix = `http://${host}/static`;
@@ -95,10 +84,10 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
         eq(events[1].shortTitle, `GET foo.jpg?noCache&waitBeforeResponse=50&bytesPerSecond=400000`);
         eq(events[2].shortTitle, `GET foo.jpg?noCache&waitBeforeResponse=35&bytesPerSecond=300000`);
         eq(events[3].shortTitle, `GET foo.jpg?noCache&waitBeforeResponse=60&bytesPerSecond=400000`);
-        approximately(events[0].timing.duration, 50 + STATIC_HTML_SIZE / 100000 * 1000, 250);
-        approximately(events[1].timing.duration, 50 + FOO_JPG_SIZE / 400000 * 1000, 250);
-        approximately(events[2].timing.duration, 35 + FOO_JPG_SIZE / 300000 * 1000, 250);
-        approximately(events[3].timing.duration, 60 + FOO_JPG_SIZE / 400000 * 1000, 250);
+        isMeasurementDuration(events[0].timing.duration, 300, 200);
+        isMeasurementDuration(events[1].timing.duration, 500, 200);
+        isMeasurementDuration(events[2].timing.duration, 600, 200);
+        isMeasurementDuration(events[3].timing.duration, 500, 200);
         deq(events[0].metaData.responseHeaders.filter(h => h.name === 'Content-Type'), [{
             name: 'Content-Type',
             value: 'text/html',
@@ -303,7 +292,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
             eq(event.metaData.originUrl, null);
             eq(event.longTitle, `GET ${urlPrefix}/static.html?waitBeforeResponse=50&bytesPerSecond=100000`);
             eq(event.shortTitle, `GET static.html?waitBeforeResponse=50&bytesPerSecond=100000`);
-            approximately(event.timing.duration, 50 + STATIC_HTML_SIZE / 100000 * 1000, 250);
+            isMeasurementDuration(event.timing.duration, 300, 250);
             deq(event.metaData.responseHeaders.filter(h => h.name === 'Content-Type'), [{
                 name: 'Content-Type',
                 value: 'text/html',

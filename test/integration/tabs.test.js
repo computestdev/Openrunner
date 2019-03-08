@@ -2,6 +2,7 @@
 const {describe, specify} = require('mocha-sugar-free');
 const {assert: {lengthOf, strictEqual: eq, oneOf}} = require('chai');
 
+const {isMeasurementDuration} = require('../utilities/assertions');
 const {runScriptFromFunction, runScript, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
 
 describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
@@ -66,13 +67,15 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             );
             const after = Date.now();
             assert.strictEqual(err.name, 'Openrunner:NavigateError');
-            assert.approximately(after - before, 2000, 500);
+            return after - before;
         }, {url: `http://localhost:${testServerPort()}/no-reply`});
         /* eslint-enable no-undef */
 
         if (result.error) {
             throw result.error;
         }
+
+        isMeasurementDuration(result.value, 2000 - 10);
     });
 
     specify('Calling rpc methods on an invalid tab', async () => {
