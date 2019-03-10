@@ -76,7 +76,7 @@
     "error-stack-parser": "^2.0.1",
     "fs-extra": "^7.0.0",
     "istanbul-lib-instrument": "^3.0.0",
-    "jsdom": "^13.0.0",
+    "jsdom": "^14.0.0",
     "jsonbird": ">= 3.1.0 < 4",
     "jsonbird-websocket": "^1.0.0",
     "performr-runner-metadata-parser": "^1.0.0",
