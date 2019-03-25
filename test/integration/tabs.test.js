@@ -832,7 +832,9 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             lengthOf(scriptStackFrames, 1);
             eq(scriptStackFrames[0].fileName, 'integrationTest.js');
             eq(scriptStackFrames[0].lineNumber, 3);
-            eq(scriptStackFrames[0].columnNumber, 11); // Position of "tab.navigate"
+            //           tab.navigate()
+            // One of:   ^   ^
+            oneOf(scriptStackFrames[0].columnNumber, [11, 15]);
             eq(scriptStackFrames[0].runnerScriptContext, 'main');
         });
 
@@ -849,7 +851,9 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             oneOf(scriptStackFrames.length, [1, 2]);
             eq(scriptStackFrames[0].fileName, 'integrationTest.js');
             eq(scriptStackFrames[0].lineNumber, 2);
-            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.navigate"
+            //           tab.navigate()
+            // One of:   ^   ^
+            oneOf(scriptStackFrames[0].columnNumber, [7, 11]);
             eq(scriptStackFrames[0].runnerScriptContext, 'main');
         });
 
@@ -876,7 +880,9 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             eq(scriptStackFrames[1].fileName, 'integrationTest.js');
             eq(scriptStackFrames[1].lineNumber, 4);
-            eq(scriptStackFrames[1].columnNumber, 7); // Position of "tab.run"
+            //           tab.run()
+            // One of:   ^   ^
+            oneOf(scriptStackFrames[1].columnNumber, [7, 11]);
             eq(scriptStackFrames[1].runnerScriptContext, 'main');
         });
 
@@ -901,7 +907,9 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             eq(scriptStackFrames[1].fileName, 'integrationTest.js');
             eq(scriptStackFrames[1].lineNumber, 4);
-            eq(scriptStackFrames[1].columnNumber, 7); // Position of "tab.wait"
+            //           tab.wait()
+            // One of:   ^   ^
+            oneOf(scriptStackFrames[1].columnNumber, [7, 11]);
             eq(scriptStackFrames[1].runnerScriptContext, 'main');
         });
 
@@ -928,7 +936,9 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
 
             eq(scriptStackFrames[1].fileName, 'integrationTest.js');
             eq(scriptStackFrames[1].lineNumber, 4);
-            eq(scriptStackFrames[1].columnNumber, 7); // Position of "tab.waitForNewPage"
+            //           tab.waitForNewPage()
+            // One of:   ^   ^
+            oneOf(scriptStackFrames[1].columnNumber, [7, 11]);
             eq(scriptStackFrames[1].runnerScriptContext, 'main');
         });
 
@@ -947,7 +957,9 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             lengthOf(scriptStackFrames, 1);
             eq(scriptStackFrames[0].fileName, 'integrationTest.js');
             eq(scriptStackFrames[0].lineNumber, 3);
-            eq(scriptStackFrames[0].columnNumber, 7); // Position of "tab.waitForNewPage"
+            //           tab.waitForNewPage()
+            // One of:   ^   ^
+            oneOf(scriptStackFrames[0].columnNumber, [7, 11]);
             eq(scriptStackFrames[0].runnerScriptContext, 'main');
         });
     });
