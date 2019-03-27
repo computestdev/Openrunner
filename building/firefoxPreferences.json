@@ -84,5 +84,7 @@
     "permissions.default.desktop-notification": 2,
     "permissions.default.geo": 2,
     "permissions.default.microphone": 2,
-    "media.autoplay.default": 0
+    "media.autoplay.default": 0,
+
+    "extensions.allowPrivateBrowsingByDefault": true
 }
