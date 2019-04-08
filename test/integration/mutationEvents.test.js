@@ -2,7 +2,7 @@
 const {describe, specify} = require('mocha-sugar-free');
 const {assert: {strictEqual: eq, lengthOf}} = require('chai');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 const findMutationEventAfterInteractive = result => {
     const {events} = result.result;

@@ -1,7 +1,7 @@
 'use strict';
 const {describe, specify} = require('mocha-sugar-free');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 describe('integration/chai', {timeout: 60000, slow: 10000}, () => {
     specify('Should expose chai to content', async () => {

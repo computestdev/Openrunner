@@ -3,7 +3,7 @@ const {describe, specify} = require('mocha-sugar-free');
 require('chai').use(require('chai-subset'));
 const {assert: {containSubset, isUndefined, deepEqual: deq}} = require('chai');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 describe('integration/requestModification', {timeout: 60000, slow: 10000}, () => {
     specify('Argument validation', async () => {

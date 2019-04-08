@@ -3,7 +3,7 @@ const {describe, specify} = require('mocha-sugar-free');
 const {assert: {lengthOf, deepEqual: deq, strictEqual: eq, isAtLeast, isAtMost, isString, isOk}} = require('chai');
 
 const {isMeasurementDuration} = require('../utilities/assertions');
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 const httpEventFilter = e => e.type === 'http';
 const httpEventNoFaviconFilter = e => httpEventFilter(e) && !/\/favicon.ico$/.test(e.metaData.url);

@@ -3,7 +3,7 @@ const {describe, specify} = require('mocha-sugar-free');
 require('chai').use(require('chai-subset'));
 const {assert: {ok, match}} = require('chai');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 describe('integration/requestBlocking', {timeout: 60000, slow: 10000}, () => {
     specify('Argument validation', async () => {

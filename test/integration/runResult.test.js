@@ -2,7 +2,7 @@
 const {describe, specify} = require('mocha-sugar-free');
 const {assert: {strictEqual: eq, match, isAtLeast, isAtMost, lengthOf}} = require('chai');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 describe('integration/runResult', {timeout: 10000, slow: 5000}, () => {
     specify('Script transactions in the outer script and content', async () => {

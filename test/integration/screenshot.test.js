@@ -2,7 +2,7 @@
 const {describe, specify} = require('mocha-sugar-free');
 const {assert: {strictEqual: eq, lengthOf, isAbove, isObject, isString, match}} = require('chai');
 
-const {runScriptFromFunction, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort, testServerBadTLSPort} = require('./setupIntegrationTest');
 
 const assertJpegDataUrl = url => {
     isString(url);

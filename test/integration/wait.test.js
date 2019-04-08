@@ -4,7 +4,7 @@ require('chai').use(require('chai-subset'));
 const {assert: {strictEqual: eq, lengthOf, isNumber, isAtLeast, isAtMost, isNull}} = require('chai');
 
 const {isMeasurementDuration} = require('../utilities/assertions');
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
     specify('Utility functions for the script-env', async () => {

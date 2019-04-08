@@ -3,7 +3,7 @@ const {describe, specify} = require('mocha-sugar-free');
 require('chai').use(require('chai-subset'));
 const {assert: {lengthOf, containSubset, strictEqual: eq, isAtLeast, approximately}} = require('chai');
 
-const {runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 const keyInputTestCases = require('./testCases/keyInput.json');
 const cancelledKeyInputTestCases = require('./testCases/cancelledKeyInput.json');
 

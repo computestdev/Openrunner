@@ -3,7 +3,7 @@ const {describe, specify} = require('mocha-sugar-free');
 const {assert: {lengthOf, strictEqual: eq, oneOf}} = require('chai');
 
 const {isMeasurementDuration} = require('../utilities/assertions');
-const {runScriptFromFunction, runScript, testServerPort, testServerBadTLSPort} = require('../utilities/integrationTest');
+const {runScriptFromFunction, runScript, testServerPort, testServerBadTLSPort} = require('./setupIntegrationTest');
 
 describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
     specify('Successful navigation', async () => {

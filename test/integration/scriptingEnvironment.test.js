@@ -2,7 +2,7 @@
 const {describe, specify} = require('mocha-sugar-free');
 const {assert: {strictEqual: eq, deepEqual: deq}} = require('chai');
 
-const {runScript, runScriptFromFunction, testServerPort} = require('../utilities/integrationTest');
+const {runScript, runScriptFromFunction, testServerPort} = require('./setupIntegrationTest');
 
 describe('integration/scriptingEnvironment', {timeout: 60000, slow: 10000}, () => {
     specify('Minimal script using only "transaction", "core" and "tabs"', async () => {
