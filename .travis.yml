@@ -5,6 +5,7 @@ env:
     global:
         - TEST_FIREFOX_BIN="${TRAVIS_HOME}/firefox-latest-unsigned/firefox/firefox"
         - TEST_HEADLESS=1
+        - COVERALLS_PARALLEL=true
 dist: xenial
 install:
     - lsb_release -a
@@ -17,10 +18,18 @@ jobs:
           script:
               - npm run lint
 
-        - stage: test
-          env: TEST_SUITE=unit,integration
+        - stage: unit
+          env: TEST_SUITE=unit
+          script:
+              - npm run test:unit:coveralls
+
+        - stage: integration
+          env: TEST_SUITE=integration
           addons:
               firefox: latest-unsigned
           script:
               - '"$TEST_FIREFOX_BIN" --version'
-              - npm run test:unit:coveralls
+              - npm run test:integration:coveralls
+
+notifications:
+    webhooks: https://coveralls.io/webhook
