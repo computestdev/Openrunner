@@ -16,6 +16,8 @@ const {
     TEST_HEADLESS = '1',
     // if enabled, open the js console when starting firefox and do not kill the browser after the tests have completed
     TEST_DEBUG = '0',
+    // restart the browser after X consecutive script runs
+    TEST_RESTART_BROWSER_EVERY = '5',
 } = env;
 
 module.exports = Object.freeze({
@@ -26,4 +28,5 @@ module.exports = Object.freeze({
     TEST_SERVER_BAD_TLS_PORT,
     TEST_HEADLESS,
     TEST_DEBUG,
+    TEST_RESTART_BROWSER_EVERY,
 });

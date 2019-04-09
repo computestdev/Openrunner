@@ -16,6 +16,7 @@ const {
     TEST_SERVER_BAD_TLS_PORT,
     TEST_HEADLESS,
     TEST_DEBUG,
+    TEST_RESTART_BROWSER_EVERY,
 } = require('./testEnv');
 
 const debugMode = TEST_DEBUG === '1';
@@ -23,6 +24,9 @@ let firefoxProfileDisposer;
 let firefoxProcessDisposer;
 let server;
 let startPromise;
+let profilePath;
+const restartBrowserEvery = Number(TEST_RESTART_BROWSER_EVERY) || 0;
+let runScriptCounterForRestart = 0;
 
 const startTestServer = async () => {
     server = new TestingServer({
@@ -35,9 +39,35 @@ const startTestServer = async () => {
     return {listenPort: server.listenPort};
 };
 
-const doStart = async () => {
+const startFirefoxProcess = async () => {
     assert.isString(TEST_FIREFOX_BIN, 'TEST_FIREFOX_BIN must be set');
     assert.isOk(TEST_FIREFOX_BIN, 'TEST_FIREFOX_BIN must not be empty');
+    log.debug('Starting browser...');
+    firefoxProcessDisposer = startFirefox({
+        firefoxPath: [TEST_FIREFOX_BIN, '--jsconsole'],
+        profilePath,
+        headless: !debugMode && TEST_HEADLESS === '1',
+        extraArgs: debugMode ? ['--jsconsole'] : [],
+    });
+    await firefoxProcessDisposer.promise();
+
+    log.info('Waiting for C&C connection');
+    await server.waitForActiveCnCConnection();
+    log.info('Browser has been connected and is ready to run scripts');
+};
+
+const stopFirefoxProcess = async () => {
+    await mergeCoverage();
+    if (firefoxProcessDisposer) {
+        await firefoxProcessDisposer.tryDispose();
+        firefoxProcessDisposer = null;
+    }
+    log.debug('Closing any active connection...');
+    await server.destroyActiveCnCConnection('Stopping!');
+    log.debug('Successfully stopped the browser');
+};
+
+const doStart = async () => {
     assert.isOk(TEST_TEMP_DIR, 'TEST_TEMP_DIR must not be empty');
 
     await fs.mkdirp(TEST_TEMP_DIR);
@@ -51,41 +81,27 @@ const doStart = async () => {
     };
     log.info(buildProfileOptions, 'Building firefox profile...');
     firefoxProfileDisposer = buildTempFirefoxProfile(buildProfileOptions);
+    profilePath = await firefoxProfileDisposer.promise();
 
-    const profilePath = await firefoxProfileDisposer.promise();
-    firefoxProcessDisposer = startFirefox({
-        firefoxPath: [TEST_FIREFOX_BIN, '--jsconsole'],
-        profilePath,
-        headless: !debugMode && TEST_HEADLESS === '1',
-        extraArgs: debugMode ? ['--jsconsole'] : [],
-    });
-    await firefoxProcessDisposer.promise();
-
-    log.info('Waiting for C&C connection');
-    await server.waitForActiveCnCConnection();
-
-    log.info('Browser has been connected and is ready to run scripts');
+    await startFirefoxProcess();
 };
 
-const start = async () => {
+const ensureStarted = async () => {
     if (!startPromise) {
         startPromise = doStart();
     }
     await startPromise;
+    await firefoxProcessDisposer.promise();
 };
 
 const stop = async () => {
     await startPromise;
-    await mergeCoverage();
 
     if (debugMode) {
         return;
     }
 
-    if (firefoxProcessDisposer) {
-        await firefoxProcessDisposer.tryDispose();
-        firefoxProcessDisposer = null;
-    }
+    await stopFirefoxProcess();
     if (firefoxProfileDisposer) {
         await firefoxProfileDisposer.tryDispose();
         firefoxProfileDisposer = null;
@@ -103,24 +119,41 @@ const mergeCoverage = async () => {
 
         const extensionCoverage = await server.reportCodeCoverage();
         mergeCoverageReports(myCoverage, extensionCoverage);
+        log.debug('Merged code coverage report');
     }
     catch (err) {
         log.warn({err}, 'Failed to retrieve code coverage from the browser extension');
     }
 };
 
+const runScriptPrepare = async () => {
+    await ensureStarted();
+    ++runScriptCounterForRestart;
+    if (
+        !debugMode &&
+        restartBrowserEvery > 0 &&
+        runScriptCounterForRestart > restartBrowserEvery
+    ) {
+        log.info({restartBrowserEvery}, 'Restarting browser...');
+        runScriptCounterForRestart = 0;
+
+        await stopFirefoxProcess();
+        await startFirefoxProcess();
+    }
+};
+
 const runScript = async (scriptContent) => {
-    await start();
+    await runScriptPrepare();
     return await server.runScript({scriptContent, stackFileName: 'integrationTest.js'});
 };
 
 const runScriptFromFunction = async (func, injected = {}) => {
-    await start();
+    await runScriptPrepare();
     return await server.runScriptFromFunction(func, injected);
 };
 
 module.exports = {
-    start,
+    start: ensureStarted,
     stop,
     runScript,
     runScriptFromFunction,

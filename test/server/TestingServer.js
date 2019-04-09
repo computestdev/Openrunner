@@ -258,6 +258,10 @@ class TestingServer {
         await this.cncServer.waitForActiveConnection();
     }
 
+    destroyActiveCnCConnection(reason) {
+        this.cncServer.destroyActiveConnection(1000, reason);
+    }
+
     async runScript({scriptContent, stackFileName}) {
         return await this.cncServer.runScript({scriptContent, stackFileName});
     }
