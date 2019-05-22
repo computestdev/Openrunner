@@ -85,7 +85,7 @@
     "jsonbird": ">= 3.1.0 < 4",
     "jsonbird-websocket": "^1.0.0",
     "performr-runner-metadata-parser": "^1.0.0",
-    "performr-runner-result-graph": "^6.0.0",
+    "performr-runner-result-graph": "^7.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "shortid": "^2.2.8",
