@@ -1,17 +1,21 @@
 'use strict';
 const EventEmitter = require('events').EventEmitter;
+const {assert} = require('chai');
 
 const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'tabs/background/ScriptWindow'});
 const {BLANK_HTML} = require('./urls');
 const WaitForEvent = require('../../../../lib/WaitForEvent');
 
+let containerNameCounter = 0;
+
 class ScriptWindow extends EventEmitter {
-    constructor({browserWindows, browserTabs, browserWebNavigation}) {
+    constructor({browserWindows, browserTabs, browserWebNavigation, browserContextualIdentities}) {
         super();
         this._attached = false;
         this.browserWindows = browserWindows;
         this.browserTabs = browserTabs;
         this.browserWebNavigation = browserWebNavigation;
+        this.browserContextualIdentities = browserContextualIdentities;
         this.openPromise = null;
         this.firstTabCreation = true;
         this.closed = false;
@@ -54,15 +58,41 @@ class ScriptWindow extends EventEmitter {
         log.debug({}, 'Creating new window...');
 
         this.firstTabCreation = true;
-        this.openPromise = this.browserWindows.create({
-            incognito: true,
-            state: 'normal',
-            url: 'about:blank',
-        }).then(window => window.id);
+        this.openPromise = (async () => {
+            containerNameCounter = (containerNameCounter + 1) % Number.MAX_SAFE_INTEGER;
 
-        const browserWindowId = await this.openPromise;
-        const {tabs: windowTabs} = await this.browserWindows.get(browserWindowId, {populate: true});
-        const firstTabId = windowTabs[0].id;
+            const {cookieStoreId} = await this.browserContextualIdentities.create({
+                // the name does not have to be unique, but this way we communicate
+                // to the user that a new container is used every time.
+                name: `openrunner-${containerNameCounter}`,
+                color: 'pink',
+                icon: 'pet',
+            });
+
+            try {
+                const window = await this.browserWindows.create({
+                    cookieStoreId,
+                    state: 'normal',
+                    url: 'about:blank',
+                });
+
+                const firstTabId = window.tabs[0].id;
+                await this._navigateToBlankPage(firstTabId);
+
+                return {
+                    browserWindowId: window.id,
+                    cookieStoreId,
+                    firstTabId,
+                };
+            }
+            catch (err) {
+                await this.browserContextualIdentities.remove(cookieStoreId)
+                .catch(err => log.error({err}, 'Error from browserContextualIdentities.remove()'));
+                throw err;
+            }
+        })();
+
+        const {browserWindowId, firstTabId} = await this.openPromise;
         await this._gatherBrowserWindowDetails(browserWindowId, firstTabId);
 
         // maximize after looking up the view port measurements in _gatherBrowserWindowDetails
@@ -75,17 +105,24 @@ class ScriptWindow extends EventEmitter {
     }
 
     /**
+     * Navigate to blank.html and wait for the load event
+     * @param {string} tabId
+     * @return {Promise<void>}
+     * @private
+     */
+    async _navigateToBlankPage(tabId) {
+        await this._navigationCompletedWait.wait([tabId], async () => {
+            await this.browserTabs.update(tabId, {url: BLANK_HTML});
+        });
+    }
+
+    /**
      * Navigate to an extension page and gather some statistics about the environment, such as the position of the viewport.
      * @param {string} browserWindowId
      * @param {string} firstTabId
      * @private
      */
     async _gatherBrowserWindowDetails(browserWindowId, firstTabId) {
-        // navigate to blank.html and wait for the load event
-        await this._navigationCompletedWait.wait([firstTabId], async () => {
-            await this.browserTabs.update(firstTabId, {url: BLANK_HTML});
-        });
-
         let sizeMinusViewport = [0, 0];
         try {
             [sizeMinusViewport] = await this.browserTabs.executeScript(firstTabId, {
@@ -118,7 +155,8 @@ class ScriptWindow extends EventEmitter {
             await this.open();
         }
 
-        return await this.openPromise;
+        const {browserWindowId} = await this.openPromise;
+        return browserWindowId;
     }
 
     async getBrowserWindow() {
@@ -134,9 +172,13 @@ class ScriptWindow extends EventEmitter {
             return;
         }
 
-        const browserWindowId = await this.getBrowserWindowId();
+        const {browserWindowId, cookieStoreId} = await this.openPromise;
         log.info({browserWindowId}, 'Closing our script window');
         await this.browserWindows.remove(browserWindowId);
+
+        log.info({cookieStoreId}, 'Removing contextual identity');
+        await this.browserContextualIdentities.remove(cookieStoreId);
+
         this.emit('windowClosed', {browserWindowId});
     }
 
@@ -145,16 +187,21 @@ class ScriptWindow extends EventEmitter {
             throw Error('Invalid state');
         }
 
-        const {id: browserWindowId} = await this.getBrowserWindow();
+        // opens the window if needed:
+        const browserWindow = await this.getBrowserWindow();
+        const {browserWindowId, cookieStoreId} = await this.openPromise;
+        assert.strictEqual(browserWindow.id, browserWindowId);
+
         const tab = await this.browserTabs.create({
             active: true,
             windowId: browserWindowId,
             url,
+            cookieStoreId,
         });
 
         if (this.firstTabCreation) {
             this.firstTabCreation = false;
-            const {tabs: windowTabs} = await this.getBrowserWindow();
+            const {tabs: windowTabs} = browserWindow;
 
             if (windowTabs[0].id !== tab.id) {
                 // remove the first blank tab. But do not wait for it, otherwise
