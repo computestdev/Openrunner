@@ -19,7 +19,7 @@
     "test:coverage-report": "nyc report --reporter=html",
     "test": "npm run lint && npm run test:unit-and-integration:coverage && npm run test:coverage-report",
     "test:server": "sh -c 'node test/testing-server.js \"$@\" | bunyan' --",
-    "start": "npm run build && \"$FIREFOX_BIN\" --no-remote --profile PRIV/profile --jsconsole",
+    "start": "npm run build && \"$FIREFOX_BIN\" --no-remote --profile PRIV/profile 'about:blank' 'about:devtools-toolbox?type=extension&id=openrunner%40computest.nl'",
     "version": "bin/_npm_version.js && git add manifest.json"
   },
   "author": "Joris van der Wel <joris@jorisvanderwel.com>",

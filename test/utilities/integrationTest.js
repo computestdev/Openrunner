@@ -44,10 +44,10 @@ const startFirefoxProcess = async () => {
     assert.isOk(TEST_FIREFOX_BIN, 'TEST_FIREFOX_BIN must not be empty');
     log.debug('Starting browser...');
     firefoxProcessDisposer = startFirefox({
-        firefoxPath: [TEST_FIREFOX_BIN, '--jsconsole'],
+        firefoxPath: TEST_FIREFOX_BIN,
         profilePath,
         headless: !debugMode && TEST_HEADLESS === '1',
-        extraArgs: debugMode ? ['--jsconsole'] : [],
+        extraArgs: debugMode ? ['about:devtools-toolbox?type=extension&id=openrunner%40computest.nl'] : [],
     });
     await firefoxProcessDisposer.promise();
 
