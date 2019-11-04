@@ -6,11 +6,12 @@
     "applications": {
         "gecko": {
             "id": "openrunner@computest.nl",
-            "strict_min_version": "54.0"
+            "strict_min_version": "67.0"
         }
     },
     "permissions": [
         "<all_urls>",
+        "contextualIdentities",
         "cookies",
         "downloads",
         "tabs",
@@ -18,6 +19,7 @@
         "webRequest",
         "webRequestBlocking"
     ],
+    "incognito": "not_allowed",
     "icons": {
         "48": "icons/openrunner-48.png",
         "96": "icons/openrunner-96.png"

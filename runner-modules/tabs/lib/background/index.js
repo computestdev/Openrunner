@@ -12,6 +12,7 @@ module.exports = script => {
         tabs: browser.tabs,
         webNavigation: browser.webNavigation,
         scriptApiVersion: script.scriptApiVersion,
+        contextualIdentities: browser.contextualIdentities,
     });
     tabManager.on('windowCreated', data => script.emit('tabs.windowCreated', data));
     tabManager.on('windowClosed', data => script.emit('tabs.windowClosed', data));

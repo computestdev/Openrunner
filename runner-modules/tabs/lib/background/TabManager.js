@@ -19,6 +19,7 @@ class TabManager extends EventEmitter {
         windows: browserWindows,
         tabs: browserTabs,
         webNavigation: browserWebNavigation,
+        contextualIdentities: browserContextualIdentities,
         scriptApiVersion,
     }) {
         super();
@@ -28,7 +29,7 @@ class TabManager extends EventEmitter {
         this.browserTabs = browserTabs;
         this.browserWebNavigation = browserWebNavigation;
         // all tabs opened by the script end up in a single window:
-        this.scriptWindow = new ScriptWindow({browserWindows, browserTabs, browserWebNavigation});
+        this.scriptWindow = new ScriptWindow({browserWindows, browserTabs, browserWebNavigation, browserContextualIdentities});
         this.myTabs = new TabTracker();
         this.tabContentRPC = new TabContentRPC({
             browserRuntime,
