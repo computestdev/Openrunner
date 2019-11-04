@@ -65,7 +65,7 @@ describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
             event.longTitle,
             'The expression sets the target to <#window>, waits up to 30 seconds until all synchronous resources of the HTML document ' +
             'have been loaded, finds the first descendant element matching the CSS selector “img”, waits up to 30 seconds until a result ' +
-            'is found.'
+            'is found.',
         );
         eq(event.metaData.failureReason, null);
         isNumber(event.metaData.checkCount);
@@ -104,7 +104,7 @@ describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
             transaction.error.message,
             'Wait expression timed out after 1 seconds because no results were found, instead of a minimum of 1 results. ' +
             'The expression sets the target to <#window>, finds the first descendant element matching the CSS selector ' +
-            '“img#doesNotExist”, waits up to 1 seconds until a result is found.'
+            '“img#doesNotExist”, waits up to 1 seconds until a result is found.',
         );
 
         const events = result.result.events.filter(e => e.type === 'command:wait');
@@ -116,13 +116,13 @@ describe('integration/wait', {timeout: 60000, slow: 10000}, () => {
         eq(
             event.longTitle,
             'The expression sets the target to <#window>, finds the first descendant element matching the CSS selector ' +
-            '“img#doesNotExist”, waits up to 1 seconds until a result is found.'
+            '“img#doesNotExist”, waits up to 1 seconds until a result is found.',
         );
         eq(
             event.metaData.failureReason,
             'Wait expression timed out after 1 seconds because no results were found, instead of a minimum of 1 results. ' +
             'The expression sets the target to <#window>, finds the first descendant element matching the CSS selector ' +
-            '“img#doesNotExist”, waits up to 1 seconds until a result is found.'
+            '“img#doesNotExist”, waits up to 1 seconds until a result is found.',
         );
         isAtLeast(event.timing.begin.time, transaction.timing.begin.time);
         isAtMost(event.timing.end.time, transaction.timing.end.time);

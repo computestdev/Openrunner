@@ -14,7 +14,7 @@ const isMeasurementDuration = (actualDuration, minimalDuration, maximumOverhead 
             'This might be caused by a slow testing environment:',
             err.message,
             '\n',
-            err.stack
+            err.stack,
         );
     }
 };

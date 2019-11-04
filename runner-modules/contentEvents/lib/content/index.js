@@ -22,7 +22,7 @@ registerRunnerModule('contentEvents', async ({getModule}) => {
     applyEventMetaData(scriptResult.timeEvent(
         'content:navigate',
         timing().navigationStart,
-        timing().responseStart
+        timing().responseStart,
     ));
 
     let interactiveEvent;
@@ -34,7 +34,7 @@ registerRunnerModule('contentEvents', async ({getModule}) => {
                 interactiveEvent = applyEventMetaData(scriptResult.timeEvent(
                     'content:documentInteractive',
                     timing().responseStart,
-                    timing().domInteractive
+                    timing().domInteractive,
                 ));
             }
 
@@ -42,7 +42,7 @@ registerRunnerModule('contentEvents', async ({getModule}) => {
                 completeEvent = applyEventMetaData(scriptResult.timeEvent(
                     'content:documentComplete',
                     timing().domInteractive,
-                    timing().domComplete
+                    timing().domComplete,
                 ));
             }
         }

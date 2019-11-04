@@ -149,7 +149,7 @@ class RunResult {
 
         if (this[PRIVATE].transactions.has(transaction.id)) {
             throw illegalArgumentError(
-                `RunResult.transaction: A transaction with id "${transaction.id}" already exists. Transaction id's must be unique.`
+                `RunResult.transaction: A transaction with id "${transaction.id}" already exists. Transaction id's must be unique.`,
             );
         }
 

@@ -28,7 +28,7 @@ class TimePoint {
         return Boolean(
             object &&
             typeof object.time === 'number' &&
-            typeof object.toJSONObject === 'function'
+            typeof object.toJSONObject === 'function',
         );
     }
 

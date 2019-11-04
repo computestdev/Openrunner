@@ -35,7 +35,7 @@ describe('integration/scriptingEnvironment', {timeout: 60000, slow: 10000}, () =
         /* eslint-disable no-undef */
         const result = await runScript(
             `'Openrunner-Script: v1';` +
-            `return 123; //`
+            `return 123; //`,
         );
         /* eslint-enable no-undef */
 

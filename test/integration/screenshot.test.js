@@ -91,7 +91,7 @@ describe('integration/screenshot', {timeout: 60000, slow: 20000}, () => {
             await assert.isRejected(
                 tab.navigate(injected.badURL, {timeout: '10s'}),
                 Error,
-                /navigating.*https:\/\/localhost.*time.*out/i
+                /navigating.*https:\/\/localhost.*time.*out/i,
             );
 
             assert.isRejected(screenshot.take(), Error, /screenshot.*take.*unable/i);
@@ -122,7 +122,7 @@ describe('integration/screenshot', {timeout: 60000, slow: 20000}, () => {
             await assert.isRejected(
                 tab.navigate(injected.badURL, {timeout: '2s'}),
                 Error,
-                /navigating.*https:\/\/localhost.*time.*out/i
+                /navigating.*https:\/\/localhost.*time.*out/i,
             );
 
             throw Error('Error from test!');

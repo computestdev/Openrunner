@@ -7,5 +7,5 @@ module.exports = Object.assign(
     {
         buildSources,
     },
-    buildFirefoxProfileFunctions
+    buildFirefoxProfileFunctions,
 );

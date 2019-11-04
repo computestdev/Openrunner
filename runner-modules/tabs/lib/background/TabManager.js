@@ -259,14 +259,14 @@ class TabManager extends EventEmitter {
             rpc.call({name: 'tabs.run', timeout: 0}, {code, arg, metadata}).catch(err => {
                 if (err.name === 'RPCNoResponse') {
                     throw contentScriptAbortedError(
-                        'The web page has navigated away while the execution of the content script was pending (RPCNoResponse)'
+                        'The web page has navigated away while the execution of the content script was pending (RPCNoResponse)',
                     );
                 }
                 throw err;
             }),
             this.myTabs.waitForTabUninitialization(browserTabId, browserFrameId).then(() => {
                 throw contentScriptAbortedError(
-                    'The web page has navigated away while the execution of the content script was pending'
+                    'The web page has navigated away while the execution of the content script was pending',
                 );
             }),
         ]);
@@ -317,7 +317,7 @@ class TabManager extends EventEmitter {
             const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
             promises.push(
                 rpc.call({name: 'tabs.contentUnload', timeout: 5001})
-                .catch(err => log.warn({err, browserTabId, browserFrameId}, 'Error calling tabs.contentUnload for frame'))
+                .catch(err => log.warn({err, browserTabId, browserFrameId}, 'Error calling tabs.contentUnload for frame')),
             );
         }
         await Promise.all(promises);

@@ -51,7 +51,7 @@ const executeCommandHandler = (modulePath, args) => {
             console.error('Error while executing command!');
             console.error(err, err.stack);
             process.exitCode = 99;
-        }
+        },
     );
 };
 
@@ -100,7 +100,7 @@ yargs
         })
         .example(
             '$0 run --firefox \'/Applications/Firefox Nightly.app/Contents/MacOS/firefox\' ' +
-            '--script example.js --result example.json'
+            '--script example.js --result example.json',
         ),
     handler: args => executeCommandHandler('./_subcommands/run', args),
 })
@@ -184,7 +184,7 @@ yargs
                 .option(...tmpOption)
                 .example(
                     '$0 build firefox-mac-bundle --profile ./firefox-profile --app ' +
-                    '/Volumes/Nightly/Nightly.app --output ./Openrunner.dmg'
+                    '/Volumes/Nightly/Nightly.app --output ./Openrunner.dmg',
                 ),
             handler: args => executeCommandHandler('./_subcommands/build-firefox-mac-bundle', args),
         })
@@ -196,6 +196,6 @@ yargs
 .help('help')
 .epilogue(
     'Options can also be set using environment variables by prefixing the option name with `OPENRUNNER_`. ' +
-    'For example: `$0 ide --firefox /bin/firefox` and `OPENRUNNER_FIREFOX=/bin/firefox $0 ide` are equivalent.'
+    'For example: `$0 ide --firefox /bin/firefox` and `OPENRUNNER_FIREFOX=/bin/firefox $0 ide` are equivalent.',
 )
 .argv;

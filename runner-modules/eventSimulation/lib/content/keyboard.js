@@ -11,14 +11,14 @@ const NOOP = () => {};
 const keyDown = (window, element, keyEntry) => {
     const event = new window.KeyboardEvent('keydown', Object.assign(
         keyEntry.getEventInit('keydown'),
-        {view: window}
+        {view: window},
     ));
     return element.dispatchEvent(event); // returns false if cancelled
 };
 const keyUp = (window, element, keyEntry) => {
     const event = new window.KeyboardEvent('keyup', Object.assign(
         keyEntry.getEventInit('keyup'),
-        {view: window}
+        {view: window},
     ));
     return element.dispatchEvent(event);
 };
@@ -26,7 +26,7 @@ const keyDownUp = (window, element, keyEntry, down) => (down ? keyDown(window, e
 const keyPress = (window, element, keyEntry) => {
     const event = new window.KeyboardEvent('keypress', Object.assign(
         keyEntry.getEventInit('keypress'),
-        {view: window}
+        {view: window},
     ));
     return element.dispatchEvent(event);
 };
@@ -39,7 +39,7 @@ const keyboardKeys = async (
         keyDownDuration = 0,
         _handleInput = NOOP,
         _handleChange = NOOP,
-    } = {}
+    } = {},
 ) => {
     assertIsNodeType(element, ELEMENT_NODE, 'keyboardKeys(): First argument: ');
     const window = getDocumentWindow(getOwnerDocument(element));
@@ -117,7 +117,7 @@ const keyboardTextInput = async (element, keyIdentifiers, options = {}) => {
 
     if (!isElementTextValueControl && !isElementContentEditable) {
         throw illegalArgumentError(
-            `keyboardTextInput(): (${element.nodeName} ${element.type || ''}) is not a valid element for text input`
+            `keyboardTextInput(): (${element.nodeName} ${element.type || ''}) is not a valid element for text input`,
         );
     }
 

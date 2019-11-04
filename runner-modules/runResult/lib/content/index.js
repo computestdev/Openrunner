@@ -21,7 +21,7 @@ registerRunnerModule('runResult', ({eventEmitter, rpc}) => {
         log.debug('Content unload, sending script result object');
         try {
             const transactionError = transactionAbortedError(
-                'This transaction aborted because the page has navigated to a different location or the tab has been closed'
+                'This transaction aborted because the page has navigated to a different location or the tab has been closed',
             );
             scriptResult.setPendingTransactionError(transactionError);
 

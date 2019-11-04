@@ -28,7 +28,7 @@ describe('node/runResult', () => {
                 });
 
                 eq(await fs.readFile(resultFilePath, 'utf8'), '{"foo": "bar"}');
-            })
+            }),
         );
 
         it('Should remove the file if an error occurs during the using block', async () =>
@@ -41,7 +41,7 @@ describe('node/runResult', () => {
                 await isRejected(promise, Error, 'Error from test!');
 
                 isNotOk(await fs.pathExists(resultFilePath), 'result file should no longer exist');
-            })
+            }),
         );
 
         it('Should not create a file if no path is given', async () => {

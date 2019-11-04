@@ -20,7 +20,7 @@ openRunnerRegisterRunnerModule('runResult', async ({script}) => {
     const handleRunEnd = async reason => {
         log.debug('Script run has ended, sending the run result for the script-env');
         const transactionError = transactionAbortedError(
-            'This transaction aborted because the script run has ended: ' + (reason && reason.message)
+            'This transaction aborted because the script run has ended: ' + (reason && reason.message),
         );
         scriptResult.setPendingTransactionError(transactionError);
         await script.rpcCall('runResult.scriptResult', scriptResult.toJSONObject());

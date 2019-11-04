@@ -146,7 +146,7 @@ describe('integration/mutationEvents', {timeout: 60000, slow: 20000}, () => {
         eq(event.metaData.addedElements.length, 1);
         eq(
             event.metaData.addedElements[0],
-            'html > body > section.anotherClass.someSection:nth-child(2) > h3:nth-child(3)'
+            'html > body > section.anotherClass.someSection:nth-child(2) > h3:nth-child(3)',
         );
     });
 

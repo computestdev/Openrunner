@@ -102,7 +102,7 @@ module.exports = ({eventEmitter, getModule, rpc}) => {
             if (err.name === CONTENT_RPC_TIMEOUT_ERROR) {
                 throw frameContentTimeoutError(
                     `tabs.frame(): Waiting for the content document of <${description}> to become available ` +
-                    `timed out after ${timeoutMs / 1000} seconds.`
+                    `timed out after ${timeoutMs / 1000} seconds.`,
                 );
             }
             throw err;

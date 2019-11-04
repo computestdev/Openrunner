@@ -37,7 +37,7 @@ class Event {
             TimePeriod.isTimePeriod(object.timing) &&
             typeof object.toJSONObject === 'function' &&
             typeof object.addChild === 'function' &&
-            typeof object.setMetaData === 'function'
+            typeof object.setMetaData === 'function',
         );
     }
 

@@ -62,7 +62,7 @@ const waitForNewPage = async ({tabManager, tabId, frameId, code, arg, timeoutMs}
     await Promise.race([
         waitForNewContentPromise,
         delay(timeoutMs).then(() => Promise.reject(
-            newPageWaitTimeoutError(`Waiting for a new page timed out after ${timeoutMs / 1000} seconds`)
+            newPageWaitTimeoutError(`Waiting for a new page timed out after ${timeoutMs / 1000} seconds`),
         )),
     ]);
 

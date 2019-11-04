@@ -86,7 +86,7 @@ describe('integration/requestModification', {timeout: 60000, slow: 10000}, () =>
             const firstResult = await requestModification.modifyRequestHeaders(
                 ['http://localhost/headers/html'],
                 {'X-Foo': 'The foo header!!'},
-                test
+                test,
             );
             const secondResult = await test();
 
@@ -219,7 +219,7 @@ describe('integration/requestModification', {timeout: 60000, slow: 10000}, () =>
             const firstResult = await requestModification.modifyResponseHeaders(
                 ['http://localhost/headers/json'],
                 {'X-NewHeader': 'A new header!'},
-                test
+                test,
             );
             const secondResult = await test();
 

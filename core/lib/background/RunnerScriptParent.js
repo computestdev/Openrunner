@@ -185,7 +185,7 @@ class RunnerScriptParentPrivate {
                     scriptContent: this.scriptContent,
                     stackFileName,
                     scriptApiVersion: this.scriptApiVersion,
-                }
+                },
             );
 
             this.scriptTimeoutTimer = setTimeout(() => {
@@ -209,7 +209,7 @@ class RunnerScriptParentPrivate {
                         // note: if this timeout hits, the result log will be fairly empty, it is only used as a last resort:
                         timeout: runTimeoutMs + 30000,
                     },
-                    {}
+                    {},
                 );
                 await this.emitRunScriptResult(runScriptResult);
                 scriptResult.timing.endNow();
@@ -281,9 +281,9 @@ class RunnerScriptParentPrivate {
                 promise.catch(err => {
                     log.error({err}, 'Uncaught error while emitting "core.runScriptResult" event');
                     throw err;
-                })
+                }),
             ),
-            runScriptResult
+            runScriptResult,
         );
         await Promise.all(promises); // may reject
     }
@@ -295,8 +295,8 @@ class RunnerScriptParentPrivate {
                 promise.catch(err => {
                     log.error({err}, 'Uncaught error while emitting "core.beforeRunStart" event');
                     throw err;
-                })
-            )
+                }),
+            ),
         );
         await Promise.all(promises); // may reject
     }
@@ -305,16 +305,16 @@ class RunnerScriptParentPrivate {
         const beforePromises = [];
         this.emit('core.beforeRunEnd', promise =>
             beforePromises.push(
-                promise.catch(err => log.error({err}, 'Uncaught error while emitting "core.beforeRunEnd" event'))
-            )
+                promise.catch(err => log.error({err}, 'Uncaught error while emitting "core.beforeRunEnd" event')),
+            ),
         );
         await Promise.all(beforePromises); // should never reject
 
         const promises = [];
         this.emit('core.runEnd', promise =>
             promises.push(
-                promise.catch(err => log.error({err}, 'Uncaught error while emitting "core.runEnd" event'))
-            )
+                promise.catch(err => log.error({err}, 'Uncaught error while emitting "core.runEnd" event')),
+            ),
         );
         await Promise.all(promises); // should never reject
     }

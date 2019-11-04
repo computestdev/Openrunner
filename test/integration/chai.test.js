@@ -26,7 +26,7 @@ describe('integration/chai', {timeout: 60000, slow: 10000}, () => {
                 expect({a: 'b', foo: 'bar'}).to.containSubset({a: 'b'});
                 await assert.isRejected(
                     Promise.reject(Error('FOO BAR')),
-                    /FOO/i
+                    /FOO/i,
                 );
             });
         }, {url: `http://localhost:${testServerPort()}/static/static.html`});
@@ -51,7 +51,7 @@ describe('integration/chai', {timeout: 60000, slow: 10000}, () => {
             expect({a: 'b', foo: 'bar'}).to.containSubset({a: 'b'});
             await assert.isRejected(
                 Promise.reject(Error('FOO BAR')),
-                /FOO/i
+                /FOO/i,
             );
         });
         /* eslint-enable no-undef */

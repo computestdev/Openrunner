@@ -148,9 +148,9 @@ class RunnerScriptPrivate {
         const beforePromises = [];
         this.emit('core.beforeRunEnd',
             promise => beforePromises.push(
-                promise.catch(err => log.error({err}, 'Uncaught error while emitting "beforeRunEnd" event'))
+                promise.catch(err => log.error({err}, 'Uncaught error while emitting "beforeRunEnd" event')),
             ),
-            reason
+            reason,
         );
         await Promise.all(beforePromises); // should never reject
 
@@ -159,9 +159,9 @@ class RunnerScriptPrivate {
         const promises = [];
         this.emit('core.runEnd',
             promise => promises.push(
-                promise.catch(err => log.error({err}, 'Uncaught error while emitting "endRun" event'))
+                promise.catch(err => log.error({err}, 'Uncaught error while emitting "endRun" event')),
             ),
-            reason
+            reason,
         );
         await Promise.all(promises); // should never reject
 

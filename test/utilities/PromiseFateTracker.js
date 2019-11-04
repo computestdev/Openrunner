@@ -21,7 +21,7 @@ class PromiseFateTracker {
                 this.fates.set(name, {promise, reject: error});
 
                 throw error;
-            }
+            },
         );
 
         result.catch(() => {}); // avoid unhandled rejection messages

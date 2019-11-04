@@ -29,7 +29,7 @@ module.exports = (tabManager) => {
             throw illegalArgumentError(
                 `tabs.viewportSize: Failed to set the viewport size to ${viewportWidth}x${viewportHeight}. ` +
                 `After resizing the window to ${width}x${height}, the actual size is ${resultWidth}x${resultHeight}. ` +
-                'The given size is probably too small, or too large for the screen.'
+                'The given size is probably too small, or too large for the screen.',
             );
         }
     };

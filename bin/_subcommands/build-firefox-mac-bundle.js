@@ -77,7 +77,7 @@ const buildFirefoxMacBundleHandler = async argv => {
         'and firefox application bundle',
         appPath,
         'at',
-        outputDmgPath
+        outputDmgPath,
     );
 
     await Promise.using(temporaryDirectory(tempDirectory, ['openrunner-app-']), async ([tmp]) => {
@@ -88,7 +88,7 @@ const buildFirefoxMacBundleHandler = async argv => {
             fs.copy(
                 appIcon,
                 joinPath(appOutputPath, 'Contents', 'Resources', 'openrunner.icns'),
-                {preserveTimestamps: true}
+                {preserveTimestamps: true},
             ),
             fs.writeFile(joinPath(appOutputPath, 'Contents', 'MacOS', 'openrunner'), bootstrapScript, {mode: 0o777}),
             modifyInfoPlist(joinPath(appOutputPath, 'Contents', 'Info.plist')),

@@ -59,7 +59,7 @@ try {
             if (!backgroundScriptInitData) {
                 throw Error(
                     'openRunnerRegisterRunnerModule(): Called too early. Background script has not yet sent ' +
-                    '\'tabs.initializedMainTabContent\' to content script'
+                    '\'tabs.initializedMainTabContent\' to content script',
                 );
             }
 

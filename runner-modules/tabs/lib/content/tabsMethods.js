@@ -42,7 +42,7 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
 
         // (([foo, bar]) => (async () => { console.log('hi!') }))
         return evalNoScope(
-            `(([${argNames.join(',')}]) => (${functionCode}))`
+            `(([${argNames.join(',')}]) => (${functionCode}))`,
         )(argValues);
     };
 

@@ -16,7 +16,7 @@ class TimePeriod {
             object &&
             (object.begin === null || TimePoint.isTimePoint(object.begin)) &&
             (object.end === null || TimePoint.isTimePoint(object.end)) &&
-            typeof object.toJSONObject === 'function'
+            typeof object.toJSONObject === 'function',
         );
     }
 

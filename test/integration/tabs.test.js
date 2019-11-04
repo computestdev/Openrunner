@@ -32,7 +32,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             {
                 const err = await assert.isRejected(
                     tab.navigate('foo://bar', {timeout: '10s'}),
-                    /url.*must.*absolute.*HTTP.*URL/
+                    /url.*must.*absolute.*HTTP.*URL/,
                 );
                 assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
             }
@@ -40,7 +40,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             {
                 const err = await assert.isRejected(
                     tab.navigate('foo.html', {timeout: '10s'}),
-                    /url.*must.*absolute.*HTTP.*URL/i
+                    /url.*must.*absolute.*HTTP.*URL/i,
                 );
                 assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
             }
@@ -63,7 +63,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const before = Date.now();
             const err = await assert.isRejected(
                 tab.navigate(injected.url, {timeout: '2s'}),
-                /Navigating.*http:\/\/localhost.*no-reply.*time.*out.*2 second/i
+                /Navigating.*http:\/\/localhost.*no-reply.*time.*out.*2 second/i,
             );
             const after = Date.now();
             assert.strictEqual(err.name, 'Openrunner:NavigateError');
@@ -150,7 +150,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                         throw Error('foo');
                     }),
                     Error,
-                    'foo'
+                    'foo',
                 );
             }
 
@@ -169,7 +169,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                         return new Promise((resolve, reject) => setTimeout(() => reject(Error('foo')), 10));
                     }),
                     Error,
-                    'foo'
+                    'foo',
                 );
             }
 
@@ -468,7 +468,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                         const err = await assert.isRejected(
                             tabs.frame(arg),
                             Error,
-                            /tabs.frame.*first.*argument.*must.*iframe.*WindowProxy/i
+                            /tabs.frame.*first.*argument.*must.*iframe.*WindowProxy/i,
                         );
                         assert.strictEqual(err.name, 'Openrunner:IllegalArgumentError');
                     };
@@ -551,7 +551,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                         });
                     });
                     assert.strictEqual(frameBodyId, 'frame2body');
-                }
+                },
             );
 
             await transaction('find content in frame3, which is added dynamically with a cross origin src after a timeout', async t => {
@@ -575,7 +575,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                     await assert.isRejected(
                         tabs.frame(iframe, {timeout: '3s'}),
                         Error,
-                        /tabs\.frame.*waiting.*content.*document.*iframe.*time.*out.*\b3\b.*second/i
+                        /tabs\.frame.*waiting.*content.*document.*iframe.*time.*out.*\b3\b.*second/i,
                     );
                     return 123;
                 });
@@ -641,7 +641,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                             tabs.frame(iframe, {timeout: '10s'}).then(frame => frame.run(async () => {
                                 const body = await wait.documentInteractive().selector('body');
                                 return body.getAttribute('id');
-                            }))
+                            })),
                         ));
                     });
                 });
@@ -796,7 +796,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             const err = await assert.isRejected(
                 tab.navigate(injected.badURL, {timeout: '10s'}),
                 Error,
-                /navigating.*https:\/\/localhost.*time.*out/i
+                /navigating.*https:\/\/localhost.*time.*out/i,
             );
             assert.strictEqual(err.name, 'Openrunner:NavigateError');
 
@@ -825,7 +825,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `${SCRIPT_INIT} // line 1\n` +
                 `  // line 2\n` +
                 `    await tab.navigate('foo://bar', {timeout: '10s'}); // line 3; Error here\n` +
-                `// line 4`
+                `// line 4`,
             );
             eq(result.error.name, 'Openrunner:IllegalArgumentError');
             const scriptStackFrames = result.error.stackFrames.filter(s => s.runnerScriptContext);
@@ -841,7 +841,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
         specify('tab.navigate() to an invalid page', async () => {
             const result = await runScript(
                 `${SCRIPT_INIT} // line 1\n` +
-                `await tab.navigate('http://localhost:${testServerPort()}/no-reply', {timeout: '0.1s'}); // line 2; Error here`
+                `await tab.navigate('http://localhost:${testServerPort()}/no-reply', {timeout: '0.1s'}); // line 2; Error here`,
             );
 
             eq(result.error.name, 'Openrunner:NavigateError');
@@ -866,7 +866,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `    // line 5 / 2\n` +
                 `    throw new Error("Error from test!!") // line 6 / 3\n` +
                 `    // line 7 / 4\n` +
-                `}); // line 8 / 5\n`
+                `}); // line 8 / 5\n`,
             );
 
             eq(result.error.name, 'Error');
@@ -893,7 +893,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `// line 3\n` +
                 `await tab.wait( // line 4\n` +
                 `    () => Promise.reject(Error('Error from test!')) // line 5\n` +
-                `); // line 6\n`
+                `); // line 6\n`,
             );
 
             eq(result.error.name, 'Error');
@@ -922,7 +922,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `// line 5\n` +
                 `    const error = new Error('Error from test!') // line 6\n` +
                 `    throw error // line 7\n` +
-                `}); // line 8\n`
+                `}); // line 8\n`,
             );
 
             eq(result.error.name, 'Error');
@@ -948,7 +948,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 `await tab.navigate('http://localhost:${testServerPort()}/static/textOnly.html'); // line 2\n` +
                 `await tab.waitForNewPage(() => { // line 3\n` +
                 `    // line 4\n` +
-                `}, null, {timeout: '0.1s'}); // line 5\n`
+                `}, null, {timeout: '0.1s'}); // line 5\n`,
             );
 
             eq(result.error.name, 'Openrunner:NewPageWaitTimeoutError');
@@ -992,13 +992,13 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
             await assert.isRejected(
                 tabs.viewportSize({width: 1, height: 2}),
                 Error,
-                /tabs.viewportSize.*failed.*set.*viewport.*size.*1x2/i
+                /tabs.viewportSize.*failed.*set.*viewport.*size.*1x2/i,
             );
 
             await assert.isRejected(
                 tabs.viewportSize({width: 10000, height: 500}),
                 Error,
-                /tabs.viewportSize.*invalid.*width/i
+                /tabs.viewportSize.*invalid.*width/i,
             );
 
             // make sure that we can recover from the prior errors

@@ -28,7 +28,7 @@ registerRunnerModule('eventSimulation', async ({getModule}) => {
         keyboardKeys: async (
             element,
             keyIdentifiers,
-            {keyInterval = DEFAULT_KEY_INTERVAL, keyDownDuration = DEFAULT_KEY_DOWN_DURATION} = {}
+            {keyInterval = DEFAULT_KEY_INTERVAL, keyDownDuration = DEFAULT_KEY_DOWN_DURATION} = {},
         ) => {
             await scriptResult.execEvent('command:eventSimulation.keyboardKeys', async event => {
                 await keyboardKeys(element, keyIdentifiers, {keyInterval, keyDownDuration});
@@ -41,7 +41,7 @@ registerRunnerModule('eventSimulation', async ({getModule}) => {
         keyboardTextInput: async (
             element,
             keyIdentifiers,
-            {keyInterval = DEFAULT_KEY_INTERVAL, keyDownDuration = DEFAULT_KEY_DOWN_DURATION} = {}
+            {keyInterval = DEFAULT_KEY_INTERVAL, keyDownDuration = DEFAULT_KEY_DOWN_DURATION} = {},
         ) => {
             await scriptResult.execEvent('command:eventSimulation.keyboardTextInput', async event => {
                 await keyboardTextInput(element, keyIdentifiers, {keyInterval, keyDownDuration});

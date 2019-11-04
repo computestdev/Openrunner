@@ -227,7 +227,7 @@ describe('integration/httpEvents', {timeout: 60000, slow: 20000}, () => {
 
             await transaction('First', async () => {
                 await assert.isRejected(
-                    tab.navigate(injected.url, {timeout: '2s'})
+                    tab.navigate(injected.url, {timeout: '2s'}),
                 );
             });
             await delay('1s');

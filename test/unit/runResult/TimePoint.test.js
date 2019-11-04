@@ -165,48 +165,48 @@ describe('TimePoint', () => {
         it('Should prioritize time over counters, unless the time is equal', () => {
             isSortedLower(TimePoint.compare(
                 new TimePoint(100, {contentCounter: 123}),
-                new TimePoint(123, {contentCounter: 100})
+                new TimePoint(123, {contentCounter: 100}),
             ));
             isSortedLower(TimePoint.compare(
                 new TimePoint(100, {contentCounter: 100}),
-                new TimePoint(100, {contentCounter: 123})
+                new TimePoint(100, {contentCounter: 123}),
             ));
             isSortedEqual(TimePoint.compare(
                 new TimePoint(100),
-                new TimePoint(100)
+                new TimePoint(100),
             ));
         });
 
         it('Should prioritize the contentCounter over other counters', () => {
             isSortedLower(TimePoint.compare(
                 new TimePoint(100, {contentCounter: 100, scriptCounter: 123}),
-                new TimePoint(100, {contentCounter: 123, scriptCounter: 100})
+                new TimePoint(100, {contentCounter: 123, scriptCounter: 100}),
             ));
             isSortedEqual(TimePoint.compare(
                 new TimePoint(100, {contentCounter: 100, scriptCounter: 123}),
-                new TimePoint(100, {contentCounter: 100, scriptCounter: 100})
+                new TimePoint(100, {contentCounter: 100, scriptCounter: 100}),
             ));
         });
 
         it('Should prioritize the scriptCounter over the backgroundCounter', () => {
             isSortedLower(TimePoint.compare(
                 new TimePoint(100, {scriptCounter: 100, backgroundCounter: 123}),
-                new TimePoint(100, {scriptCounter: 123, backgroundCounter: 100})
+                new TimePoint(100, {scriptCounter: 123, backgroundCounter: 100}),
             ));
             isSortedEqual(TimePoint.compare(
                 new TimePoint(100, {scriptCounter: 100, backgroundCounter: 123}),
-                new TimePoint(100, {scriptCounter: 100, backgroundCounter: 100})
+                new TimePoint(100, {scriptCounter: 100, backgroundCounter: 100}),
             ));
         });
 
         it('Should prioritize use the backgroundCounter if the other counters are unused', () => {
             isSortedHigher(TimePoint.compare(
                 new TimePoint(100, {backgroundCounter: 123}),
-                new TimePoint(100, {backgroundCounter: 100})
+                new TimePoint(100, {backgroundCounter: 100}),
             ));
             isSortedEqual(TimePoint.compare(
                 new TimePoint(100, {backgroundCounter: 100}),
-                new TimePoint(100, {backgroundCounter: 100})
+                new TimePoint(100, {backgroundCounter: 100}),
             ));
         });
     });
@@ -264,7 +264,7 @@ describe('TimePoint', () => {
                     scriptCounter: 33000,
                     contentCounter: 440000,
                 })),
-                -40000
+                -40000,
             );
             eq(
                 new TimePoint(110, {
@@ -275,7 +275,7 @@ describe('TimePoint', () => {
                     scriptCounter: 30000,
                     contentCounter: 400000,
                 })),
-                3000
+                3000,
             );
             eq(
                 new TimePoint(110, {
@@ -285,7 +285,7 @@ describe('TimePoint', () => {
                     backgroundCounter: 2000,
                     contentCounter: 400000,
                 })),
-                200
+                200,
             );
             eq(
                 new TimePoint(110, {
@@ -293,7 +293,7 @@ describe('TimePoint', () => {
                     scriptCounter: 30000,
                     contentCounter: 400000,
                 }).diff(new TimePoint(100, {})),
-                10
+                10,
             );
         });
 

@@ -264,7 +264,7 @@ class TabTracker {
                 assert.strictEqual(
                     frame.parentBrowserFrameId,
                     parentBrowserFrameId,
-                    'TabTracker#registerFrame called multiple times with different values for parentBrowserFrameId'
+                    'TabTracker#registerFrame called multiple times with different values for parentBrowserFrameId',
                 );
 
                 return frame.public;

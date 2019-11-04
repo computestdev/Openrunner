@@ -237,7 +237,7 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
 
                     const events = result.value;
                     const expectedKeyboardEvents = expectedEvents.filter(
-                        e => e.type === 'keydown' || e.type === 'keyup' || e.type === 'keypress'
+                        e => e.type === 'keydown' || e.type === 'keyup' || e.type === 'keypress',
                     );
 
                     for (let i = 0; i < expectedKeyboardEvents.length; ++i) {
@@ -519,21 +519,21 @@ describe('integration/eventSimulation', {slow: 10000, timeout: 60000}, () => {
 
                     await assert.isRejected(
                         eventSimulation.keyboardKeys(document.createTextNode('foo'), ['x']),
-                        /keyboardKeys.*expected.*element/i
+                        /keyboardKeys.*expected.*element/i,
                     );
                     await assert.isRejected(
                         eventSimulation.keyboardKeys(textarea, ['foo']),
-                        /key.*not.*supported.*foo/i
+                        /key.*not.*supported.*foo/i,
                     );
                     await assert.isRejected(
                         eventSimulation.keyboardTextInput(document.createElement('div'), ['x']),
-                        /keyboardTextInput.*DIV.*not.*element.*text.*input/i
+                        /keyboardTextInput.*DIV.*not.*element.*text.*input/i,
                     );
                     const inputHidden = document.createElement('input');
                     inputHidden.type = 'hidden';
                     await assert.isRejected(
                         eventSimulation.keyboardTextInput(inputHidden, ['x']),
-                        /keyboardTextInput.*INPUT hidden.*not.*element.*text.*input/i
+                        /keyboardTextInput.*INPUT hidden.*not.*element.*text.*input/i,
                     );
                 });
             }, {url: `http://localhost:${testServerPort()}/static/empty.html`});

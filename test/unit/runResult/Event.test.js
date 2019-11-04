@@ -305,7 +305,7 @@ describe('Event', () => {
                 const event = new Event('my type');
                 const child = event.childTimePointEvent(
                     'child type',
-                    new TimePoint(2150, {contentCounter: 5002150})
+                    new TimePoint(2150, {contentCounter: 5002150}),
                 );
                 instanceOf(child, Event);
                 lengthOf([...event.children], 1);
@@ -319,7 +319,7 @@ describe('Event', () => {
                 const child = event.childTimePointEvent(
                     'child type',
                     new TimePoint(2150, {contentCounter: 5002150}),
-                    new TimePoint(2200, {contentCounter: 5002200})
+                    new TimePoint(2200, {contentCounter: 5002200}),
                 );
                 instanceOf(child, Event);
                 lengthOf([...event.children], 1);
@@ -334,7 +334,7 @@ describe('Event', () => {
                 const event = new Event('my type');
                 const child = event.childTimeEvent(
                     'child type',
-                    2120
+                    2120,
                 );
                 instanceOf(child, Event);
                 lengthOf([...event.children], 1);
@@ -347,7 +347,7 @@ describe('Event', () => {
                 const child = event.childTimeEvent(
                     'child type',
                     2120,
-                    2121
+                    2121,
                 );
                 instanceOf(child, Event);
                 lengthOf([...event.children], 1);
