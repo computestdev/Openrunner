@@ -59,7 +59,12 @@ const startFirefoxProcess = async () => {
 const stopFirefoxProcess = async () => {
     await mergeCoverage();
     if (firefoxProcessDisposer) {
-        await firefoxProcessDisposer.tryDispose();
+        try {
+            await firefoxProcessDisposer.tryDispose();
+        }
+        catch (err) {
+            log.error({err}, 'Stopping browser failed');
+        }
         firefoxProcessDisposer = null;
     }
     log.debug('Closing any active connection...');
@@ -103,7 +108,14 @@ const stop = async () => {
 
     await stopFirefoxProcess();
     if (firefoxProfileDisposer) {
-        await firefoxProfileDisposer.tryDispose();
+        try {
+            // bluebird will throw if tryDispose is called multiple times,
+            // so make sure that firefoxProcessDisposer is always unset
+            await firefoxProcessDisposer.tryDispose();
+        }
+        catch (err) {
+            log.error({err}, 'Stopping browser failed');
+        }
         firefoxProfileDisposer = null;
     }
     await server.stop();
