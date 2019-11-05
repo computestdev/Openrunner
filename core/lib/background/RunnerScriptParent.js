@@ -10,7 +10,9 @@ const loadModule = require('./loadModule');
 const ModuleRegister = require('../../../lib/ModuleRegister');
 const compileRunnerScript = require('./compileRunnerScript');
 const {mergeCoverageReports} = require('../../../lib/mergeCoverage');
-const {SCRIPT_ENV: SCRIPT_ENV_URL} = require('../urls');
+const {SCRIPT_ENV: SCRIPT_ENV_URL, SCRIPT_ENV_CONTENT: SCRIPT_ENV_CONTENT_URL} = require('../urls');
+const ScriptWindow = require('./ScriptWindow');
+const TabContentRPC = require('../../../lib/contentRpc/TabContentRPC');
 
 const PRIVATE = Symbol('RunnerScriptParent private');
 
@@ -18,6 +20,10 @@ class RunnerScriptParent {
     constructor() {
         this[PRIVATE] = new RunnerScriptParentPrivate(this);
         Object.freeze(this);
+    }
+
+    get window() {
+        return this[PRIVATE].window;
     }
 
     on(type, listener) {
@@ -83,10 +89,17 @@ class RunnerScriptParentPrivate {
         this.stackFileName = null;
         this.scriptApiVersion = null;
         this.sentStopCommand = false;
-        this.worker = null;
-        this.rpc = null;
+        this.workerTabRpc = null;
+        this.workerTabRpcInstance = null;
+        this.workerRpc = null;
         this.moduleRegister = new ModuleRegister();
         this.scriptTimeoutTimer = 0;
+        this.window = new ScriptWindow({
+            browserWindows: browser.windows,
+            browserTabs: browser.tabs,
+            browserWebNavigation: browser.webNavigation,
+            browserContextualIdentities: browser.contextualIdentities,
+        });
         Object.seal(this);
     }
 
@@ -107,11 +120,11 @@ class RunnerScriptParentPrivate {
     }
 
     async rpcCall(...args) {
-        return this.rpc.call(...args);
+        return this.workerRpc.call(...args);
     }
 
     rpcRegisterMethods(methods) {
-        this.rpc.methods(methods);
+        this.workerRpc.methods(methods);
     }
 
     compileScript(scriptContent, stackFileName) {
@@ -138,6 +151,50 @@ class RunnerScriptParentPrivate {
         return await this.moduleRegister.waitForModuleRegistration(moduleName);
     }
 
+    async _createWorker(workerTabId) {
+        if (this.workerTabRpc || this.workerTabRpcInstance || this.workerRpc) {
+            throw Error('Invalid state');
+        }
+
+        const workerTabRpc = this.workerTabRpc = new TabContentRPC({
+            browserRuntime: browser.runtime,
+            browserTabs: browser.tabs,
+            context: 'core/script-env-content',
+            filterSender: tab => tab.id === workerTabId,
+        });
+        workerTabRpc.attach();
+        const workerTabRpcInstance = this.workerTabRpcInstance = workerTabRpc.get(workerTabId, 0);
+
+        const waitForContentInit = new Promise(resolve => workerTabRpcInstance.method('initialized', resolve));
+        log.debug({workerTabId, SCRIPT_ENV_CONTENT_URL}, 'Executing script-env-content script...');
+        browser.tabs.executeScript(workerTabId, {
+            allFrames: false,
+            frameId: 0,
+            file: SCRIPT_ENV_CONTENT_URL,
+            runAt: 'document_start',
+        });
+
+        log.debug({workerTabId, SCRIPT_ENV_CONTENT_URL}, 'Waiting for script-env-content to be initialized...');
+        await waitForContentInit;
+
+        const workerRpc = this.workerRpc = new JSONBird({
+            // take advantage of the structured clone algorithm
+            readableMode: 'object',
+            writableMode: 'object',
+            receiveErrorStack: true,
+            sendErrorStack: true,
+            defaultTimeout: 15001,
+            pingMethod: 'ping',
+        });
+        workerTabRpcInstance.method('workerMessage', object => workerRpc.write(object));
+        workerRpc.on('data', object => workerTabRpcInstance.call('workerPostMessage', object));
+        workerRpc.on('error', err => log.error({err}, 'Uncaught error in script-env RPC'));
+        workerRpc.on('protocolError', err => log.error({err}, 'Protocol error in script-env RPC'));
+
+        log.debug({workerTabId, SCRIPT_ENV_URL}, 'Creating Web Worker...');
+        await workerTabRpcInstance.call('workerCreate', {url: SCRIPT_ENV_URL});
+    }
+
     async run() {
         if (!this.scriptContent) {
             throw Error('Script must be compiled first (compileScript())');
@@ -149,25 +206,16 @@ class RunnerScriptParentPrivate {
 
         this.runActive = true; // set this to true before doing anything async, so that this function can not be invoked in parallel
         try {
-            log.debug({SCRIPT_ENV_URL}, 'Creating Web Worker...');
-            const worker = new Worker(SCRIPT_ENV_URL, {name: 'Openrunner script environment'});
-            const rpc = new JSONBird({
-                // take advantage of the structured clone algorithm
-                readableMode: 'object',
-                writableMode: 'object',
-                receiveErrorStack: true,
-                sendErrorStack: true,
-                defaultTimeout: 15001,
-                pingMethod: 'ping',
-            });
-            worker.onmessage = e => rpc.write(e.data);
-            rpc.on('data', object => worker.postMessage(object));
-            rpc.on('error', err => log.error({err}, 'Uncaught error in script-env RPC'));
-            rpc.on('protocolError', err => log.error({err}, 'Protocol error in script-env RPC'));
+            this.window.attach();
+            await this.window.open();
+            // The Openrunner script itself runs inside a Web Worker, which is created from a special tab pointing to our blank.html,
+            // this tab runs in the same cookie store (contextual identity) as the tabs created by the script.
+            // This ensures that using fetch() in the global scope of the Openrunner script does not pollute the global cookie
+            // store (and thus, persists between script runs)
+            const workerTabId = await this.window.getBlankExtensionPageTabId();
+            await this._createWorker(workerTabId);
 
             this.sentStopCommand = false;
-            this.worker = worker;
-            this.rpc = rpc;
 
             this.rpcRegisterMethods(coreMethods(this.publicInterface));
 
@@ -224,8 +272,8 @@ class RunnerScriptParentPrivate {
                     mergeCoverageReports(myCoverage, scriptEnvCoverage);
                 }
 
-                this.cleanup();
                 await this.emitRunEnd();
+                await this.cleanup();
             }
             log.info('Script is now stopped, serializing the script run result');
 
@@ -237,23 +285,35 @@ class RunnerScriptParentPrivate {
         }
         finally {
             this.runActive = false;
-            this.cleanup();
+            await this.cleanup();
         }
     }
 
-    cleanup() {
+    async cleanup() {
         clearTimeout(this.scriptTimeoutTimer);
         this.scriptTimeoutTimer = 0;
 
-        if (this.worker) {
-            this.worker.terminate();
-            this.worker = null;
+        if (this.workerRpc) {
+            this.workerRpc.removeAllListeners('data');
+        }
+        this.workerRpc = null;
+
+        if (this.workerTabRpcInstance) {
+            await this.workerTabRpcInstance.call('workerTerminate', {timeout: 4002})
+            .catch(err => log.error({err}, 'Error while terminating worker'));
         }
 
-        if (this.rpc) {
-            this.rpc.removeAllListeners('data');
-            this.rpc = null;
+        if (this.workerTabRpc) {
+            this.workerTabRpc.detach();
         }
+        this.workerTabRpc = null;
+        this.workerTabRpcInstance = null;
+
+        if (this.window) {
+            await this.window.close().catch(err => log.error({err}, 'Error while closing window'));
+            this.window.detach();
+        }
+        this.window = null;
     }
 
     async stop({name, message} = {}) {

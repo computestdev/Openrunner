@@ -4,7 +4,6 @@ const {assert} = require('chai');
 
 const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'tabs/background/TabManager'});
 const {contentScriptAbortedError} = require('../../../../lib/scriptErrors');
-const ScriptWindow = require('./ScriptWindow');
 const TabTracker = require('./TabTracker');
 const TabContentRPC = require('../../../../lib/contentRpc/TabContentRPC');
 const {resolveScriptContentEvalStack} = require('../../../../lib/errorParsing');
@@ -15,27 +14,26 @@ const TOP_FRAME_ID = 0;
 
 class TabManager extends EventEmitter {
     constructor({
+        scriptWindow,
         runtime: browserRuntime,
-        windows: browserWindows,
         tabs: browserTabs,
         webNavigation: browserWebNavigation,
-        contextualIdentities: browserContextualIdentities,
         scriptApiVersion,
     }) {
         super();
         this._attached = false;
         this.browserRuntime = browserRuntime;
-        this.browserWindows = browserWindows;
         this.browserTabs = browserTabs;
         this.browserWebNavigation = browserWebNavigation;
         // all tabs opened by the script end up in a single window:
-        this.scriptWindow = new ScriptWindow({browserWindows, browserTabs, browserWebNavigation, browserContextualIdentities});
+        this.scriptWindow = scriptWindow;
         this.myTabs = new TabTracker();
         this.tabContentRPC = new TabContentRPC({
             browserRuntime,
             browserTabs,
             context: 'runner-modules/tabs',
             onRpcInitialize: obj => this.handleRpcInitialize(obj),
+            filterSender: tab => this.myTabs.hasBrowserTabId(tab.id),
         });
         this.scriptApiVersion = scriptApiVersion;
         this._navigationCommittedWait = new WaitForEvent(); // key is [browserTabId, browserFrameId]
@@ -45,15 +43,12 @@ class TabManager extends EventEmitter {
         this.handleWebNavigationOnCommitted = this.handleWebNavigationOnCommitted.bind(this);
         this.handleTabMainContentInitialized = this.handleTabMainContentInitialized.bind(this);
         this.handleTabsRemoved = this.handleTabsRemoved.bind(this);
-        this.scriptWindow.on('windowCreated', ({browserWindowId}) => this.emit('windowCreated', {browserWindowId}));
-        this.scriptWindow.on('windowClosed', ({browserWindowId}) => this.emit('windowClosed', {browserWindowId}));
         this.TOP_FRAME_ID = TOP_FRAME_ID;
         Object.seal(this);
     }
 
     attach() {
         this.tabContentRPC.attach();
-        this.scriptWindow.attach();
         this.browserTabs.onCreated.addListener(this.handleTabCreated);
         this.browserWebNavigation.onBeforeNavigate.addListener(this.handleWebNavigationOnBeforeNavigate);
         this.browserWebNavigation.onCommitted.addListener(this.handleWebNavigationOnCommitted);
@@ -64,7 +59,6 @@ class TabManager extends EventEmitter {
     detach() {
         this._attached = false;
         this.tabContentRPC.detach();
-        this.scriptWindow.detach();
         this.browserTabs.onCreated.removeListener(this.handleTabCreated);
         this.browserWebNavigation.onBeforeNavigate.removeListener(this.handleWebNavigationOnBeforeNavigate);
         this.browserWebNavigation.onCommitted.removeListener(this.handleWebNavigationOnCommitted);
@@ -299,31 +293,43 @@ class TabManager extends EventEmitter {
         return this.scriptWindow.sizeMinusViewport;
     }
 
-    async closeScriptWindow() {
-        assert.isTrue(this._attached, 'TabManager.closeScriptWindow: Not initialized yet or in the progress of cleaning up');
+    async closeAllTabs() {
+        assert.isTrue(this._attached, 'TabManager.closeAll: Not initialized yet or in the progress of cleaning up');
 
-        const frames = [...this.myTabs.frames()];
-
-        log.debug({
-            frames: frames.map(frame => ({tab: frame.tab.browserTabId, frame: frame.browserFrameId})),
-        }, 'Calling tabs.contentUnload for all active frames');
-
+        const tabs = [...this.myTabs];
         const promises = [];
-        for (const frame of frames) {
-            const {tab: {browserTabId}, browserFrameId, initialized} = frame;
-            if (!initialized) {
-                continue;
+
+        for (const tab of tabs) {
+            const {browserTabId} = tab;
+            const tabPromises = [];
+            const frames = [...tab.frames()];
+
+            log.debug({
+                browserTabId,
+                browserFrameIds: frames.map(frame => frame.browserFrameId),
+            }, 'Calling tabs.contentUnload for all active frames');
+
+            for (const frame of frames) {
+                const {browserFrameId, initialized} = frame;
+                if (!initialized) {
+                    continue;
+                }
+
+                const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
+                tabPromises.push(
+                    rpc.call({name: 'tabs.contentUnload', timeout: 5001})
+                    .catch(err => log.warn({err, browserTabId, browserFrameId}, 'Error calling tabs.contentUnload for frame')),
+                );
             }
 
-            const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
             promises.push(
-                rpc.call({name: 'tabs.contentUnload', timeout: 5001})
-                .catch(err => log.warn({err, browserTabId, browserFrameId}, 'Error calling tabs.contentUnload for frame')),
+                Promise.all(tabPromises)
+                .then(() => this.browserTabs.remove(browserTabId))
+                .catch(err => log.warn({err, browserTabId}, 'Error closing tab')),
             );
         }
-        await Promise.all(promises);
 
-        await this.scriptWindow.close();
+        await Promise.all(promises);
     }
 
     async setWindowSize(options) {

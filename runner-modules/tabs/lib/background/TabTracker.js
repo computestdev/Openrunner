@@ -149,6 +149,12 @@ class Tab {
                 return self.currentContentId;
             },
 
+            * frames() {
+                for (const frame of self.frames.values()) {
+                    yield frame.public;
+                }
+            },
+
             hasFrame(browserFrameId) {
                 return self.hasFrame(browserFrameId);
             },
