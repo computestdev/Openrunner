@@ -178,6 +178,13 @@ class TestingServer {
             `);
         });
 
+        app.get('/headers/set-cookie', (request, response) => {
+            response.status(200);
+            response.append('Set-Cookie', 'foo=123; HttpOnly');
+            response.append('Set-Cookie', 'bar=123');
+            response.json({headers: request.headers});
+        });
+
         app.use((request, response) => {
             response.status(404).send('Thing not found!');
         });

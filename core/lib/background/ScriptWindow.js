@@ -2,9 +2,9 @@
 const EventEmitter = require('events').EventEmitter;
 const {assert} = require('chai');
 
-const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'tabs/background/ScriptWindow'});
-const {BLANK_HTML} = require('./urls');
-const WaitForEvent = require('../../../../lib/WaitForEvent');
+const log = require('../../../lib/logger')({hostname: 'background', MODULE: 'core/ScriptWindow'});
+const {BLANK_HTML} = require('../urls');
+const WaitForEvent = require('../../../lib/WaitForEvent');
 
 let containerNameCounter = 0;
 
@@ -17,7 +17,6 @@ class ScriptWindow extends EventEmitter {
         this.browserWebNavigation = browserWebNavigation;
         this.browserContextualIdentities = browserContextualIdentities;
         this.openPromise = null;
-        this.firstTabCreation = true;
         this.closed = false;
         this._navigationCompletedWait = new WaitForEvent(); // key is [browserTabId]
         this._sizeMinusViewport = Object.freeze({width: 0, height: 0});
@@ -57,7 +56,6 @@ class ScriptWindow extends EventEmitter {
 
         log.debug({}, 'Creating new window...');
 
-        this.firstTabCreation = true;
         this.openPromise = (async () => {
             containerNameCounter = (containerNameCounter + 1) % Number.MAX_SAFE_INTEGER;
 
@@ -159,6 +157,18 @@ class ScriptWindow extends EventEmitter {
         return browserWindowId;
     }
 
+    /**
+     * Returns the tabId of the blank.html extension page, which is always open in the script window.
+     * @return {Promise<string>}
+     */
+    async getBlankExtensionPageTabId() {
+        if (!this.openPromise) {
+            await this.open();
+        }
+        const {firstTabId} = await this.openPromise;
+        return firstTabId;
+    }
+
     async getBrowserWindow() {
         const browserWindowId = await this.getBrowserWindowId();
         return await this.browserWindows.get(browserWindowId, {
@@ -198,16 +208,6 @@ class ScriptWindow extends EventEmitter {
             url,
             cookieStoreId,
         });
-
-        if (this.firstTabCreation) {
-            this.firstTabCreation = false;
-            const {tabs: windowTabs} = browserWindow;
-
-            if (windowTabs[0].id !== tab.id) {
-                // remove the first blank tab. But do not wait for it, otherwise
-                this.browserTabs.remove(windowTabs[0].id).catch(err => log.error({err}, 'Error while removing tab'));
-            }
-        }
 
         log.debug({browserTabId: tab.id, url}, 'Created a new tab');
 

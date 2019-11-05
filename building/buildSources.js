@@ -34,6 +34,7 @@ const buildBundles = async (outputDirectoryPath, buildConfigPath, {instrumentCov
     await Promise.all([
         bundle(rootPath('core/lib/background'), 'background.js'),
         bundle(rootPath('core/lib/script-env'), 'script-env.js'),
+        bundle(rootPath('core/lib/script-env-content'), 'script-env-content.js'),
         bundle(rootPath('core/lib/scratchpad-content/scratchpad'), 'scratchpad-content-scratchpad.js'),
         bundle(rootPath('core/lib/scratchpad-content/scratchpad-breakdown'), 'scratchpad-content-breakdown.js'),
         bundle(rootPath('core/lib/scratchpad-content/scratchpad-result'), 'scratchpad-content-result.js'),
