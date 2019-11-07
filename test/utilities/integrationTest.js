@@ -3,14 +3,16 @@
 const {assert} = require('chai');
 const fs = require('fs-extra');
 
+const {OpenrunnerClient} = require('../..');
 const TestingServer = require('../server/TestingServer');
-const {buildTempFirefoxProfile} = require('../../index');
 const log = require('../../lib/logger')({hostname: 'test', MODULE: 'integrationTest'});
 const {mergeCoverageReports} = require('../../lib/mergeCoverage');
-const {startFirefox} = require('../../lib/node/firefoxProcess');
+const findFreeTCPPort = require('../../lib/node/findFreeTCPPort');
+const {temporaryDirectory} = require('../../lib/node/temporaryFs');
 const {
     TEST_TEMP_DIR,
     TEST_FIREFOX_BIN,
+    TEST_SERVER_CNC_PORT,
     TEST_SERVER_PORT,
     TEST_SERVER_EXTRA_PORT,
     TEST_SERVER_BAD_TLS_PORT,
@@ -20,11 +22,11 @@ const {
 } = require('./testEnv');
 
 const debugMode = TEST_DEBUG === '1';
-let firefoxProfileDisposer;
-let firefoxProcessDisposer;
-let server;
-let startPromise;
-let profilePath;
+let cncPort;
+let buildCacheDisposer = null;
+let openrunnerDisposer = null;
+let server = null;
+let startPromise = null;
 const restartBrowserEvery = Number(TEST_RESTART_BROWSER_EVERY) || 0;
 let runScriptCounterForRestart = 0;
 
@@ -39,56 +41,48 @@ const startTestServer = async () => {
     return {listenPort: server.listenPort};
 };
 
-const startFirefoxProcess = async () => {
+const startOpenrunner = async () => {
     assert.isString(TEST_FIREFOX_BIN, 'TEST_FIREFOX_BIN must be set');
     assert.isOk(TEST_FIREFOX_BIN, 'TEST_FIREFOX_BIN must not be empty');
-    log.debug('Starting browser...');
-    firefoxProcessDisposer = startFirefox({
-        firefoxPath: TEST_FIREFOX_BIN,
-        profilePath,
-        headless: !debugMode && TEST_HEADLESS === '1',
-        extraArgs: debugMode ? ['about:devtools-toolbox?type=extension&id=openrunner%40computest.nl'] : [],
-    });
-    await firefoxProcessDisposer.promise();
+    assert.isNull(openrunnerDisposer, 'openrunnerDisposer');
 
-    log.info('Waiting for C&C connection');
-    await server.waitForActiveCnCConnection();
-    log.info('Browser has been connected and is ready to run scripts');
+    const [buildCacheDirectory] = await buildCacheDisposer.promise();
+
+    openrunnerDisposer = OpenrunnerClient.promiseDisposer({
+        firefoxPath: TEST_FIREFOX_BIN,
+        tempDirectory: TEST_TEMP_DIR,
+        headless: !debugMode && TEST_HEADLESS === '1',
+        cncPort,
+        instrumentCoverage: Boolean(global.__coverage__),
+        openDevtool: debugMode,
+        buildCacheDirectory,
+    });
 };
 
-const stopFirefoxProcess = async () => {
+const stopOpenrunner = async () => {
     await mergeCoverage();
-    if (firefoxProcessDisposer) {
+    if (openrunnerDisposer) {
         try {
-            await firefoxProcessDisposer.tryDispose();
+            await openrunnerDisposer.tryDispose();
         }
         catch (err) {
-            log.error({err}, 'Stopping browser failed');
+            log.error({err}, 'Stopping Openrunner failed');
         }
-        firefoxProcessDisposer = null;
+        openrunnerDisposer = null;
     }
-    log.debug('Closing any active connection...');
-    await server.destroyActiveCnCConnection('Stopping!');
-    log.debug('Successfully stopped the browser');
 };
 
 const doStart = async () => {
     assert.isOk(TEST_TEMP_DIR, 'TEST_TEMP_DIR must not be empty');
 
     await fs.mkdirp(TEST_TEMP_DIR);
+    cncPort = TEST_SERVER_CNC_PORT > 0 ? TEST_SERVER_CNC_PORT : await findFreeTCPPort();
+    buildCacheDisposer = temporaryDirectory(TEST_TEMP_DIR, ['openrunner-build-cache-']);
 
-    const {listenPort} = await startTestServer();
-
-    const buildProfileOptions = {
-        cncPort: listenPort,
-        tempDirectory: TEST_TEMP_DIR,
-        instrumentCoverage: Boolean(global.__coverage__),
-    };
-    log.info(buildProfileOptions, 'Building firefox profile...');
-    firefoxProfileDisposer = buildTempFirefoxProfile(buildProfileOptions);
-    profilePath = await firefoxProfileDisposer.promise();
-
-    await startFirefoxProcess();
+    await Promise.all([
+        startTestServer(),
+        startOpenrunner(),
+    ]);
 };
 
 const ensureStarted = async () => {
@@ -96,7 +90,7 @@ const ensureStarted = async () => {
         startPromise = doStart();
     }
     await startPromise;
-    await firefoxProcessDisposer.promise();
+    await openrunnerDisposer.promise();
 };
 
 const stop = async () => {
@@ -106,17 +100,15 @@ const stop = async () => {
         return;
     }
 
-    await stopFirefoxProcess();
-    if (firefoxProfileDisposer) {
+    await stopOpenrunner();
+    if (buildCacheDisposer) {
         try {
-            // bluebird will throw if tryDispose is called multiple times,
-            // so make sure that firefoxProcessDisposer is always unset
-            await firefoxProcessDisposer.tryDispose();
+            await buildCacheDisposer.tryDispose();
         }
         catch (err) {
-            log.error({err}, 'Stopping browser failed');
+            log.error({err}, 'Cleaning up build cache failed');
         }
-        firefoxProfileDisposer = null;
+        buildCacheDisposer = null;
     }
     await server.stop();
 };
@@ -129,7 +121,8 @@ const mergeCoverage = async () => {
             return;
         }
 
-        const extensionCoverage = await server.reportCodeCoverage();
+        const openrunner = await openrunnerDisposer.promise();
+        const extensionCoverage = await openrunner.reportCodeCoverage();
         mergeCoverageReports(myCoverage, extensionCoverage);
         log.debug('Merged code coverage report');
     }
@@ -149,19 +142,23 @@ const runScriptPrepare = async () => {
         log.info({restartBrowserEvery}, 'Restarting browser...');
         runScriptCounterForRestart = 0;
 
-        await stopFirefoxProcess();
-        await startFirefoxProcess();
+        await stopOpenrunner();
+        await startOpenrunner();
     }
 };
 
-const runScript = async (scriptContent) => {
+const runScript = async (scriptContent, stackFileName = 'integrationTest.js') => {
     await runScriptPrepare();
-    return await server.runScript({scriptContent, stackFileName: 'integrationTest.js'});
+    const openrunner = await openrunnerDisposer.promise();
+    return await openrunner.runScript({scriptContent, stackFileName});
 };
 
 const runScriptFromFunction = async (func, injected = {}) => {
-    await runScriptPrepare();
-    return await server.runScriptFromFunction(func, injected);
+    const stackFileName = (func.name || 'integrationTest') + 'js';
+    const scriptContent =
+        `const injected = ${JSON.stringify(injected)};` +
+        func.toString().replace(/^async\s*\(\)\s*=>\s*{|}$/g, '');
+    return await runScript(scriptContent, stackFileName);
 };
 
 module.exports = {

@@ -1,19 +1,21 @@
 'use strict';
 
 const {
-    buildSources,
+    buildFirefoxExtension,
     buildFirefoxProfile,
-    buildSourcesAndFirefoxProfile,
     buildTempFirefoxProfile,
+    buildTempFirefoxExtensionDirectory,
 } = require('./building');
 const CnCServer = require('./lib/node/CnCServer');
+const OpenrunnerClient = require('./lib/node/OpenrunnerClient');
 const getRunnerScriptMetadata = require('./lib/getRunnerScriptMetadata');
 
 module.exports = {
-    buildSources,
+    buildFirefoxExtension,
     buildFirefoxProfile,
-    buildSourcesAndFirefoxProfile,
     buildTempFirefoxProfile,
     CnCServer,
+    buildTempFirefoxExtensionDirectory,
+    OpenrunnerClient,
     getRunnerScriptMetadata,
 };

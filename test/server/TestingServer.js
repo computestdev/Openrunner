@@ -15,7 +15,6 @@ const morgan = require('morgan');
 const jsonHtmlify = require('htmlescape');
 
 const log = require('../../lib/logger')({pid: process.pid, hostname: os.hostname(), MODULE: 'TestingServer'});
-const {CnCServer} = require('../..');
 
 const STATIC_CONTENT_PATH = pathResolve(__dirname, './static');
 const TEMPLATES_CONTENT_PATH = pathResolve(__dirname, './templates');
@@ -28,7 +27,7 @@ class TestingServer {
         this.configuredExtraListenPort = extraListenPort; // used for cross-origin tests
         this.configuredbadTLSListenPort = badTLSListenPort;
         this.expressApp = null;
-        this.cncServer = null;
+        this.httpServer = null;
         this.extraHttpServer = null;
         this.badTLSHttpServer = null;
     }
@@ -194,8 +193,13 @@ class TestingServer {
             response.status(500).send('Something broke!');
         });
 
-        this.cncServer = new CnCServer({httpPort: this.configuredListenPort, requestListener: app});
-        await this.cncServer.start();
+        {
+            this.httpServer = http.createServer(app);
+            this.httpServer.listen(this.configuredListenPort, '127.0.0.1');
+            await new Promise(resolve => this.httpServer.once('listening', resolve));
+            const address = this.httpServer.address();
+            log.warn({address}, 'Started HTTP server');
+        }
 
         if (this.configuredExtraListenPort >= 0) {
             this.extraHttpServer = http.createServer(app);
@@ -226,9 +230,10 @@ class TestingServer {
     async stop() {
         log.info('Stopping...');
 
-        if (this.cncServer) {
-            await this.cncServer.stop();
-            this.cncServer = null;
+        if (this.httpServer) {
+            await Promise.fromCallback(cb => this.httpServer.close(cb));
+            this.httpServer = null;
+            log.info('HTTP server has been closed');
         }
 
         if (this.extraHttpServer) {
@@ -247,12 +252,12 @@ class TestingServer {
     }
 
     get listenPort() {
-        assert(this.cncServer, 'Main CncServer has not been started');
-        return this.cncServer.listenPort;
+        assert(this.httpServer, 'HTTP server has not been started');
+        return this.httpServer.address().port;
     }
 
     get extraListenPort() {
-        assert(this.extraHttpServer, 'Main CncServer has not been started');
+        assert(this.extraHttpServer, 'Extra HTTP server has not been started');
         return this.extraHttpServer.address().port;
     }
 
@@ -260,31 +265,6 @@ class TestingServer {
         assert(this.badTLSHttpServer, 'Bad-TLS server has not been started');
         return this.badTLSHttpServer.address().port;
     }
-
-    async waitForActiveCnCConnection() {
-        await this.cncServer.waitForActiveConnection();
-    }
-
-    destroyActiveCnCConnection(reason) {
-        this.cncServer.destroyActiveConnection(1000, reason);
-    }
-
-    async runScript({scriptContent, stackFileName}) {
-        return await this.cncServer.runScript({scriptContent, stackFileName});
-    }
-
-    async runScriptFromFunction(func, injected = {}) {
-        const stackFileName = (func.name || 'integrationTest') + 'js';
-        const scriptContent =
-            `const injected = ${JSON.stringify(injected)};` +
-            func.toString().replace(/^async\s*\(\)\s*=>\s*{|}$/g, '');
-        return await this.runScript({scriptContent, stackFileName});
-    }
-
-    async reportCodeCoverage() {
-        return await this.cncServer.reportCodeCoverage();
-    }
-
 }
 
 module.exports = TestingServer;

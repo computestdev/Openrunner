@@ -17,9 +17,12 @@
     "browser.laterrun.enabled": false, // https://bugzilla.mozilla.org/show_bug.cgi?id=1200639
     "startup.homepage_welcome_url": "about:blank",
     "devtools.errorconsole.enabled": true,
+    "devtools.browserconsole.contentMessages": true,
     "dom.disable_open_during_load": false,
     "extensions.autoDisableScopes" : 10, // disable all extensions that come from default locations on the system
     "extensions.enabledScopes": 5, // only extensions installed from the profile or by firefox
+    "extensions.installDistroAddons": false,
+    "extensions.checkCompatibility.nightly": false,
     "extensions.logging.enabled": false,
     "extensions.update.enabled": false,
     "extensions.update.notifyUser": false,
@@ -80,5 +83,10 @@
     "permissions.default.desktop-notification": 2,
     "permissions.default.geo": 2,
     "permissions.default.microphone": 2,
-    "media.autoplay.default": 0
+    "media.autoplay.default": 0,
+
+    // The option --start-debugger-server 1234 will not function without these prefs:
+    "devtools.debugger.remote-enabled": true,
+    "devtools.chrome.enabled": true,
+    "devtools.debugger.prompt-connection": false
 }

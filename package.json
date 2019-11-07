@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build:sources": "node bin/openrunner.js build source --output build",
-    "build:profile": "node bin/openrunner.js build firefox-profile --input build --output PRIV/profile",
-    "build": "npm run build:sources && npm run build:profile",
+    "build:profile": "node bin/openrunner.js build firefox-profile --output PRIV/profile",
+    "build": "npm run build:profile",
     "lint": "eslint bin building core lib runner-modules test",
     "test:unit-and-integration": "mocha \"test/**/*.test.js\"",
     "test:unit-and-integration:coverage": "nyc --all mocha \"test/**/*.test.js\"",
@@ -67,6 +67,7 @@
     "throttle": "^1.0.3"
   },
   "dependencies": {
+    "@cliqz-oss/firefox-client": "^0.3.1",
     "archiver": "^3.0.0",
     "bluebird": "^3.5.0",
     "bluefox": "2.2.0",

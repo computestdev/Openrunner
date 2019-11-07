@@ -11,7 +11,7 @@ const firefoxOption = ['firefox', {
 }];
 
 const tmpOption = ['tmp', {
-    describe: 'Filesystem path to a directory to temporarily store files in, such as the profile used by the browser',
+    describe: 'Filesystem path to a directory to temporarily store files in, such as build files and the profile used by the browser',
     default: tmpdir(),
 }];
 
@@ -21,9 +21,25 @@ const headlessOption = ['headless', {
     boolean: true,
 }];
 
-const profileCacheOption = ['profileCache', {
-    describe: 'Filesystem path to a directory where the generated browser profile will be cached between multiple ' +
-              'invocations of this command. If this option is not given, a new browser profile will be ' +
+const preloadExtensionOption = ['preloadExtension', {
+    describe:
+        'Install the Openrunner extension by placing it in the generated firefox profile, instead of installing it using the ' +
+        'debugger API. This option only works on Firefox Developer Edition, Addon Devel, Nightly, etc',
+    boolean: true,
+}];
+
+const cncPortOption = ['cncPort', {
+    describe:
+        'If set, the built extension will automatically try to connect to this WebSocket port on the loopback interface, ' +
+        'to receive JSON-RPC 2 calls',
+    number: true,
+    default: 0,
+    defaultDescription: 'disabled',
+}];
+
+const buildCacheOption = ['buildCache', {
+    describe: 'Filesystem path to a directory where the generated browser profile and extension will be cached between multiple ' +
+              'invocations of this command. If this option is not given, a new browser profile and extension will be ' +
               'generated for every single invocation',
 }];
 
@@ -65,9 +81,10 @@ yargs
         yargs
         .group(['firefox'], 'Basic options')
         .option(...firefoxOption)
-        .group(['tmp'], 'Advanced options')
+        .group(['tmp', 'preloadExtension'], 'Advanced options')
         .option(...tmpOption)
-        .example('$0 ide --firefox \'/Applications/Firefox Nightly.app/Contents/MacOS/firefox\''),
+        .option(...preloadExtensionOption)
+        .example('$0 ide --firefox \'/Volumes/Applications/Firefox.app\''),
     handler: args => executeCommandHandler('./_subcommands/ide', args),
 })
 .command({
@@ -88,18 +105,19 @@ yargs
             describe: 'Filesystem path where a JSON file containing the results of the script run will be stored',
         })
         .option(...headlessOption)
-        .group(['tmp', 'profileCache', 'cncPort'], 'Advanced options')
+        .group(['tmp', 'buildCache', 'cncPort', 'preloadExtension'], 'Advanced options')
         .option(...tmpOption)
-        .option(...profileCacheOption)
+        .option(...buildCacheOption)
+        .option(...preloadExtensionOption)
         .option('cncPort', {
             describe: 'The TCP port used to communicate with the browser. A web server will be started (temporarily) at this port ' +
             'on the loopback interface. If "0" is passed an unused port is picked by the OS however this can not ' +
-            'be used at the same time as the --profileCache option',
+            'be used at the same time as the --buildCache option',
             number: true,
             default: 17011,
         })
         .example(
-            '$0 run --firefox \'/Applications/Firefox Nightly.app/Contents/MacOS/firefox\' ' +
+            '$0 run --firefox \'/Volumes/Applications/Firefox.app\' ' +
             '--script example.js --result example.json',
         ),
     handler: args => executeCommandHandler('./_subcommands/run', args),
@@ -109,29 +127,43 @@ yargs
     describe: 'Various commands for building browser extensions and profiles',
     builder: yargs =>
         yargs
-        // Building a profile takes two steps `build source` and `build firefox-profile`
-        // This is because in the future we will have multiple build targets (`build chrome-profile`,
-        // etc) which should all be build with identical sources. And it will speed up the entire build
-        // process.
+        // this command is mostly useful while developing Openrunner. See `npm build:sources`
         .command({
             command: 'source',
-            describe: 'Builds the Openrunner WebExtensions source, which can then be used to generate browser profiles',
+            describe: false, // hide it from --help unless explictly specified
             builder: yargs =>
                 yargs
                 .group(['output'], 'Basic options')
                 .option(...buildOutputOption)
                 .group(['coverage', 'cncPort'], 'Advanced options')
                 .option(...coverageOption)
-                .option('cncPort', {
-                    describe:
-                    'If set, the built extension will automatically try to connect to this WebSocket port on the loopback interface, ' +
-                    'to receive JSON-RPC 2 calls',
-                    number: true,
-                    default: 0,
-                    defaultDescription: 'disabled',
-                })
-                .example('$0 build source --output ./openrunner-extension'),
+                .option(...cncPortOption)
+                .example('$0 build source --output ./openrunner-source'),
             handler: args => executeCommandHandler('./_subcommands/build-source', args),
+        })
+        .command({
+            command: 'extension',
+            describe: 'Builds the Openrunner WebExtension',
+            builder: yargs =>
+                yargs
+                .group(['output'], 'Basic options')
+                .option('output', {
+                    alias: 'o',
+                    describe: 'Where to place the generated Web Extension',
+                    demandOption: true,
+                })
+                .option('xpi', {
+                    alias: 'x',
+                    describe: 'If set a single .xpi file is generated. If not set a directory is ' +
+                              'generated which can be used with the "Load Temporary Add-on" button in firefox.',
+                    boolean: true,
+                })
+                .group(['coverage', 'cncPort', 'tmp'], 'Advanced options')
+                .option(...coverageOption)
+                .option(...cncPortOption)
+                .option(...tmpOption)
+                .example('$0 build extension --xpi --output ./openrunner.xpi'),
+            handler: args => executeCommandHandler('./_subcommands/build-extension', args),
         })
         .command({
             command: 'firefox-profile',
@@ -141,18 +173,17 @@ yargs
                       'popups in tabs, et cetera)',
             builder: yargs =>
                 yargs
-                .group(['input', 'output'], 'Basic options')
-                .option('input', {
-                    alias: 'i',
-                    describe: 'Input directory, containing a previously generated source build',
-                    demandOption: true,
-                })
+                .group(['output'], 'Basic options')
                 .option('output', {
                     alias: 'o',
                     describe: 'Profile output directory',
                     demandOption: true,
                 })
-                .example('$0 build firefox-profile --input ./openrunner-extension --output ./firefox-profile')
+                .group(['coverage', 'cncPort', 'tmp'], 'Advanced options')
+                .option(...coverageOption)
+                .option(...cncPortOption)
+                .option(...tmpOption)
+                .example('$0 build firefox-profile --output ./firefox-profile')
                 .example('\'/Applications/Firefox Nightly.app/Contents/MacOS/firefox\' --no-remote --profile ./firefox-profile'),
             handler: args => executeCommandHandler('./_subcommands/build-firefox-profile', args),
         })
@@ -168,7 +199,7 @@ yargs
                 .option('profile', {
                     alias: 'p',
                     describe: 'Input directory containing a previously generated profile',
-                    demandOption: true,
+                    demandOption: false,
                 })
                 .option('app', {
                     alias: 'a',
@@ -183,8 +214,7 @@ yargs
                 .group(['tmp'], 'Advanced options')
                 .option(...tmpOption)
                 .example(
-                    '$0 build firefox-mac-bundle --profile ./firefox-profile --app ' +
-                    '/Volumes/Nightly/Nightly.app --output ./Openrunner.dmg',
+                    '$0 build firefox-mac-bundle --app /Volumes/Nightly/Nightly.app --output ./Openrunner.dmg',
                 ),
             handler: args => executeCommandHandler('./_subcommands/build-firefox-mac-bundle', args),
         })
