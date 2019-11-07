@@ -7,6 +7,7 @@ const browserify = require('browserify');
 const browserifyBuiltins = require('browserify/lib/builtins');
 const {assert} = require('chai');
 
+const log = require('../lib/logger')({MODULE: 'building/buildSources'});
 const CoverageInstrumentationStream = require('./CoverageInstrumentationStream');
 
 const ROOT_PATH = resolvePath(__dirname, '../');
@@ -83,9 +84,11 @@ const buildSources = async ({outputPath, cncPort = 0, instrumentCoverage = false
 
     const resolvedOutputPath = resolvePath(outputPath);
 
+    log.debug({cncPort, instrumentCoverage, outputPath: resolvedOutputPath}, 'Building sources...');
     await fs.emptyDir(resolvedOutputPath);
     const buildConfigPath = await createBuildConfig(resolvedOutputPath, {cncPort});
     await buildBundles(resolvedOutputPath, buildConfigPath, {instrumentCoverage});
+    log.debug({cncPort, instrumentCoverage, outputPath: resolvedOutputPath}, 'Sources have been built');
     return {outputPath: resolvedOutputPath};
 };
 

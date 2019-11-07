@@ -6,6 +6,7 @@ const {resolve: resolvePath, join: joinPath} = require('path');
 const archiver = require('archiver');
 const cjson = require('cjson');
 const Promise = require('bluebird');
+const {tmpdir} = require('os');
 
 const {version: packageVersion} = require('../package.json');
 const {temporaryDirectory} = require('../lib/node/temporaryFs');
@@ -16,27 +17,72 @@ const ROOT_PATH = resolvePath(__dirname, '../');
 const rootPath = path => resolvePath(ROOT_PATH, path);
 const EXTENSION_FILE_NAME = 'openrunner@computest.nl.xpi';
 const ERROR_FAILED_TO_CREATE_PROFILE_CACHE = Symbol();
+const ERROR_FAILED_TO_CREATE_EXTENSION_CACHE = Symbol();
 
-const buildFirefoxExtension  = async ({buildDir, extensionFile}) => {
-    const extensionFileStream = fs.createWriteStream(extensionFile);
-    const extensionZip = archiver('zip', {
-        store: true, // no compression (for faster startup)
+const buildFirefoxExtension  = async ({tempDirectory, outputPath, extensionOptions = {}, zipped}) => {
+    let extensionZip;
+    let extensionZipPromise;
+
+    log.debug({outputPath, extensionOptions, zipped}, 'Building firefox extension...');
+
+    if (zipped) {
+        const extensionFileStream = fs.createWriteStream(outputPath);
+        extensionZip = archiver('zip', {
+            store: true, // no compression (for faster startup)
+        });
+        extensionZipPromise = new Promise((resolve, reject) => {
+            extensionZip.on('warning', reject);
+            extensionZip.on('error', reject);
+            extensionFileStream.on('error', reject);
+            extensionFileStream.on('finish', resolve);
+        });
+        extensionZip.pipe(extensionFileStream);
+    }
+
+    const addDirectory = async (source, dest) => {
+        if (zipped) {
+            extensionZip.directory(source, dest);
+        }
+        else {
+            const destPath = joinPath(outputPath, dest);
+            await fs.ensureDir(destPath);
+            await fs.copy(source, destPath, {errorOnExist: true});
+        }
+    };
+
+    const addFile = async (source, dest) => {
+        if (zipped) {
+            extensionZip.file(source, {name: dest});
+        }
+        else {
+            await fs.copy(source, joinPath(outputPath, dest), {errorOnExist: true});
+        }
+    };
+
+    await Promise.using(temporaryDirectory(tempDirectory || tmpdir(), ['openrunner-src-']), async ([sourcePath]) => {
+        const addSources = async () => {
+            const {cncPort, instrumentCoverage} = extensionOptions;
+            await buildSources({outputPath: sourcePath, cncPort, instrumentCoverage});
+            await addDirectory(sourcePath, 'build');
+        };
+
+        await Promise.all([
+            addDirectory(rootPath('core'), 'core'),
+            addDirectory(rootPath('icons'), 'icons'),
+            addDirectory(rootPath('lib'), 'lib'),
+            addDirectory(rootPath('runner-modules'), 'runner-modules'),
+            addFile(rootPath('manifest.json'), 'manifest.json'),
+            addDirectory(sourcePath, 'build'),
+            addSources(),
+        ]);
+
+        if (zipped) {
+            extensionZip.finalize();
+            await extensionZipPromise;
+        }
     });
-    const extensionZipPromise = new Promise((resolve, reject) => {
-        extensionZip.on('warning', reject);
-        extensionZip.on('error', reject);
-        extensionFileStream.on('error', reject);
-        extensionFileStream.on('finish', resolve);
-    });
-    extensionZip.pipe(extensionFileStream);
-    extensionZip.directory(rootPath('core'), 'core');
-    extensionZip.directory(rootPath('icons'), 'icons');
-    extensionZip.directory(rootPath('lib'), 'lib');
-    extensionZip.directory(rootPath('runner-modules'), 'runner-modules');
-    extensionZip.file(rootPath('manifest.json'), {name: 'manifest.json'});
-    extensionZip.directory(buildDir, 'build');
-    extensionZip.finalize();
-    await extensionZipPromise;
+
+    log.debug({outputPath, extensionOptions, zipped}, 'Firefox extension has been built!');
 };
 
 const buildUserPrefs =
@@ -51,45 +97,67 @@ const buildUserPrefFile = async ({outputPath}) => {
     await fs.writeFile(resolvePath(outputPath, 'user.js'), userFileContent);
 };
 
-const buildFirefoxProfile = async ({sourceBuildInput, outputPath}) => {
+const buildFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOptions = {}, outputPath}) => {
     assert.isOk(outputPath, 'outputPath must be set to a valid directory path');
-    const buildDir = resolvePath(sourceBuildInput);
-
     await fs.emptyDir(outputPath);
-    await fs.emptyDir(resolvePath(outputPath, 'extensions'));
 
-    const extensionFile = resolvePath(outputPath, 'extensions', EXTENSION_FILE_NAME);
+    log.debug({outputPath}, 'Building firefox profile...');
+
+    let buildExtensionPromise;
+    if (preloadExtension) {
+        buildExtensionPromise =
+            fs.emptyDir(resolvePath(outputPath, 'extensions'))
+            .then(() => buildFirefoxExtension({
+                tempDirectory,
+                outputPath: resolvePath(outputPath, 'extensions', EXTENSION_FILE_NAME),
+                extensionOptions,
+                zipped: true,
+            }));
+    }
 
     await Promise.all([
-        buildFirefoxExtension({buildDir, extensionFile}),
         buildUserPrefFile({outputPath}),
+        buildExtensionPromise,
     ]);
+
+    log.debug({outputPath}, 'Firefox profile has been built!');
 };
 
-const buildSourcesAndFirefoxProfile = async ({sourcePath, cncPort, instrumentCoverage, profilePath}) => {
-    log.debug({cncPort, sourcePath}, 'Building sources...');
-    await buildSources({outputPath: sourcePath, cncPort, instrumentCoverage});
-
-    log.debug({profilePath}, 'Building firefox profile...');
-    await buildFirefoxProfile({sourceBuildInput: sourcePath, outputPath: profilePath});
-};
-
-const buildTempFirefoxProfile = ({tempDirectory, cncPort, instrumentCoverage}) => {
-    const tempDirectoryDisposer = temporaryDirectory(tempDirectory, ['openrunner-src-', 'openrunner-profile-']);
+const buildTempFirefoxProfile = ({tempDirectory, preloadExtension, extensionOptions = {}}) => {
+    const tempDirectoryDisposer = temporaryDirectory(tempDirectory || tmpdir(), ['openrunner-profile-']);
     return Promise.try(async () => {
-        const [sourcePath, profilePath] = await tempDirectoryDisposer.promise();
-        await buildSourcesAndFirefoxProfile({sourcePath, cncPort, instrumentCoverage, profilePath});
+        const [profilePath] = await tempDirectoryDisposer.promise();
+        await buildFirefoxProfile({tempDirectory, preloadExtension, extensionOptions, outputPath: profilePath});
         return profilePath;
     })
     .disposer(() => tempDirectoryDisposer.tryDispose());
 };
 
-const buildCachedTempFirefoxProfile = async ({tempDirectory, cncPort, instrumentCoverage, profileCache}) => {
-    const profilePath = joinPath(profileCache, `firefox-${packageVersion}-${Number(cncPort)}`);
+const buildTempFirefoxExtensionDirectory = ({tempDirectory, extensionOptions = {}}) => {
+    const tempDirectoryDisposer = temporaryDirectory(tempDirectory || tmpdir(), ['openrunner-extension-']);
+    return Promise.try(async () => {
+        const [extensionPath] = await tempDirectoryDisposer.promise();
+        await buildFirefoxExtension({tempDirectory, extensionOptions, outputPath: extensionPath, zipped: false});
+        return extensionPath;
+    })
+    .disposer(() => tempDirectoryDisposer.tryDispose());
+};
+
+const buildCachedFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOptions = {}, buildCacheDirectory}) => {
+    const cacheName = preloadExtension
+        ? `firefox-profile-${packageVersion}-y-${Number(extensionOptions.cncPort)}`
+        : `firefox-profile-${packageVersion}-n`;
+
+    const profilePath = joinPath(buildCacheDirectory, cacheName);
 
     // quick check to see if the profile looks valid
-    if (await fs.pathExists(joinPath(profilePath, 'extensions', EXTENSION_FILE_NAME))) {
-        log.debug({cncPort, profilePath}, 'Using cached profile');
+    const userJsValid = await fs.pathExists(joinPath(profilePath, 'user.js'));
+    const preloadedExtensionValid = preloadExtension
+        ? await fs.pathExists(joinPath(profilePath, 'extensions', EXTENSION_FILE_NAME))
+        : true;
+
+    if (userJsValid && preloadedExtensionValid) {
+        log.debug({cncPort: preloadExtension && extensionOptions.cncPort, profilePath, preloadExtension}, 'Using cached profile');
         return profilePath;
     }
 
@@ -98,18 +166,42 @@ const buildCachedTempFirefoxProfile = async ({tempDirectory, cncPort, instrument
         throw err;
     });
 
-    await Promise.using(temporaryDirectory(tempDirectory, ['openrunner-src-']), async ([sourcePath]) => {
-        await buildSourcesAndFirefoxProfile({sourcePath, cncPort, instrumentCoverage, profilePath});
+    await buildFirefoxProfile({tempDirectory, preloadExtension, extensionOptions, outputPath: profilePath});
+    return profilePath;
+};
+
+const buildCachedFirefoxExtensionDirectory = async ({tempDirectory, extensionOptions = {}, buildCacheDirectory}) => {
+    const cacheName = `firefox-extension-${packageVersion}-${Number(extensionOptions.cncPort)}`;
+    const extensionPath = joinPath(buildCacheDirectory, cacheName);
+
+    // quick check to see if the extension directory looks valid
+    const manifestValid = await fs.pathExists(joinPath(extensionPath, 'manifest.json'));
+    const buildConfigValid = await fs.pathExists(joinPath(extensionPath, 'build', 'buildConfig.json'));
+    const scriptEnvValid = await fs.pathExists(joinPath(extensionPath, 'build', 'script-env.js'));
+
+    if (manifestValid && buildConfigValid && scriptEnvValid) {
+        log.debug({cncPort: extensionOptions.cncPort, extensionPath}, 'Using cached extension directory');
+        return extensionPath;
+    }
+
+    await fs.mkdirp(extensionPath).catch(err => {
+        err[ERROR_FAILED_TO_CREATE_EXTENSION_CACHE] = true;
+        throw err;
     });
 
-    return profilePath;
+    await buildFirefoxExtension({tempDirectory, extensionOptions, outputPath: extensionPath, zipped: false});
+    return extensionPath;
 };
 
 module.exports = {
     ERROR_FAILED_TO_CREATE_PROFILE_CACHE,
+    ERROR_FAILED_TO_CREATE_EXTENSION_CACHE,
     EXTENSION_FILE_NAME,
+    buildFirefoxExtension,
+    buildUserPrefFile,
     buildFirefoxProfile,
-    buildSourcesAndFirefoxProfile,
     buildTempFirefoxProfile,
-    buildCachedTempFirefoxProfile,
+    buildTempFirefoxExtensionDirectory,
+    buildCachedFirefoxProfile,
+    buildCachedFirefoxExtensionDirectory,
 };
