@@ -4,6 +4,7 @@ const EventEmitter = require('events').EventEmitter;
 const JSONBird = require('jsonbird');
 
 const {SCRIPT_EXECUTION_TIMEOUT_ERROR} = require('../../../lib/scriptErrors');
+const {addLogListener, removeLogListener} = require('../../../lib/logger');
 const log = require('../../../lib/logger')({hostname: 'background', MODULE: 'core/background/RunnerScriptParent'});
 const coreMethods = require('./coreMethods');
 const loadModule = require('./loadModule');
@@ -204,8 +205,12 @@ class RunnerScriptParentPrivate {
             throw Error('A run is already in progress');
         }
 
+        const logMessages = [];
+        const logListener = obj => logMessages.push(obj);
+
         this.runActive = true; // set this to true before doing anything async, so that this function can not be invoked in parallel
         try {
+            addLogListener(logListener);
             this.window.attach();
             await this.window.open();
             // The Openrunner script itself runs inside a Web Worker, which is created from a special tab pointing to our blank.html,
@@ -281,11 +286,13 @@ class RunnerScriptParentPrivate {
                 error: runScriptResult.scriptError,
                 value: runScriptResult.scriptValue,
                 result: scriptResult.toJSONObject({scriptFileName: this.stackFileName}),
+                log: logMessages,
             };
         }
         finally {
-            this.runActive = false;
+            removeLogListener(logListener);
             await this.cleanup();
+            this.runActive = false;
         }
     }
 

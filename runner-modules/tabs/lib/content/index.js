@@ -4,11 +4,13 @@ const EventEmitter = require('events').EventEmitter;
 
 const ContentRPC = require('../../../../lib/contentRpc/ContentRPC');
 const tabsMethods = require('./tabsMethods');
+const {setupLogging} = require('./logging');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/index'});
 const contentUnloadEvent = require('./contentUnloadEvent');
 const ModuleRegister = require('../../../../lib/ModuleRegister');
 const tabsModule = require('./tabsModule');
 
+setupLogging(browser.runtime);
 log.debug('Initializing...');
 
 try {

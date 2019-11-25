@@ -1,8 +1,10 @@
 'use strict';
 /* global window:false */
 const ContentRPC = require('../../../lib/contentRpc/ContentRPC');
+const {setupLogging, maybeParseWorkerLogMessage} = require('./logging');
 const log = require('../../../lib/logger')({hostname: 'script-env-content', MODULE: 'core/script-env-content/index'});
 
+setupLogging(browser.runtime);
 log.debug('Initializing...');
 try {
     if (window.scriptEnvContentInitialized) {
@@ -24,7 +26,12 @@ try {
 
         worker = new Worker(url, {name: 'Openrunner script environment'});
         worker.onmessage = e => {
-            rpc.callAndForget('workerMessage', e.data);
+            const message = e.data;
+            if (maybeParseWorkerLogMessage(message)) {
+                return;
+            }
+
+            rpc.callAndForget('workerMessage', message);
         };
     });
 

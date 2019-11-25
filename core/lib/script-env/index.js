@@ -2,7 +2,9 @@
 const log = require('../../../lib/logger')({hostname: 'script-env', MODULE: 'core/script-env/index'});
 const RunnerScript = require('./RunnerScript');
 const {isValidModuleName} = require('../../../lib/ModuleRegister');
+const {setupLogging} = require('./logging');
 
+setupLogging(self);
 log.info('Initializing...');
 
 try {
@@ -33,6 +35,13 @@ try {
             log.error({err}, 'Error during openRunnerRegisterRunnerModule()');
             throw err;
         }
+    };
+
+    self.log = (...messages) => {
+        // eslint-disable-next-line no-console
+        console.log('RunnerScript:', ...messages);
+        const message = messages.join(' ');
+        log.info({fromRunnerScript: true}, message);
     };
 
     // prevent the script from creating global variables, or modifying javascript built-ins

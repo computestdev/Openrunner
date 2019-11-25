@@ -48,6 +48,10 @@ class CnCClient {
         return this.rpc.call(...args);
     }
 
+    notify(...args) {
+        return this.rpc.notify(...args);
+    }
+
     methods(methods) {
         this.rpc.methods(methods);
     }
