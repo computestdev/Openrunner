@@ -3,6 +3,7 @@ const {illegalArgumentError} = require('../../../../lib/scriptErrors');
 const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/tabsMethods'});
 const constructGlobalFunctions = require('./globalFunctions');
 const sanitizeForJsonSerialization = require('../../../../lib/sanitizeForJsonSerialization');
+const explicitPromise = require('../../../../lib/explicitPromise');
 
 // "not being evaluated by a direct call": http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.
 const evalNoScope = eval; // eslint-disable-line no-eval
@@ -22,6 +23,7 @@ const getModuleValues = function* (modulesMap, metadata) {
 module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
     const globalFunctionsPromise = constructGlobalFunctions(getModule);
+    const [tabInitializationPromise, tabInitializationResolve] = explicitPromise();
 
     const compileFunction = async (functionCode, globalFunctions, metadataArg) => {
         const metadata = {
@@ -47,8 +49,10 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
     };
 
     const initializedTabContent = async () => {
+        // All runner modules have been initialized now
         log.debug('initializedTabContent');
         eventEmitter.emit('tabs.initializedTabContent');
+        tabInitializationResolve();
     };
 
     const run = async ({code, arg, metadata}) => {
@@ -60,6 +64,7 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
             throw illegalArgumentError('tabs.run(): invalid argument `metadata`');
         }
 
+        await tabInitializationPromise;
         const globalFunctions = await globalFunctionsPromise;
         const func = await compileFunction(code, globalFunctions, metadata);
 
