@@ -1,4 +1,5 @@
 'use strict';
+const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/globalFunctions'});
 
 module.exports = async (getModule) => {
     const transaction = async (...args) => {
@@ -6,5 +7,12 @@ module.exports = async (getModule) => {
         return runResult.scriptResult.transaction(...args);
     };
 
-    return {transaction};
+    const logFunc = (...messages) => {
+        // eslint-disable-next-line no-console
+        console.log('RunnerContentScript:', ...messages);
+        const message = messages.join(' ');
+        log.info({fromRunnerContentScript: true}, message);
+    };
+
+    return {transaction, log: logFunc};
 };

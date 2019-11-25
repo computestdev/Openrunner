@@ -143,7 +143,7 @@ class RunnerScriptPrivate {
 
     async emitRunEnd() {
         const reason = this.stopReason;
-        log.info({reason}, 'Emitting core.beforeRunEnd...');
+        log.info({err: reason}, 'Emitting core.beforeRunEnd...');
 
         const beforePromises = [];
         this.emit('core.beforeRunEnd',

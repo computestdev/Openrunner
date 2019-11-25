@@ -54,9 +54,44 @@ const coverageOption = ['coverage', {
     boolean: true,
 }];
 
+const verbose = ['verbose', {
+    describe: 'Enable verbose logging',
+    boolean: true,
+}];
+
+const pretty = ['pretty', {
+    describe: 'Prettify logging output. Pass --no-pretty to disable',
+    boolean: true,
+    default: true,
+}];
+
 const executeCommandHandler = (modulePath, args) => {
-    // We use a dynamic and lazy require here to prevent having to require the majority of the openrunner and
+    // We use a lazy require here to prevent having to require the majority of the openrunner and
     // node_module source whenever we invoke something like `--help`, `--get-yargs-completions`, etc.
+
+    const {setHandler: setLogHandler} = require('../lib/logger');
+
+
+    const {verbose, pretty} = args;
+    let pinoPretty;
+    if (pretty) {
+        pinoPretty = require('pino-pretty')();
+    }
+
+    setLogHandler(obj => {
+        if (!verbose && obj.level < 50) { // 50 = error
+            return;
+        }
+
+        if (pretty) {
+            console.log('%s', pinoPretty(obj));
+        }
+        else {
+            console.log('%s', JSON.stringify(obj));
+        }
+    });
+
+
     const func = require(modulePath).handler;
 
     func(args).then(
@@ -74,6 +109,8 @@ const executeCommandHandler = (modulePath, args) => {
 yargs
 .wrap(yargs.terminalWidth())
 .env('OPENRUNNER')
+.option(...pretty)
+.option(...verbose)
 .command({
     command: 'ide',
     describe: 'Launch the Openrunner IDE',
@@ -127,10 +164,10 @@ yargs
     describe: 'Various commands for building browser extensions and profiles',
     builder: yargs =>
         yargs
-        // this command is mostly useful while developing Openrunner. See `npm build:sources`
+        // this command is mostly useful while developing Openrunner. See `npm run build:sources`
         .command({
             command: 'source',
-            describe: false, // hide it from --help unless explictly specified
+            describe: false, // hide it from --help unless explicitly specified
             builder: yargs =>
                 yargs
                 .group(['output'], 'Basic options')
@@ -217,6 +254,26 @@ yargs
                     '$0 build firefox-mac-bundle --app /Volumes/Nightly/Nightly.app --output ./Openrunner.dmg',
                 ),
             handler: args => executeCommandHandler('./_subcommands/build-firefox-mac-bundle', args),
+        })
+        .demandCommand(1, 'A subcommand must be provided'),
+})
+.command({
+    command: 'result',
+    describe: 'Various commands for interpreting result files',
+    builder: yargs =>
+        yargs
+        .command({
+            command: 'replay-log',
+            describe: 'Replay the log messages from the specific result file',
+            builder: yargs =>
+                yargs
+                .group(['result'], 'Basic options')
+                .option('result', {
+                    alias: 'r',
+                    describe: 'Filesystem path where a JSON file containing the results of a script run will be read from',
+                })
+                .example('$0 result replay-log --result ./result.json'),
+            handler: args => executeCommandHandler('./_subcommands/result-replay-log', args),
         })
         .demandCommand(1, 'A subcommand must be provided'),
 })

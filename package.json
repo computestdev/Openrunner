@@ -18,7 +18,7 @@
     "test:integration:coveralls": "npm run test:integration:coverage && nyc report --reporter=text-lcov | coveralls",
     "test:coverage-report": "nyc report --reporter=html",
     "test": "npm run lint && npm run test:unit-and-integration:coverage && npm run test:coverage-report",
-    "test:server": "sh -c 'node test/testing-server.js \"$@\" | bunyan' --",
+    "test:server": "sh -c 'node test/testing-server.js \"$@\" | pino-pretty -c' --",
     "start": "npm run build && \"$FIREFOX_BIN\" --no-remote --profile PRIV/profile 'about:blank' 'about:devtools-toolbox?type=extension&id=openrunner%40computest.nl'",
     "version": "bin/_npm_version.js && git add manifest.json"
   },
@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "bunyan": "^1.8.12",
     "clone": "^2.1.1",
     "coveralls": "^3.0.0",
     "css.escape": "^1.5.1",
@@ -87,6 +86,7 @@
     "jsonbird-websocket": "^1.0.0",
     "performr-runner-metadata-parser": "^1.0.0",
     "performr-runner-result-graph": "^6.0.0",
+    "pino-pretty": "^3.4.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "shortid": "^2.2.8",
