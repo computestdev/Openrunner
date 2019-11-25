@@ -4,12 +4,14 @@ const EventEmitter = require('events').EventEmitter;
 
 const ContentRPC = require('../../../../lib/contentRpc/ContentRPC');
 const tabsMethods = require('./tabsMethods');
-const log = require('../../../../lib/logger')({hostname: 'content', MODULE: 'tabs/content/index'});
+const {setupLogging} = require('./logging');
+const logger = require('../../../../lib/logger');
 const contentUnloadEvent = require('./contentUnloadEvent');
 const ModuleRegister = require('../../../../lib/ModuleRegister');
 const tabsModule = require('./tabsModule');
 
-log.debug('Initializing...');
+const log = logger({hostname: 'content', MODULE: 'tabs/content/index'});
+const logHandler = setupLogging(browser.runtime);
 
 try {
     if (window.openRunnerRegisterRunnerModule) {
@@ -83,6 +85,8 @@ try {
             throw err;
         }
     };
+    openRunnerRegisterRunnerModule.defaultLogHandler = logHandler;
+    Object.freeze(openRunnerRegisterRunnerModule);
 
     const handleWindowMessage = event => {
         // Note!! These messages could come from anywhere (the web)!

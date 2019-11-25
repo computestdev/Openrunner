@@ -32,11 +32,13 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
         const argNames = [
             'runMetadata',
             'transaction',
+            'log',
             ...modules.keys(),
         ];
         const argValues = [
             metadata, // `runMetadata`
             globalFunctions.transaction, // `transaction`
+            globalFunctions.log, // `log`
             ...getModuleValues(modules, metadata),
         ];
 

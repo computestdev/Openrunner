@@ -2,7 +2,9 @@
 const log = require('../../../../lib/logger')({hostname: 'background', MODULE: 'tabs/background/index'});
 const TabManager = require('./TabManager');
 const tabsMethods = require('./tabsMethods');
+const {setupLogging} = require('./logging');
 
+setupLogging(browser.runtime);
 const scriptEnvUrl = browser.extension.getURL('/build/tabs-script-env.js');
 
 module.exports = script => {

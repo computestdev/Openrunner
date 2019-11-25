@@ -5,6 +5,7 @@ const CnCClient = require('./CnCClient');
 const cncMethods = require('./cncMethods');
 const {cncLoopbackPort} = require('../../../lib/buildConfig');
 const getRuntimeVersions = require('./runtimeVersions');
+const {setupLogging} = require('./logging');
 
 (async () => {
     try {
@@ -29,6 +30,7 @@ const getRuntimeVersions = require('./runtimeVersions');
             });
             client.methods(cncMethods());
             client.start();
+            setupLogging(client);
         }
     }
     catch (err) {

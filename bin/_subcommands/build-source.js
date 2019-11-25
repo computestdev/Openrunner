@@ -1,7 +1,7 @@
 'use strict';
 const {resolve: resolvePath} = require('path');
 
-const {buildSources} = require('../..');
+const {buildSources} = require('../../building');
 
 const buildSourceHandler = async argv => {
     const outputPath = resolvePath(argv.output);
