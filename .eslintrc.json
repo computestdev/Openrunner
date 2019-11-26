@@ -324,21 +324,6 @@
         "strict": "error",
         "unicode-bom": "error",
         "use-isnan": "error",
-        "valid-jsdoc": [
-            "error",
-            {
-                "prefer": {
-                    "arg": "param",
-                    "argument": "param",
-                    "class": "constructor",
-                    "returns": "return",
-                    "virtual": "abstract"
-                },
-                "requireParamDescription": false,
-                "requireReturn": false,
-                "requireReturnDescription": false
-            }
-        ],
         "valid-typeof": [
             "error",
             {
