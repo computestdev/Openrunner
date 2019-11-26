@@ -25,20 +25,30 @@ try {
     const eventEmitter = new EventEmitter();
     const fireContentUnload = contentUnloadEvent(eventEmitter);
     let backgroundScriptInitData = null;
-    const scriptApiVersion = () => backgroundScriptInitData && backgroundScriptInitData.scriptApiVersion;
+    const getScriptApiVersion = () => backgroundScriptInitData && backgroundScriptInitData.scriptApiVersion;
+    const getContentId = () => backgroundScriptInitData && backgroundScriptInitData.contentId;
+
     const initializedMainTabContent = async (data) => {
+        log.debug(data, 'Received init data from background');
+
         // when we send 'tabs.mainContentInit' to the background script, the background script will then in turn send us
         // 'tabs.initializedMainTabContent', after which it will begin to load runner modules
-        // backgroundScriptInitData = {scriptApiVersion}
+        // backgroundScriptInitData = {scriptApiVersion, contentId}
         backgroundScriptInitData = data;
     };
+    const contentUnload = ({contentId}) => {
+        const expectedContentId = getContentId();
+        log.debug({contentId, expectedContentId}, 'Received tabs.contentUnload from background');
+        fireContentUnload();
+    };
+
     const rpc = new ContentRPC({
         browserRuntime: browser.runtime,
         context: 'runner-modules/tabs',
     });
     rpc.attach();
-    rpc.methods(tabsMethods(moduleRegister, eventEmitter, scriptApiVersion));
-    rpc.method('tabs.contentUnload', fireContentUnload);
+    rpc.methods(tabsMethods(moduleRegister, eventEmitter, getScriptApiVersion, getContentId));
+    rpc.method('tabs.contentUnload', contentUnload);
     rpc.method('tabs.initializedMainTabContent', initializedMainTabContent);
     window.addEventListener('unload', fireContentUnload);
     eventEmitter.on('tabs.contentUnload', () => log.debug('Content is about to unload'));
@@ -70,15 +80,16 @@ try {
                     eventEmitter,
                     getModule,
                     rpc,
-                    scriptApiVersion: scriptApiVersion(),
+                    scriptApiVersion: getScriptApiVersion(),
                 });
             };
 
             const promise = initModule();
             moduleRegister.registerModule(moduleName, promise);
 
-            log.debug({moduleName}, 'Runner module has been initialized. Notifying the background script');
-            await rpc.call('tabs.contentInit', {moduleName});
+            const contentId = getContentId();
+            log.debug({moduleName, contentId}, 'Runner module has been initialized. Notifying the background script');
+            await rpc.call('tabs.contentInit', {moduleName, contentId});
         }
         catch (err) {
             log.error({err}, 'Error during openRunnerRegisterRunnerModule()');

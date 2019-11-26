@@ -19,7 +19,7 @@ const getModuleValues = function* (modulesMap, metadata) {
 };
 
 
-module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
+module.exports = (moduleRegister, eventEmitter, getScriptApiVersion, getContentId) => {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
     const globalFunctionsPromise = constructGlobalFunctions(getModule);
 
@@ -48,12 +48,13 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
         )(argValues);
     };
 
-    const initializedTabContent = async () => {
-        log.debug('initializedTabContent');
+    const initializedTabContent = async ({contentId}) => {
+        const expectedContentId = getContentId();
+        log.debug({contentId, expectedContentId}, 'Received tabs.initializedTabContent from background');
         eventEmitter.emit('tabs.initializedTabContent');
     };
 
-    const run = async ({code, arg, metadata}) => {
+    const run = async ({contentId, code, arg, metadata}) => {
         if (typeof code !== 'string') {
             throw illegalArgumentError('tabs.run(): invalid argument `code`');
         }
@@ -61,6 +62,9 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
         if (typeof metadata !== 'object') {
             throw illegalArgumentError('tabs.run(): invalid argument `metadata`');
         }
+
+        const expectedContentId = getContentId();
+        log.debug({contentId, expectedContentId, codeLength: code.length}, 'Running script...');
 
         const globalFunctions = await globalFunctionsPromise;
         const func = await compileFunction(code, globalFunctions, metadata);
