@@ -26,7 +26,7 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
     const compileFunction = async (functionCode, globalFunctions, metadataArg) => {
         const metadata = {
             ...metadataArg,
-            scriptApiVersion: getScriptApiVersion(),
+            scriptApiVersion: await getScriptApiVersion(),
         };
         const modules = await moduleRegister.getAllModules();
         const argNames = [
@@ -49,7 +49,7 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
     };
 
     const initializedTabContent = async () => {
-        log.debug('initializedTabContent');
+        log.debug('Received tabs.initializedTabContent from background');
         eventEmitter.emit('tabs.initializedTabContent');
     };
 
@@ -61,6 +61,8 @@ module.exports = (moduleRegister, eventEmitter, getScriptApiVersion) => {
         if (typeof metadata !== 'object') {
             throw illegalArgumentError('tabs.run(): invalid argument `metadata`');
         }
+
+        log.debug({codeLength: code.length}, 'Running script...');
 
         const globalFunctions = await globalFunctionsPromise;
         const func = await compileFunction(code, globalFunctions, metadata);

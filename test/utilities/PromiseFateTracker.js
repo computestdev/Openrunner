@@ -51,11 +51,13 @@ class PromiseFateTracker {
     assertResolved(name, expectedValue = ANY_VALUE) {
         const fate = this.getFate(name);
         assert(fate, `There should be a promise tracked with name "${name}"`);
-        assert('resolve' in fate, `The tracked promise "${name}" should be resolved`);
+        assert('resolve' in fate, `The tracked promise "${name}" should be resolved. Instead of ${fate.reject}`);
 
         if (expectedValue !== ANY_VALUE) {
             assert.deepEqual(fate.resolve, expectedValue, `The tracked promise "${name}" should be resolved with the expectedValue`);
         }
+
+        return fate.resolve;
     }
 
     assertRejected(name, constructor, regexp) {
@@ -72,6 +74,8 @@ class PromiseFateTracker {
         if (regexp) {
             assert.match(fate.reject.message, regexp);
         }
+
+        return fate.reject;
     }
 }
 
