@@ -11,7 +11,11 @@ const ModuleRegister = require('../../../../lib/ModuleRegister');
 const tabsModule = require('./tabsModule');
 
 const log = logger({hostname: 'content', MODULE: 'tabs/content/index'});
-const logHandler = setupLogging(browser.runtime);
+// Firefox 66 has a rare bug in which the content script sometimes executes 2 times, in separate sandboxes.
+// Both of these scripts then remain active and will respond to RPC commands.
+// This token is used to filter out messages that are not meant for this instance of the content script.
+const contentToken = `${Date.now()}x${window.crypto.getRandomValues(new Uint32Array(1))[0]}`;
+const logHandler = setupLogging(browser.runtime, contentToken);
 
 try {
     if (window.openRunnerRegisterRunnerModule) {
@@ -24,22 +28,21 @@ try {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
     const eventEmitter = new EventEmitter();
     const fireContentUnload = contentUnloadEvent(eventEmitter);
-    let backgroundScriptInitData = null;
-    const scriptApiVersion = () => backgroundScriptInitData && backgroundScriptInitData.scriptApiVersion;
-    const initializedMainTabContent = async (data) => {
-        // when we send 'tabs.mainContentInit' to the background script, the background script will then in turn send us
-        // 'tabs.initializedMainTabContent', after which it will begin to load runner modules
-        // backgroundScriptInitData = {scriptApiVersion}
-        backgroundScriptInitData = data;
+    const getScriptApiVersion = () => scriptApiVersionPromise;
+
+    const contentUnload = () => {
+        log.debug('Received tabs.contentUnload from background');
+        fireContentUnload();
     };
+
     const rpc = new ContentRPC({
         browserRuntime: browser.runtime,
         context: 'runner-modules/tabs',
+        contentToken,
     });
     rpc.attach();
-    rpc.methods(tabsMethods(moduleRegister, eventEmitter, scriptApiVersion));
-    rpc.method('tabs.contentUnload', fireContentUnload);
-    rpc.method('tabs.initializedMainTabContent', initializedMainTabContent);
+    rpc.methods(tabsMethods(moduleRegister, eventEmitter, getScriptApiVersion));
+    rpc.method('tabs.contentUnload', contentUnload);
     window.addEventListener('unload', fireContentUnload);
     eventEmitter.on('tabs.contentUnload', () => log.debug('Content is about to unload'));
 
@@ -58,19 +61,13 @@ try {
                 throw Error('openRunnerRegisterRunnerModule(): Invalid `func`');
             }
 
-            if (!backgroundScriptInitData) {
-                throw Error(
-                    'openRunnerRegisterRunnerModule(): Called too early. Background script has not yet sent ' +
-                    '\'tabs.initializedMainTabContent\' to content script',
-                );
-            }
-
+            const scriptApiVersion = await getScriptApiVersion();
             const initModule = async () => {
                 return await func({
                     eventEmitter,
                     getModule,
                     rpc,
-                    scriptApiVersion: scriptApiVersion(),
+                    scriptApiVersion,
                 });
             };
 
@@ -122,8 +119,16 @@ try {
         window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
     });
 
+
     log.debug('Initialized... Notifying the background script');
-    rpc.callAndForget('tabs.mainContentInit');
+    const backgroundScriptInitDataPromise = rpc.call('tabs.mainContentInit').then(data => {
+        log.debug(data, 'Received init data from background');
+        return data;
+
+    }).catch(err => {
+        log.error({err}, 'Error calling tabs.mainContentInit');
+    });
+    const scriptApiVersionPromise = backgroundScriptInitDataPromise.then(data => data.scriptApiVersion);
 }
 catch (err) {
     log.error({err}, 'Error during initialization');

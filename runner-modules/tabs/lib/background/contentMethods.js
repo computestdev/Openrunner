@@ -4,7 +4,7 @@ const {assert} = require('chai');
 const scriptFrameCommands = require('./scriptFrameCommands');
 const {mergeCoverageReports} = require('../../../../lib/mergeCoverage');
 
-module.exports = (tabManager, frame) => {
+module.exports = (tabManager, contentToken, frame) => {
     const {tab, browserFrameId} = frame;
     const {id: tabId, browserTabId} = tab;
 
@@ -17,17 +17,21 @@ module.exports = (tabManager, frame) => {
     };
 
     const waitForChildFrameToken = async (token) => {
-        return await frame.waitForChildFrameToken(String(token)); // returns the frameId
+        const childBrowserFrameId = browserFrameId;
+        const childFrame = await tabManager.frameWaitForChildFrameToken(browserTabId, childBrowserFrameId, String(token));
+        return childFrame.browserFrameId;
     };
 
     const receivedFrameToken = async (token) => {
-        frame.parentFrame.resolveChildFrameToken(token, frame);
+        const parentBrowserFrameId = frame.parentFrame.browserFrameId;
+        const childBrowserFrameId = browserFrameId;
+        tabManager.frameResolveChildFrameToken(browserTabId, parentBrowserFrameId, String(token), childBrowserFrameId);
     };
 
     const validateFrameId = frameId => {
         // only allowed to execute commands on child frames (not ancestors, children of children, etc)
-        const childFrame = tab.getFrame(frameId);
-        assert.isTrue(frame.isChild(childFrame), 'Invalid frameId');
+        const childFrame = tab.frameByBrowserId(frameId);
+        assert.isTrue(childFrame && childFrame.isChildOf(frame), 'Invalid frameId');
     };
 
     const run = async ({frameId, code, arg}) => {
@@ -46,8 +50,14 @@ module.exports = (tabManager, frame) => {
     };
 
     return new Map([
-        ['tabs.mainContentInit', () => tabManager.handleTabMainContentInitialized(browserTabId, browserFrameId)],
-        ['tabs.contentInit', ({moduleName}) => tabManager.handleTabModuleInitialized(browserTabId, browserFrameId, moduleName)],
+        [
+            'tabs.mainContentInit',
+            () => tabManager.handleTabMainContentInitialized(browserTabId, browserFrameId, contentToken),
+        ],
+        [
+            'tabs.contentInit',
+            ({moduleName}) => tabManager.handleTabModuleInitialized(browserTabId, browserFrameId, contentToken, moduleName),
+        ],
         ['core.submitCodeCoverage', submitCodeCoverage],
         ['tabs.waitForChildFrameToken', waitForChildFrameToken],
         ['tabs.receivedFrameToken', receivedFrameToken],

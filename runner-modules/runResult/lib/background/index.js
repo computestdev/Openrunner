@@ -23,7 +23,7 @@ module.exports = script => {
                 for (const event of result.events) {
                     event.tabId = tab.id;
                     event.frameId = frame.browserFrameId;
-                    event.tabContentId = tab.currentContentId;
+                    event.frameContentId = frame.currentContentId;
                 }
                 scriptResult.mergeJSONObject(result);
             }

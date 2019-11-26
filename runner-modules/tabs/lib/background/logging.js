@@ -17,6 +17,7 @@ const handleRuntimeMessage = (message, messageSender) => {
         fromContent: {
             browserTabId: tab && tab.id,
             browserFrameId,
+            contentToken: message.contentToken,
         },
     }));
 };

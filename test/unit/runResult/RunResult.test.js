@@ -429,7 +429,7 @@ describe('RunResult', () => {
                         children: [],
                         tabId: null,
                         frameId: null,
-                        tabContentId: null,
+                        frameContentId: null,
                     },
                     {
                         type: 'Event1',
@@ -456,7 +456,7 @@ describe('RunResult', () => {
                         children: [],
                         tabId: null,
                         frameId: null,
-                        tabContentId: null,
+                        frameContentId: null,
                     },
                     {
                         type: 'Event2',
@@ -483,7 +483,7 @@ describe('RunResult', () => {
                         children: [],
                         tabId: null,
                         frameId: null,
-                        tabContentId: null,
+                        frameContentId: null,
                     },
                 ],
             });
@@ -626,7 +626,7 @@ describe('RunResult', () => {
                         children: [],
                         tabId: null,
                         frameId: null,
-                        tabContentId: null,
+                        frameContentId: null,
                     },
                     {
                         type: 'Event1',
@@ -653,7 +653,7 @@ describe('RunResult', () => {
                         children: [],
                         tabId: null,
                         frameId: null,
-                        tabContentId: null,
+                        frameContentId: null,
                     },
                     {
                         type: 'Event2',
@@ -680,7 +680,7 @@ describe('RunResult', () => {
                         children: [],
                         tabId: null,
                         frameId: null,
-                        tabContentId: null,
+                        frameContentId: null,
                     },
                 ],
             });

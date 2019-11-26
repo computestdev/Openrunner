@@ -393,8 +393,6 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 assert.isFalse(waitPromiseResolved);
 
                 await tab.navigate(injected.url + '?pending1', {timeout: '10s'});
-                await delay(50);
-                assert.isTrue(waitPromiseResolved);
                 assert.strictEqual(await waitPromise, undefined);
             }
 
@@ -414,8 +412,6 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
                 assert.isFalse(waitPromiseResolved);
 
                 await tab.navigate(injected.url + '?pending1', {timeout: '10s'});
-                await delay(50);
-                assert.isTrue(waitPromiseResolved);
                 assert.strictEqual(await waitPromise, undefined);
             }
 
@@ -685,7 +681,7 @@ describe('integration/tabs', {timeout: 60000, slow: 10000}, () => {
         }
     });
 
-    specify('Running a content script in a cross origin firame tag and waiting until it triggers a navigation', async () => {
+    specify('Running a content script in a cross origin iframe tag and waiting until it triggers a navigation', async () => {
         /* eslint-disable no-undef */
         const result = await runScriptFromFunction(async () => {
             'Openrunner-Script: v1';
