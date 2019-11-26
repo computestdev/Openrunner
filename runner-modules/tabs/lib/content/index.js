@@ -11,7 +11,6 @@ const ModuleRegister = require('../../../../lib/ModuleRegister');
 const tabsModule = require('./tabsModule');
 
 setupLogging(browser.runtime);
-log.debug('Initializing...');
 
 try {
     if (window.openRunnerRegisterRunnerModule) {
@@ -24,22 +23,22 @@ try {
     const getModule = name => moduleRegister.waitForModuleRegistration(name);
     const eventEmitter = new EventEmitter();
     const fireContentUnload = contentUnloadEvent(eventEmitter);
-    let backgroundScriptInitData = null;
-    const scriptApiVersion = () => backgroundScriptInitData && backgroundScriptInitData.scriptApiVersion;
-    const initializedMainTabContent = async (data) => {
-        // when we send 'tabs.mainContentInit' to the background script, the background script will then in turn send us
-        // 'tabs.initializedMainTabContent', after which it will begin to load runner modules
-        // backgroundScriptInitData = {scriptApiVersion}
-        backgroundScriptInitData = data;
+    const getScriptApiVersion = () => scriptApiVersionPromise;
+    const getContentId = () => contentIdPromise;
+
+    const contentUnload = ({contentId}) => {
+        const expectedContentId = contentIdSync;
+        log.debug({contentId, expectedContentId}, 'Received tabs.contentUnload from background');
+        fireContentUnload();
     };
+
     const rpc = new ContentRPC({
         browserRuntime: browser.runtime,
         context: 'runner-modules/tabs',
     });
     rpc.attach();
-    rpc.methods(tabsMethods(moduleRegister, eventEmitter, scriptApiVersion));
-    rpc.method('tabs.contentUnload', fireContentUnload);
-    rpc.method('tabs.initializedMainTabContent', initializedMainTabContent);
+    rpc.methods(tabsMethods(moduleRegister, eventEmitter, getScriptApiVersion, getContentId));
+    rpc.method('tabs.contentUnload', contentUnload);
     window.addEventListener('unload', fireContentUnload);
     eventEmitter.on('tabs.contentUnload', () => log.debug('Content is about to unload'));
 
@@ -58,27 +57,22 @@ try {
                 throw Error('openRunnerRegisterRunnerModule(): Invalid `func`');
             }
 
-            if (!backgroundScriptInitData) {
-                throw Error(
-                    'openRunnerRegisterRunnerModule(): Called too early. Background script has not yet sent ' +
-                    '\'tabs.initializedMainTabContent\' to content script',
-                );
-            }
-
+            const scriptApiVersion = await getScriptApiVersion();
             const initModule = async () => {
                 return await func({
                     eventEmitter,
                     getModule,
                     rpc,
-                    scriptApiVersion: scriptApiVersion(),
+                    scriptApiVersion,
                 });
             };
 
             const promise = initModule();
             moduleRegister.registerModule(moduleName, promise);
 
-            log.debug({moduleName}, 'Runner module has been initialized. Notifying the background script');
-            await rpc.call('tabs.contentInit', {moduleName});
+            const contentId = await getContentId();
+            log.debug({moduleName, contentId}, 'Runner module has been initialized. Notifying the background script');
+            await rpc.call('tabs.contentInit', {moduleName, contentId});
         }
         catch (err) {
             log.error({err}, 'Error during openRunnerRegisterRunnerModule()');
@@ -120,8 +114,20 @@ try {
         window.openRunnerRegisterRunnerModule = openRunnerRegisterRunnerModule;
     });
 
+
     log.debug('Initialized... Notifying the background script');
-    rpc.callAndForget('tabs.mainContentInit');
+    let contentIdSync = null;
+    const backgroundScriptInitDataPromise = rpc.call('tabs.mainContentInit').then(data => {
+        log.debug(data, 'Received init data from background');
+
+        contentIdSync = data.contentId;
+        return data;
+
+    }).catch(err => {
+        log.error({err}, 'Error calling tabs.mainContentInit');
+    });
+    const scriptApiVersionPromise = backgroundScriptInitDataPromise.then(data => data.scriptApiVersion);
+    const contentIdPromise = backgroundScriptInitDataPromise.then(data => data.contentId);
 }
 catch (err) {
     log.error({err}, 'Error during initialization');

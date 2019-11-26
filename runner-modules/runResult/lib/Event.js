@@ -94,7 +94,7 @@ class Event {
             type: String(type),
             tabId: null,
             frameId: null,
-            tabContentId: null,
+            frameContentId: null,
         });
         Object.freeze(this);
     }
@@ -307,16 +307,16 @@ class Event {
      *
      * @return {?string}
      */
-    get tabContentId() {
-        return this[PRIVATE].tabContentId;
+    get frameContentId() {
+        return this[PRIVATE].frameContentId;
     }
 
     /**
      *
      * @param {?string} value
      */
-    set tabContentId(value) {
-        this[PRIVATE].tabContentId = value ? String(value) : null;
+    set frameContentId(value) {
+        this[PRIVATE].frameContentId = value ? String(value) : null;
     }
 
     /**
@@ -351,7 +351,7 @@ class Event {
             children: [...this.children].map(event => event.toJSONObject()),
             tabId: this.tabId,
             frameId: this.frameId,
-            tabContentId: this.tabContentId,
+            frameContentId: this.frameContentId,
         };
         /* eslint-enable sort-keys */
 

@@ -18,7 +18,7 @@ class Frame {
         this.initCount = 0;
         this.initMarked = false;
         this.destroyed = false;
-        this.currentContentId = null;
+        this.currentContentId = generateShortId();
         this.pendingInitTokens = new Set();
         this.childFrameTokenWait = new WaitForEvent(); // key is [frameToken]
         this.public = {
@@ -61,8 +61,7 @@ class Frame {
 
             /**
              * An unique ID which represents a single frame-content instance. Navigating to a new URL resets this id.
-             * This id might be null before the first navigation
-             * @return {?string}
+             * @return {string}
              */
             get currentContentId() {
                 return self.currentContentId;
@@ -138,15 +137,6 @@ class Tab {
              */
             get initialized() {
                 return self.initialized;
-            },
-
-            /**
-             * An unique ID which represents a single top level frame instance. Navigating to a new URL resets this id.
-             * This id might be null before the first navigation
-             * @return {?string}
-             */
-            get currentContentId() {
-                return self.currentContentId;
             },
 
             * frames() {
@@ -311,15 +301,16 @@ class TabTracker {
     markUninitialized(browserTabId, browserFrameId) {
         const tab = this.tabsByBrowserId.get(browserTabId);
         if (!tab) {
-            return;
+            return null;
         }
 
         const frame = tab.getFrame(browserFrameId);
         if (!frame) {
-            return;
+            return null;
         }
 
         frame.initMarked = false;
+        frame.currentContentId = generateShortId();
 
         for (const resolver of this.waitForTabUninitializationResolvers) {
             if (resolver.browserTabId === browserTabId && resolver.browserFrameId === browserFrameId) {
@@ -330,6 +321,8 @@ class TabTracker {
 
         // This frame is navigating to somewhere else. All the DOM nodes will be destroyed, including the iframes
         tab.destroyFrame(browserFrameId, {descendantsOnly: true});
+
+        return frame;
     }
 
     expectInitToken(browserTabId, browserFrameId, initToken) {
@@ -342,13 +335,8 @@ class TabTracker {
         const frame = this._getFramePrivate(browserTabId, browserFrameId);
         assert.isOk(frame, 'markInitialized(): the given browserTabId and browserFrameId combination has not been registered');
         const wasInitialized = frame.initialized;
-        const wasInitMarked = frame.initMarked;
         frame.initMarked = true;
         frame.pendingInitTokens.delete(initToken);
-
-        if (!wasInitMarked) {
-            frame.currentContentId = generateShortId();
-        }
 
         if (frame.initialized) {
             if (!wasInitialized) {
