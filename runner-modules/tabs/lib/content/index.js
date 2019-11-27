@@ -11,6 +11,11 @@ const ModuleRegister = require('../../../../lib/ModuleRegister');
 const tabsModule = require('./tabsModule');
 
 setupLogging(browser.runtime);
+
+// Firefox 66 has a rare bug in which the content script sometimes executes 2 times, in separate sandboxes.
+// Both of these scripts then remain active and will respond to RPC commands.
+// This token is used to filter out messages that are not meant for this instance of the content script, see
+// rpc.demandInstanceToken()
 const contentInstanceToken = `${Date.now()}x${window.crypto.getRandomValues(new Uint32Array(1))[0]}`;
 
 try {
@@ -37,6 +42,7 @@ try {
         browserRuntime: browser.runtime,
         context: 'runner-modules/tabs',
     });
+    rpc.demandInstanceToken(contentInstanceToken);
     rpc.attach();
     rpc.methods(tabsMethods(moduleRegister, eventEmitter, getScriptApiVersion, getContentId));
     rpc.method('tabs.contentUnload', contentUnload);

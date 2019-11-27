@@ -152,10 +152,13 @@ class TabManager extends EventEmitter {
         if (!isMyTab) {
             log.info(
                 {browserTabId, browserFrameId, contentInstanceToken, isMyTab},
-                'handleTabMainContentInitialized for a different script or unknown tab'
+                'handleTabMainContentInitialized for a different script or unknown tab',
             );
             return null; // the tab does not belong to this script
         }
+
+        const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
+        rpc.demandInstanceToken(contentInstanceToken);
 
         // this resets the value for `currentContentId`
         this.myTabs.markUninitialized(browserTabId, browserFrameId);
@@ -163,7 +166,6 @@ class TabManager extends EventEmitter {
         const frame = tab.getFrame(browserFrameId);
         assert.isOk(frame, `Frame ${browserFrameId} has not been registered for tab ${browserTabId}`);
         this.myTabs.expectInitToken(browserTabId, browserFrameId, 'tabs');
-        const rpc = this.tabContentRPC.get(browserTabId, browserFrameId);
 
         const contentId = frame.currentContentId;
         log.info({browserTabId, browserFrameId, contentInstanceToken, contentId}, 'Main tab content script has been initialized');

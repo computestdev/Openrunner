@@ -46,7 +46,10 @@ module.exports = (tabManager, frame) => {
     };
 
     return new Map([
-        ['tabs.mainContentInit', ({contentInstanceToken}) => tabManager.handleTabMainContentInitialized(browserTabId, browserFrameId, contentInstanceToken)],
+        [
+            'tabs.mainContentInit',
+            ({contentInstanceToken}) => tabManager.handleTabMainContentInitialized(browserTabId, browserFrameId, contentInstanceToken),
+        ],
         [
             'tabs.contentInit',
             ({moduleName, contentId}) => tabManager.handleTabModuleInitialized(browserTabId, browserFrameId, contentId, moduleName),
