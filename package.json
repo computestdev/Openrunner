@@ -66,7 +66,6 @@
     "throttle": "^1.0.3"
   },
   "dependencies": {
-    "@cliqz-oss/firefox-client": "^0.3.1",
     "archiver": "^3.0.0",
     "bluebird": "^3.5.0",
     "bluefox": "2.2.0",

@@ -23,7 +23,7 @@ describe('ContentRPC', () => {
                 removeListener: sinon.spy(),
             },
             sendMessage: sinon.spy(() => {
-                const [promise, resolve, reject] = explicitPromise();
+                const {promise, resolve, reject} = explicitPromise();
                 sendMessagePromises.push({promise, resolve, reject});
                 sendMessageWait.advance();
                 return promise;
