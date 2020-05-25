@@ -35,7 +35,7 @@ const runHandler = async argv => {
             return 1;
         }
 
-        const {cncPort, result: resultFile, headless} = argv;
+        const {cncPort, result: resultFile, headless, proxy} = argv;
         const preloadExtension = Boolean(argv.preloadExtension);
         const tempDirectory = resolvePath(argv.tmp);
         const firefoxPath = resolvePath(argv.firefox);
@@ -54,6 +54,7 @@ const runHandler = async argv => {
                 headless: Boolean(headless),
                 cncPort,
                 buildCacheDirectory,
+                proxy,
             }),
             async (writeResultFile, openrunner) => {
                 const scriptResult = await openrunner.runScript({scriptContent, stackFileName});

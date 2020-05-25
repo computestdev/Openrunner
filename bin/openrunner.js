@@ -65,6 +65,33 @@ const pretty = ['pretty', {
     default: true,
 }];
 
+const proxyGroup = [
+    ['proxyHttpHost', 'proxyHttpPort', 'proxyHttpsHost', 'proxyHttpsPort'],
+    'Proxy options',
+];
+
+const proxyHttpHost = ['proxyHttpHost', {
+    describe: 'The hostname of a HTTP proxy to configure for HTTP traffic from the browser.',
+    default: 'localhost',
+}];
+
+const proxyHttpPort = ['proxyHttpPort', {
+    describe: 'The port of a HTTP proxy to configure for HTTP traffic from the browser. ' +
+              'If this option is not given, the proxy will not be enabled',
+    number: true,
+}];
+
+const proxyHttpsHost = ['proxyHttpsHost', {
+    describe: 'The hostname of a HTTP proxy to configure for HTTPS traffic from the browser.',
+    default: 'localhost',
+}];
+
+const proxyHttpsPort = ['proxyHttpsPort', {
+    describe: 'The port of a HTTP proxy to configure for HTTPS traffic from the browser. ' +
+              'If this option is not given, the proxy will not be enabled',
+    number: true,
+}];
+
 const executeCommandHandler = (modulePath, args) => {
     // We use a lazy require here to prevent having to require the majority of the openrunner and
     // node_module source whenever we invoke something like `--help`, `--get-yargs-completions`, etc.
@@ -91,6 +118,16 @@ const executeCommandHandler = (modulePath, args) => {
         }
     });
 
+    args.proxy = {
+        http: args.proxyHttpPort ? {
+            host: String(args.proxyHttpHost),
+            port: Number(args.proxyHttpPort),
+        } : null,
+        https: args.proxyHttpsPort ? {
+            host: String(args.proxyHttpsHost),
+            port: Number(args.proxyHttpsPort),
+        } : null,
+    };
 
     const func = require(modulePath).handler;
 
@@ -107,6 +144,9 @@ const executeCommandHandler = (modulePath, args) => {
 };
 
 yargs
+.parserConfiguration({
+    'duplicate-arguments-array': false,
+})
 .wrap(yargs.terminalWidth())
 .env('OPENRUNNER')
 .option(...pretty)
@@ -121,7 +161,12 @@ yargs
         .group(['tmp', 'preloadExtension'], 'Advanced options')
         .option(...tmpOption)
         .option(...preloadExtensionOption)
-        .example('$0 ide --firefox \'/Volumes/Applications/Firefox.app\''),
+        .group(...proxyGroup)
+        .option(...proxyHttpHost)
+        .option(...proxyHttpPort)
+        .option(...proxyHttpsHost)
+        .option(...proxyHttpsPort)
+        .example('$0 ide --firefox \'/Applications/Firefox.app\''),
     handler: args => executeCommandHandler('./_subcommands/ide', args),
 })
 .command({
@@ -153,6 +198,11 @@ yargs
             number: true,
             default: 17011,
         })
+        .group(...proxyGroup)
+        .option(...proxyHttpHost)
+        .option(...proxyHttpPort)
+        .option(...proxyHttpsHost)
+        .option(...proxyHttpsPort)
         .example(
             '$0 run --firefox \'/Volumes/Applications/Firefox.app\' ' +
             '--script example.js --result example.json',

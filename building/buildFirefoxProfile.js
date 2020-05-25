@@ -90,14 +90,39 @@ const buildUserPrefs =
     .map(([key, value]) => `user_pref(${JSON.stringify(key)}, ${JSON.stringify(value)});`)
     .join('\n') + '\n';
 
-const buildUserPrefFile = async ({outputPath}) => {
+const buildUserPrefFile = async ({proxy = {}, outputPath}) => {
     const jsonString = await fs.readFile(require.resolve('./firefoxPreferences.json'), 'utf8');
     const preferences = cjson.parse(jsonString);
+
+    // proxy configuration
+    {
+        const {http, https, exclude} = proxy;
+
+        if (http || https) {
+            preferences['network.proxy.type'] = 1;
+            preferences['network.proxy.allow_hijacking_localhost'] = true;
+        }
+
+        if (http) {
+            preferences['network.proxy.http'] = http.host;
+            preferences['network.proxy.http_port'] = http.port;
+        }
+
+        if (https) {
+            preferences['network.proxy.ssl'] = https.host;
+            preferences['network.proxy.ssl_port'] = https.port;
+        }
+
+        if (exclude) {
+            preferences['network.proxy.no_proxies_on'] = exclude.join(', ');
+        }
+    }
+
     const userFileContent = buildUserPrefs(preferences);
     await fs.writeFile(resolvePath(outputPath, 'user.js'), userFileContent);
 };
 
-const buildFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOptions = {}, outputPath}) => {
+const buildFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOptions = {}, proxy = {}, outputPath}) => {
     assert.isOk(outputPath, 'outputPath must be set to a valid directory path');
     await fs.emptyDir(outputPath);
 
@@ -116,18 +141,18 @@ const buildFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOp
     }
 
     await Promise.all([
-        buildUserPrefFile({outputPath}),
+        buildUserPrefFile({proxy, outputPath}),
         buildExtensionPromise,
     ]);
 
     log.debug({outputPath}, 'Firefox profile has been built!');
 };
 
-const buildTempFirefoxProfile = ({tempDirectory, preloadExtension, extensionOptions = {}}) => {
+const buildTempFirefoxProfile = ({tempDirectory, preloadExtension, extensionOptions = {}, proxy = {}}) => {
     const tempDirectoryDisposer = temporaryDirectory(tempDirectory || tmpdir(), ['openrunner-profile-']);
     return Promise.try(async () => {
         const [profilePath] = await tempDirectoryDisposer.promise();
-        await buildFirefoxProfile({tempDirectory, preloadExtension, extensionOptions, outputPath: profilePath});
+        await buildFirefoxProfile({tempDirectory, preloadExtension, extensionOptions, proxy, outputPath: profilePath});
         return profilePath;
     })
     .disposer(() => tempDirectoryDisposer.tryDispose());
@@ -143,7 +168,7 @@ const buildTempFirefoxExtensionDirectory = ({tempDirectory, extensionOptions = {
     .disposer(() => tempDirectoryDisposer.tryDispose());
 };
 
-const buildCachedFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOptions = {}, buildCacheDirectory}) => {
+const buildCachedFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOptions = {}, buildCacheDirectory, proxy = {}}) => {
     const cacheName = preloadExtension
         ? `firefox-profile-${packageVersion}-y-${Number(extensionOptions.cncPort)}`
         : `firefox-profile-${packageVersion}-n`;
@@ -166,7 +191,7 @@ const buildCachedFirefoxProfile = async ({tempDirectory, preloadExtension, exten
         throw err;
     });
 
-    await buildFirefoxProfile({tempDirectory, preloadExtension, extensionOptions, outputPath: profilePath});
+    await buildFirefoxProfile({tempDirectory, preloadExtension, extensionOptions, proxy, outputPath: profilePath});
     return profilePath;
 };
 
