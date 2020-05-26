@@ -126,7 +126,7 @@ const buildFirefoxProfile = async ({tempDirectory, preloadExtension, extensionOp
     assert.isOk(outputPath, 'outputPath must be set to a valid directory path');
     await fs.emptyDir(outputPath);
 
-    log.debug({outputPath}, 'Building firefox profile...');
+    log.debug({preloadExtension, extensionOptions, proxy, outputPath}, 'Building firefox profile...');
 
     let buildExtensionPromise;
     if (preloadExtension) {

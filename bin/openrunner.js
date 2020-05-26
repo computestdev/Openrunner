@@ -92,6 +92,14 @@ const proxyHttpsPort = ['proxyHttpsPort', {
     number: true,
 }];
 
+const httpsCertificate = ['httpsCertificate', {
+    describe: 'One or more paths to PEM or DER certificate files which will be added to the certificate ' +
+              'store of the browser. Note that when this option is used, the firefox installation will be ' +
+              'copied to a temporary directory (using hardlinks if possible).',
+    array: true,
+    string: true,
+}];
+
 const executeCommandHandler = (modulePath, args) => {
     // We use a lazy require here to prevent having to require the majority of the openrunner and
     // node_module source whenever we invoke something like `--help`, `--get-yargs-completions`, etc.
@@ -158,9 +166,10 @@ yargs
         yargs
         .group(['firefox'], 'Basic options')
         .option(...firefoxOption)
-        .group(['tmp', 'preloadExtension'], 'Advanced options')
+        .group(['tmp', 'preloadExtension', 'httpsCertificate'], 'Advanced options')
         .option(...tmpOption)
         .option(...preloadExtensionOption)
+        .option(...httpsCertificate)
         .group(...proxyGroup)
         .option(...proxyHttpHost)
         .option(...proxyHttpPort)
@@ -187,7 +196,7 @@ yargs
             describe: 'Filesystem path where a JSON file containing the results of the script run will be stored',
         })
         .option(...headlessOption)
-        .group(['tmp', 'buildCache', 'cncPort', 'preloadExtension'], 'Advanced options')
+        .group(['tmp', 'buildCache', 'cncPort', 'preloadExtension', 'httpsCertificate'], 'Advanced options')
         .option(...tmpOption)
         .option(...buildCacheOption)
         .option(...preloadExtensionOption)
@@ -198,6 +207,7 @@ yargs
             number: true,
             default: 17011,
         })
+        .option(...httpsCertificate)
         .group(...proxyGroup)
         .option(...proxyHttpHost)
         .option(...proxyHttpPort)

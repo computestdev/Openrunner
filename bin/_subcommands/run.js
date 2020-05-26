@@ -35,7 +35,7 @@ const runHandler = async argv => {
             return 1;
         }
 
-        const {cncPort, result: resultFile, headless, proxy} = argv;
+        const {cncPort, result: resultFile, headless, proxy, httpsCertificate} = argv;
         const preloadExtension = Boolean(argv.preloadExtension);
         const tempDirectory = resolvePath(argv.tmp);
         const firefoxPath = resolvePath(argv.firefox);
@@ -55,6 +55,7 @@ const runHandler = async argv => {
                 cncPort,
                 buildCacheDirectory,
                 proxy,
+                certificatePaths: httpsCertificate,
             }),
             async (writeResultFile, openrunner) => {
                 const scriptResult = await openrunner.runScript({scriptContent, stackFileName});

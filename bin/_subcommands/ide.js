@@ -22,7 +22,7 @@ const ideHandler = async argv => {
     const preloadExtension = Boolean(argv.preloadExtension);
     const tempDirectory = resolvePath(argv.tmp);
     const firefoxPath = resolvePath(argv.firefox);
-    const {proxy} = argv;
+    const {proxy, httpsCertificate} = argv;
 
     await Promise.using(
         OpenrunnerClient.promiseDisposer({
@@ -31,6 +31,7 @@ const ideHandler = async argv => {
             preloadExtension,
             headless: false,
             proxy,
+            certificatePaths: httpsCertificate,
         }),
         async openrunner => {
             await openrunner.waitForChildStop();
