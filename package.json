@@ -20,7 +20,9 @@
     "test": "npm run lint && npm run test:unit-and-integration:coverage && npm run test:coverage-report",
     "test:server": "sh -c 'node test/testing-server.js \"$@\" | pino-pretty -c' --",
     "start": "npm run build && \"$FIREFOX_BIN\" --no-remote --profile PRIV/profile 'about:blank' 'about:devtools-toolbox?type=extension&id=openrunner%40computest.nl'",
-    "version": "bin/_npm_version.js && git add manifest.json"
+    "version": "bin/_npm_version.js && git add manifest.json",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Joris van der Wel <joris@jorisvanderwel.com>",
   "license": "Apache-2.0",
@@ -93,7 +95,8 @@
     "split": "^1.0.1",
     "symbol-tree": "^3.2.2",
     "ws": "^7.1.2",
-    "yargs": "^15.3.1"
+    "yargs": "^15.3.1",
+    "snyk": "^1.332.0"
   },
   "optionalDependencies": {
     "appdmg": "^0.6.0"
@@ -105,5 +108,6 @@
       "lib/**/*.js",
       "runner-modules/**/*.js"
     ]
-  }
+  },
+  "snyk": true
 }
