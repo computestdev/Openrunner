@@ -6,7 +6,7 @@ const yargs = require('yargs');
 const {tmpdir} = require('os');
 
 const firefoxOption = ['firefox', {
-    describe: 'Filesystem path to the binary of Firefox Unbranded or Developer Edition or Nightly',
+    describe: 'Filesystem path to the binary of Firefox',
     demandOption: true,
 }];
 
@@ -214,7 +214,7 @@ yargs
         .option(...proxyHttpsHost)
         .option(...proxyHttpsPort)
         .example(
-            '$0 run --firefox \'/Volumes/Applications/Firefox.app\' ' +
+            '$0 run --firefox \'/Applications/Firefox.app\' ' +
             '--script example.js --result example.json',
         ),
     handler: args => executeCommandHandler('./_subcommands/run', args),
