@@ -5,6 +5,9 @@ const {
     buildFirefoxProfile,
     buildTempFirefoxProfile,
     buildTempFirefoxExtensionDirectory,
+    buildFirefoxPolicies,
+    copyFirefox,
+    copyFirefoxToTemp,
 } = require('./building');
 const CnCServer = require('./lib/node/CnCServer');
 const OpenrunnerClient = require('./lib/node/OpenrunnerClient');
@@ -14,6 +17,9 @@ module.exports = {
     buildFirefoxExtension,
     buildFirefoxProfile,
     buildTempFirefoxProfile,
+    buildFirefoxPolicies,
+    copyFirefox,
+    copyFirefoxToTemp,
     CnCServer,
     buildTempFirefoxExtensionDirectory,
     OpenrunnerClient,
