@@ -95,7 +95,7 @@
     "split": "^1.0.1",
     "symbol-tree": "^3.2.2",
     "ws": "^7.1.2",
-    "yargs": "^15.3.1",
+    "yargs": "^16.0.0",
     "snyk": "^1.332.0"
   },
   "optionalDependencies": {
